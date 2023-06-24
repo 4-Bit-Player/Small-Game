@@ -3,16 +3,16 @@
     Mob drop
     Finding/unlocking stuff instead of fighting mobs
     Making everything moar beautiful
+    changing Mob generation to functions
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     More locations
     more shops
-    more things
+    more items
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Working inventory system
     Crafting system
     Equipment
     Inven use
-
  """
 
 import time
@@ -47,8 +47,6 @@ def restart():
 playing = True
 
 show_location_actions.init_places()
-
-
 
 
 while playing:

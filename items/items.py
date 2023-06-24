@@ -1,7 +1,4 @@
-Green_herb = {
-    "item_name": "Green Herb",
-    "item_type": "item",
-}
+
 polishing_fluid = {
     "item_type": "stat_upgrade",
     "item_name": "Polishing Fluid",

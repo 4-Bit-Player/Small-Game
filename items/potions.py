@@ -17,3 +17,13 @@ enhance_toughness = {
         "def": 1
     },
 }
+
+hp_potion = {
+    "item_type": "potion",
+    "item_name": "Small HP Potion",
+    "item_desc": f"A Potion that restores a small amount of HP.",
+    "item_amount": 1,
+    "player_affected_stats": {
+        "hp": 20
+    },
+}

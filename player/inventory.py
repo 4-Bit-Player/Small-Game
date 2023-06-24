@@ -1,5 +1,4 @@
-from player import user
-import copy
+from player import user, crafting, recipes
 from decoration import deco, colors
 
 
@@ -13,7 +12,7 @@ def open_inventory():
         deco.print_header("Inventory")
 
         if len(user.Player["inv"]) <= 0:
-            deco.clear_l()
+
             print("Your inventory is currently empty.")
             print("1. Close inventory")
             deco.clear_l()
@@ -21,11 +20,13 @@ def open_inventory():
         else:
             print("1. Close inventory")
             print("2. Inspect item")
+            print("3. Craft stuff")
+            deco.print_header("Use Item")
             for i, item in enumerate(user.Player["inv"]):
 
-                print(f'{i+3}. {item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
+                print(f'{i+4}. {item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
 
-        pick = user.user_input(len(user.Player["inv"]) + 2)
+        pick = user.user_input(len(user.Player["inv"]) + 3)
 
         if not pick:
             inv_open = False
@@ -33,20 +34,13 @@ def open_inventory():
         elif pick == 1:
             inv_inspect()
 
-        elif pick >= 2:
-            use_item(user.Player["inv"][pick - 2])
+        elif pick == 2:
+            inv_crafting()
+
+        elif pick >= 3:
+            use_item(user.Player["inv"][pick - 3])
 
     deco.clear_l(clear_all=1)
-
-
-def item_add(_item, amount=1):
-    _item["item_amount"] = amount
-    for item in user.Player["inv"]:
-        if _item["item_name"] == item["item_name"]:
-            item["item_amount"] += amount
-            return
-    _item["item_amount"] = amount
-    user.Player["inv"].append(copy.deepcopy(_item))
 
 
 def use_item(item):
@@ -55,7 +49,7 @@ def use_item(item):
             for i, k in item["player_affected_stats"].items():
                 user.Player[i] += k
                 user.check_hp_max()
-            remove_item(item)
+            crafting.remove_item(item)
 
             deco.clear_l(s="", clear_all=1)
 
@@ -72,13 +66,7 @@ def use_item(item):
 
     else:
         deco.player_hud()
-        print(f'You can\'t use the {item["item_name"]} right now...')
-
-
-def remove_item(_item, amount=1):
-    _item["item_amount"] -= amount
-    if _item["item_amount"] <= 0:
-        user.Player["inv"] = [item for item in user.Player["inv"] if item != _item]
+        print(f'{colors.red}You can\'t use the {item["item_name"]} right now...{colors.reset}')
 
 
 def inv_inspect():
@@ -105,7 +93,6 @@ def inv_inspect():
             deco.clear_l(s="", clear_all=1)
             deco.player_hud()
 
-
         else:
             item_inspect(user.Player["inv"][pick - 1])
 
@@ -114,8 +101,11 @@ def item_inspect(item):
     deco.print_header(item["item_name"], 1)
 
     deco.print_in_line(item["item_desc"])
-    show_item_effects(item)
-
+    try:
+        show_item_effects(item)
+    except KeyError:
+        pass
+    print()
     str(input("Press enter to close."))
 
 
@@ -155,3 +145,38 @@ def show_item_effects(item, already_did=0):
                     print(f"{colors.green}It increased your xp by {k} points{colors.reset}.")
                 if i == "lvl":
                     print(f"{colors.green}It increased your Level by {k} Level{colors.reset}.")
+
+
+def inv_crafting():
+    active_crafting = True
+
+    deco.clear_l(s="", clear_all=1)
+
+    while active_crafting:
+        deco.print_header("Craft Item")
+        print("1. Stop Crafting")
+        option = 2
+
+        for c_recipies in recipes.recipies:
+            print(f'{option}. {c_recipies["name"]}')
+            requirements = []
+            for req_items in c_recipies["req_res"]:
+                for u_item in user.Player["inv"]:
+                    if req_items == u_item["item_name"]:
+                        if c_recipies["req_res"][req_items] <= u_item["item_amount"]:
+                            requirements.append(f'{colors.green}{c_recipies["req_res"][req_items]}x {req_items}')
+                            break
+
+                else:
+                    requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
+
+            print(f'You need ' + ", ".join(requirements) + colors.reset)
+
+            option += 1
+        pick = user.user_input(len(recipes.recipies)+1)
+
+        if not pick:
+            deco.clear_l(s="", clear_all=1)
+            return
+        elif pick >= 1:
+            crafting.craft(recipes.recipies[pick - 1])

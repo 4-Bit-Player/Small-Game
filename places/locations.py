@@ -1,4 +1,4 @@
-from things import food, items, potions
+from items import food, items, potions, materials
 from player import user, inventory
 from places import location_actions
 import combat
@@ -70,7 +70,7 @@ locations = [
               "price": 20,
           },
           {
-              "action_text": "Buy Food (health+20)",
+              "action_text": "Buy Food",
               "action_type": location_actions.shop,
               "player_affected_stats": {
                   "hp": 20
@@ -83,7 +83,7 @@ locations = [
                        "Apple", "Cheese-wheel"]
           },
           {
-              "action_text": "Upgrade your Sword (atk + 5)",
+              "action_text": "Upgrade your Sword",
               "action_type": location_actions.shop,
               "player_affected_stats": {
                   "str": 5
@@ -94,15 +94,31 @@ locations = [
 
           },
           {
-              "action_text": "Improve you Shield (def + 1)",
+              "action_text": "Upgrade your Shield",
               "action_type": location_actions.shop,
               "player_affected_stats": {
                   "def": 1
               },
               "price": 50,
-              "item_type": "stat_upgrade",
               "item": items.polishing_fluid,
-              "name": "Polishing Fluid",
+              "name": "Sharpening Stone",
+
+          },
+          {
+              "action_text": "Buy a green herb",
+              "action_type": location_actions.shop,
+              "price": 50,
+              "item": materials.green_herb,
+              "name": "Green Herb",
+
+          },
+          {
+              "action_text": "Buy a red herb",
+              "action_type": location_actions.shop,
+              "price": 50,
+              "item_type": "stat_upgrade",
+              "item": materials.red_herb,
+              "name": "Red Herb",
 
           },
       ],

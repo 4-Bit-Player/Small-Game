@@ -65,20 +65,27 @@ def user_input(max_num):
     full_check = range(1, max_num+1)
 
     while u_input:
-        if "1" <= u_action <= str(max_num):
+        try:
+            if "1" <= u_action <= str(max_num):
 
-            if float(u_action) in full_check:
-                u_input = False
+                if float(u_action) in full_check:
+                    u_input = False
+
+                else:
+                    print(f"Please select a whole number between 1 and {max_num}")
+                    print("What will you do?")
+                    u_action = str(input("Action:"))
 
             else:
-                print(f"Please select a whole number between 1 and {max_num}")
+                print(f"Please select a number between 1 and {max_num}")
                 print("What will you do?")
                 u_action = str(input("Action:"))
 
-        else:
+        except ValueError:
             print(f"Please select a number between 1 and {max_num}")
             print("What will you do?")
             u_action = str(input("Action:"))
+
     u_action = int(u_action) - 1
     return u_action
 
@@ -129,8 +136,9 @@ def lvl_up_check():
 
 
 def lvl_up():
+    current_missing_hp = Player["hp_max"] - Player["hp"]
     Player["hp_max"] *= 1.1
-    Player["hp"] *= 1.1
+    Player["hp"] = Player["hp_max"] - current_missing_hp
     Player["str_base"] += 1
     Player["def_base"] += 1
     Player["def_multi"] += 0.1
@@ -158,5 +166,3 @@ def check_hp():
 def check_hp_max():
     if Player["hp"] > Player["hp_max"]:
         Player["hp"] = Player["hp_max"]
-    else:
-        pass

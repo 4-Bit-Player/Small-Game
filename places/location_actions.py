@@ -1,7 +1,7 @@
 import random
 import combat
 from decoration import *
-from player import user, inventory
+from player import user, crafting
 
 
 locations = []
@@ -95,7 +95,7 @@ def go_to_location(location_name):
 def shop(item):
 
     if check_money(item["price"]):
-        inventory.item_add(item["item"])
+        crafting.item_add(item["item"])
         if isinstance(item["name"], list):
             pick = int(user.random_pick_list(item["name"]))
 
@@ -113,8 +113,6 @@ def shop(item):
 def check_hp_max():
     if user.Player["hp"] > user.Player["hp_max"]:
         user.Player["hp"] = user.Player["hp_max"]
-    else:
-        pass
 
 
 def check_money(price):
