@@ -1,5 +1,5 @@
 import random
-from player import user
+from player import user, crafting
 from decoration import deco, colors
 import time
 import enemies
@@ -37,6 +37,11 @@ def combat(current_location):
                     enemy, temp_log, hp_lost = attack(enemy, 1)
             elif pick == 1:
                 till_death = True
+
+                deco.clear_l(1)
+                print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
+                deco.clear_l()
+
                 while till_death:
                     enemy, temp_log, hp_lost = attack(enemy, 0)
                     print(temp_log)
@@ -66,12 +71,27 @@ def fight_won(enemy, hp_lost, temp_log):
           f'and you have {colors.green}{user.Player["hp"]:.1f} {colors.reset}hp left.')
     print(f'You gained {colors.gold}{enemy["gold"]:.1f} Gold{colors.reset} and \033[38;5;93m{enemy["xp"]} xp\033[0;0m.')
 
+    enemy_drop(enemy)
+
     user.player_add_xp(enemy["xp"])
     user.Player["gold"] += enemy["gold"]
     user.Player["score"] += enemy["xp"]
 
     deco.clear_l()
     print()
+    str(input("Press enter to continue."))
+    deco.clear_l(s="", clear_all=1)
+
+
+def enemy_drop(enemy):
+    for item in enemy["drop"]:
+        pick = random.randint(1, 1000)
+        for amount, chance in enemy["drop"][item].items():
+            if pick <= chance:
+                real_item = crafting.item_search(item)
+                crafting.item_add(real_item, amount)
+                print(f'The {enemy["name"]} dropped {amount}x {item}')
+                break
 
 
 def check_health_combat():
@@ -111,64 +131,76 @@ def attack(enemy, failed=0):
         return enemy, temp_log, enemy_damage
     else:
         if player_action_speed >= enemy_action_speed:
-            if pl_crit_attack(enemy):
-                player_damage = user.player_atk() * 1.3
-                enemy["hp"] -= player_damage
-                temp_log = f'You surprised the {enemy["name"]} with a quick attack' \
-                           f' dealing {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
-
-            elif en_defended(enemy):
-                player_damage = max(0, user.player_atk() - enemy["def"] * 2)
-                enemy["hp"] -= player_damage
-                temp_log = f'The {enemy["name"]} expected your attack and defended. You' \
-                           f' dealt {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
-
-            elif pl_missed(enemy):
-                player_damage = max(0, user.player_atk()/2 - enemy["def"])
-                enemy["hp"] -= player_damage
-                temp_log = f'The {enemy["name"]} was to quick and you weren\'t able to hit it correctly.' \
-                           f' You dealt {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
-
-            else:
-                player_damage = max(0, user.player_atk() - enemy["def"])
-                enemy["hp"] -= player_damage
-                temp_log = f'You were faster and hit the {enemy["name"]}' \
-                           f' dealing {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
-
+            enemy, temp_log = pl_attack(enemy)
             return enemy, temp_log, enemy_damage
 
         else:
-            if en_crit_attack(enemy):
-                enemy_damage = enemy["str"] * 1.1
-                user.Player["hp"] -= enemy_damage
-                temp_log = (f'The {enemy["name"]} surprised you with a swift attack and hit you for {colors.red} '
-                            f'{round(enemy_damage, 1)} damage{colors.reset}.')
-
-            elif pl_defended(enemy):
-                enemy_damage = max(0, enemy["str"] - user.player_def() * 2)
-                user.Player["hp"] -= enemy_damage
-                temp_log = (f'You managed to block the attack from the {enemy["name"]}. {colors.red} '
-                            f'You took {round(enemy_damage, 1)} damage{colors.reset}.')
-
-            elif en_missed(enemy):
-                enemy_damage = max(0, enemy["str"]/2 - user.player_def())
-                user.Player["hp"] -= enemy_damage
-                temp_log = (f'You managed to partially dodge the attack. You took {colors.red}'
-                            f'{round(enemy_damage, 1)} damage{colors.reset}.')
-
-            else:
-                enemy_damage = max(0, enemy["str"] - user.player_def())
-                user.Player["hp"] -= enemy_damage
-                temp_log = (f'The {enemy["name"]} was faster and hit you for {colors.red} '
-                            f'{round(enemy_damage, 1)} damage{colors.reset}.')
+            enemy, temp_log, enemy_damage = en_attack(enemy)
 
             return enemy, temp_log, enemy_damage
+
+
+def pl_attack(enemy):
+
+    if pl_crit_attack(enemy):
+        player_damage = user.player_atk() * 1.3
+        enemy["hp"] -= player_damage
+        temp_log = f'You surprised the {enemy["name"]} with a quick attack' \
+                   f' dealing {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
+
+    elif en_defended(enemy):
+        player_damage = max(0, user.player_atk() - enemy["def"] * 2)
+        enemy["hp"] -= player_damage
+        temp_log = f'The {enemy["name"]} expected your attack and defended. You' \
+                   f' dealt {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
+
+    elif pl_missed(enemy):
+        player_damage = max(0, user.player_atk() / 2 - enemy["def"])
+        enemy["hp"] -= player_damage
+        temp_log = f'The {enemy["name"]} was to quick and you weren\'t able to hit it correctly.' \
+                   f' You dealt {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
+
+    else:
+        player_damage = max(0, user.player_atk() - enemy["def"])
+        enemy["hp"] -= player_damage
+        temp_log = f'You were faster and hit the {enemy["name"]}' \
+                   f' dealing {colors.light_green}{round(player_damage, 1)} damage{colors.reset}.'
+
+    return enemy, temp_log
+
+
+def en_attack(enemy):
+    if en_crit_attack(enemy):
+        enemy_damage = enemy["str"] * 1.1
+        user.Player["hp"] -= enemy_damage
+        temp_log = (f'The {enemy["name"]} surprised you with a swift attack and hit you for {colors.red}'
+                    f'{round(enemy_damage, 1)} damage{colors.reset}.')
+
+    elif pl_defended(enemy):
+        enemy_damage = max(0, enemy["str"] - user.player_def() * 2)
+        user.Player["hp"] -= enemy_damage
+        temp_log = (f'You managed to partially block the attack from the {enemy["name"]}. {colors.red}'
+                    f'You took {round(enemy_damage, 1)} damage{colors.reset}.')
+
+    elif en_missed(enemy):
+        enemy_damage = max(0, enemy["str"] / 2 - user.player_def())
+        user.Player["hp"] -= enemy_damage
+        temp_log = (f'You managed to partially dodge the attack. You took {colors.red}'
+                    f'{round(enemy_damage, 1)} damage{colors.reset}.')
+
+    else:
+        enemy_damage = max(0, enemy["str"] - user.player_def())
+        user.Player["hp"] -= enemy_damage
+        temp_log = (f'The {enemy["name"]} was faster and hit you for {colors.red}'
+                    f'{round(enemy_damage, 1)} damage{colors.reset}.')
+
+    return enemy, temp_log, enemy_damage
 
 
 def en_crit_attack(enemy):
     player_action_speed = random.uniform(1, user.Player["dex"])
     en_action_speed = random.uniform(1, enemy["dex"])
-    return True if en_action_speed > (player_action_speed * 10) else False
+    return True if en_action_speed > (player_action_speed * 8) else False
 
 
 def en_defended(enemy):
@@ -180,25 +212,25 @@ def en_defended(enemy):
 def en_missed(enemy):
     player_action_speed = random.uniform(1, user.Player["dex"])
     en_action_speed = random.uniform(1, enemy["dex"])
-    return True if (en_action_speed * 14) < player_action_speed else False
+    return True if (en_action_speed * 10) < player_action_speed else False
 
 
 def pl_crit_attack(enemy):
     player_action_speed = random.uniform(1, user.Player["dex"])
     en_action_speed = random.uniform(1, enemy["dex"])
-    return True if (en_action_speed * 8) < player_action_speed else False
+    return True if (en_action_speed * 5) < player_action_speed else False
 
 
 def pl_defended(enemy):
     player_action_speed = random.uniform(1, user.Player["dex"])
     en_action_speed = random.uniform(1, enemy["dex"])
-    return True if (en_action_speed * 5) < player_action_speed else False
+    return True if (en_action_speed * 2) < player_action_speed else False
 
 
 def pl_missed(enemy):
     player_action_speed = random.uniform(1, user.Player["dex"])
     en_action_speed = random.uniform(1, enemy["dex"])
-    return True if en_action_speed > (player_action_speed * 20) else False
+    return True if en_action_speed > (player_action_speed * 15) else False
 
 
 fighting_options = ["Fight!", "Fight till one DIES!", "Flee!", "Check Health"]

@@ -1,4 +1,6 @@
 import random
+import time
+
 import combat
 from decoration import *
 from player import user, crafting
@@ -95,7 +97,10 @@ def go_to_location(location_name):
 def shop(item):
 
     if check_money(item["price"]):
-        crafting.item_add(item["item"])
+
+        r_item = crafting.item_search(item["item"])
+        crafting.item_add(r_item)
+
         if isinstance(item["name"], list):
             pick = int(user.random_pick_list(item["name"]))
 
@@ -106,7 +111,19 @@ def shop(item):
         article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
         deco.clear_l(s="", clear_all=1)
         print(f'You bought {article} {item_name}')
+    else:
+        deco.clear_l(s="", clear_all=1)
+        if isinstance(item["name"], list):
+            pick = int(user.random_pick_list(item["name"]))
+            item_name = item["name"][pick]
 
+        else:
+            item_name = item["name"]
+        article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
+
+        deco.clear_l()
+        print(f'{colors.red}You don\'t have enough money to buy {article} {item_name} right now.{colors.reset}')
+        deco.clear_l()
     return
 
 
@@ -155,3 +172,48 @@ def inspect(current_location):
 
 past_location = search_location("Forest")
 
+
+def look_around(current_location):
+    pick = random.randint(1, 1000)
+    if pick <= current_location["enemy_chance"]:
+        deco.clear_l(1)
+        print(f'You are wandering through the {current_location["name"]} looking for usable Items...')
+        time.sleep(1)
+        print("Suddenly you hear something behind you.")
+        time.sleep(1)
+        combat.combat(current_location)
+
+    elif pick <= current_location["item_find_chance"]:
+
+        deco.clear_l(1)
+
+        print(f'You are wandering through the {current_location["name"]} looking for usable Items...')
+        drop_malus = 0
+        findable_items = list(current_location["findable_items"].keys())
+        random.shuffle(findable_items)
+
+        for item in findable_items:
+            it_pick = random.randint(1, 1000)
+
+            item_ending = ""
+
+            drop_chances = current_location["findable_items"][item]
+            for amount, chance in drop_chances.items():
+                if it_pick <= chance - drop_malus:
+                    real_item = crafting.item_search(item)
+                    crafting.item_add(real_item, amount)
+                    drop_malus += 100
+                    if amount >= 2:
+                        item_ending = "s"
+
+                    time.sleep(1.3)
+                    print(f'You found {colors.green}{amount}x {item}{item_ending}{colors.reset}.')
+
+                    break
+
+        time.sleep(1)
+        if drop_malus == 0:
+            print("You didn't find anything useful...")
+
+        str(input("Press enter to continue"))
+        deco.clear_l(s="", clear_all=1)

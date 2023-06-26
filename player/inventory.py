@@ -15,18 +15,28 @@ def open_inventory():
 
             print("Your inventory is currently empty.")
             print("1. Close inventory")
+            print("2. Inspect item")
+            print("3. Craft stuff")
             deco.clear_l()
 
+            pick = user.user_input(len(user.Player["inv"]) + 3)
         else:
             print("1. Close inventory")
             print("2. Inspect item")
             print("3. Craft stuff")
             deco.print_header("Use Item")
             for i, item in enumerate(user.Player["inv"]):
+                equipped = ""
+                try:
+                    if item["equipped"] == 1:
+                        equipped = "  (equipped)"
+                except KeyError:
+                    pass
 
-                print(f'{i+4}. {item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
+                print(f'{i+4}. {item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}'
+                      f'{equipped}')
 
-        pick = user.user_input(len(user.Player["inv"]) + 3)
+            pick = user.user_input(len(user.Player["inv"]) + 3)
 
         if not pick:
             inv_open = False
@@ -44,7 +54,7 @@ def open_inventory():
 
 
 def use_item(item):
-    if item["item_type"] in ["food", "potion"]:
+    if item["item_type"] in ["food"]:
         if user.check_hp():
             for i, k in item["player_affected_stats"].items():
                 user.Player[i] += k
@@ -64,8 +74,37 @@ def use_item(item):
             deco.player_hud()
             print("You are at full HP already.")
 
-    else:
+    elif item["item_type"] in ["potion"]:
+        healing = False
+        for stat, amount in item["player_affected_stats"].items():
+            if stat == "hp":
+                if user.Player["hp"] >= user.Player["hp_max"]:
+                    healing = True
+
+        if not healing:
+            for i, k in item["player_affected_stats"].items():
+                user.Player[i] += k
+                user.check_hp_max()
+            crafting.remove_item(item)
+
+            deco.clear_l(s="", clear_all=1)
+
+            deco.player_hud()
+
+            article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
+            print(f'You used {article} {item["item_name"]}')
+            show_item_effects(item, already_did=1)
+        else:
+            print("You are already at max hp.")
+
+    elif item["item_type"] in ["equipment"]:
+        user.equip_item(item)
+        deco.clear_l(s="", clear_all=1)
+
         deco.player_hud()
+
+    else:
+        deco.clear_l(s="", clear_all=1)
         print(f'{colors.red}You can\'t use the {item["item_name"]} right now...{colors.reset}')
 
 
@@ -116,39 +155,44 @@ def show_item_effects(item, already_did=0):
             if k > 0:
                 if i == "hp":
                     print(f"{colors.green}It heals you for {k} HP{colors.reset}.")
-                if i == "hp_max":
+                elif i == "hp_max":
                     print(f"{colors.green}It increases your max HP by {k} HP{colors.reset}.")
-                if i == "str":
+                elif i == "str":
                     print(f"{colors.red}It increases your strength by {k}{colors.reset}.")
-                if i == "dex":
+                elif i == "str_base":
+                    print(f"{colors.red}It increases your base strength by {k}{colors.reset}.")
+                elif i == "dex":
                     print(f"{colors.light_blue}It increases your dexterity by {k}{colors.reset}.")
-                if i == "def":
+                elif i == "def":
                     print(f"{colors.light_blue}It increases your defense by {k}{colors.reset}.")
-                if i == "xp":
+                elif i == "def_base":
+                    print(f"{colors.light_blue}It increases your base defense by {k}{colors.reset}.")
+                elif i == "xp":
                     print(f"{colors.green}It increases your xp by {k} points{colors.reset}.")
-                if i == "lvl":
+                elif i == "lvl":
                     print(f"{colors.green}It increases your Level by {k} Level{colors.reset}.")
     else:
         for i, k in item["player_affected_stats"].items():
             if k > 0:
                 if i == "hp":
                     print(f"{colors.green}It healed you for {k} HP{colors.reset}.")
-                if i == "hp_max":
+                elif i == "hp_max":
                     print(f"{colors.green}It increased your max HP by {k} HP{colors.reset}.")
-                if i == "str":
+                elif i == "str":
                     print(f"{colors.red}It increased your strength by {k}{colors.reset}.")
-                if i == "dex":
+                elif i == "dex":
                     print(f"{colors.light_blue}It increased your dexterity by {k}{colors.reset}.")
-                if i == "def":
+                elif i == "def":
                     print(f"{colors.light_blue}It increased your defense by {k}{colors.reset}.")
-                if i == "xp":
+                elif i == "xp":
                     print(f"{colors.green}It increased your xp by {k} points{colors.reset}.")
-                if i == "lvl":
+                elif i == "lvl":
                     print(f"{colors.green}It increased your Level by {k} Level{colors.reset}.")
 
 
 def inv_crafting():
     active_crafting = True
+    unlocked_recipies = []
 
     deco.clear_l(s="", clear_all=1)
 
@@ -158,25 +202,33 @@ def inv_crafting():
         option = 2
 
         for c_recipies in recipes.recipies:
-            print(f'{option}. {c_recipies["name"]}')
-            requirements = []
-            for req_items in c_recipies["req_res"]:
-                for u_item in user.Player["inv"]:
-                    if req_items == u_item["item_name"]:
-                        if c_recipies["req_res"][req_items] <= u_item["item_amount"]:
-                            requirements.append(f'{colors.green}{c_recipies["req_res"][req_items]}x {req_items}')
-                            break
+            if c_recipies["req_lvl"] <= user.Player["lvl"]:
 
-                else:
-                    requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
+                unlocked_recipies.append(c_recipies)
 
-            print(f'You need ' + ", ".join(requirements) + colors.reset)
+                print(f'{option}. {c_recipies["name"]}')
+                requirements = []
+                for req_items in c_recipies["req_res"]:
+                    for u_item in user.Player["inv"]:
+                        if req_items == u_item["item_name"]:
+                            if c_recipies["req_res"][req_items] <= u_item["item_amount"]:
+                                requirements.append(f'{colors.green}{c_recipies["req_res"][req_items]}x {req_items}')
+                                break
 
-            option += 1
-        pick = user.user_input(len(recipes.recipies)+1)
+                    else:
+                        requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
+
+                print(f'You need ' + ", ".join(requirements) + colors.reset)
+
+                option += 1
+
+        pick = user.user_input(len(unlocked_recipies)+1)
 
         if not pick:
             deco.clear_l(s="", clear_all=1)
+            deco.player_hud()
             return
         elif pick >= 1:
-            crafting.craft(recipes.recipies[pick - 1])
+            crafting.craft(unlocked_recipies[pick - 1])
+
+

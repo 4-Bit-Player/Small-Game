@@ -1,21 +1,35 @@
 # To do:
 """
-    Mob drop
-    Finding/unlocking stuff instead of fighting mobs
     Making everything moar beautiful
-    changing Mob generation to functions
+    changing input, so you can navigate using text
+    unlocking stuff instead of fighting mobs
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     More locations
     more shops
     more items
+    more recipes (and also switching to selection)
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Working inventory system
     Crafting system
-    Equipment
-    Inven use
+    moar Equipment
+    Inventory use
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Ask Surly about character
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Added:
+    Mob drop
+    More crafting recipies
+    Finding stuff instead of fighting mobs
+    more items
+    made a bit of stuff moar beautiful
+    working Equipment
+    changing Mob generation to functions
+
  """
 
 import time
+
+
 from decoration import story, deco, colors
 from player import user
 from places import show_location_actions, location_actions

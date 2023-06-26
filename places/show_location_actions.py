@@ -37,11 +37,7 @@ def show_location_actions(current_location):
         else:
             function()
 
-    if pot_function == enemies.encounter:
-        pot_function(current_location)
-    elif pot_function == location_actions.inspect:
-        pot_function(current_location)
-    elif pot_function == combat.combat:
+    if pot_function in [enemies.encounter, location_actions.inspect, combat.combat, location_actions.look_around]:
         pot_function(current_location)
     elif pot_function in [location_actions.shop, location_actions.go_to_location]:
         pot_function(current_location["list_of_actions"][pick])

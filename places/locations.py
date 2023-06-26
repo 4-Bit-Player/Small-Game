@@ -1,7 +1,7 @@
-from items import food, items, potions, materials
 from player import user, inventory
 from places import location_actions
 import combat
+import enemies
 
 locations = [
 
@@ -32,10 +32,6 @@ locations = [
                 "name": "Trinkets and Tincture Trove",
             },
             {
-                "action_text": "Check stats.",
-                "action_type": user.check_player_stats,
-            },
-            {
                 "action_text": "Open Inventory.",
                 "action_type": inventory.open_inventory,
             },
@@ -63,13 +59,6 @@ locations = [
               },
           },
           {
-              "action_type": location_actions.shop,
-              "action_text": "food",
-              "item": food.basic_food,
-              "name": "Basic Food",
-              "price": 20,
-          },
-          {
               "action_text": "Buy Food",
               "action_type": location_actions.shop,
               "player_affected_stats": {
@@ -78,7 +67,7 @@ locations = [
 
               "price": 20,
               "item_type": "food",
-              "item": food.basic_food,
+              "item": "Basic Food",
               "name": ["Beagle", "Burger", "Banana", "Hot Pocket",  "Doughnut", "Pizza", "Waffle", "Beef Stew",
                        "Apple", "Cheese-wheel"]
           },
@@ -89,7 +78,8 @@ locations = [
                   "str": 5
               },
               "price": 50,
-              "item": items.sharpening_stone,
+              "item_type": "item",
+              "item": "Sharpening Stone",
               "name": "Sharpening Stone",
 
           },
@@ -100,27 +90,28 @@ locations = [
                   "def": 1
               },
               "price": 50,
-              "item": items.polishing_fluid,
-              "name": "Sharpening Stone",
+              "item_type": "item",
+              "item": "Polishing Fluid",
+              "name": "Polishing Fluid",
 
           },
           {
-              "action_text": "Buy a green herb",
+              "action_text": "Buy a Helmet",
               "action_type": location_actions.shop,
               "price": 50,
-              "item": materials.green_herb,
-              "name": "Green Herb",
-
+              "item_type": "material",
+              "item": "Leather Helmet",
+              "name": "Helmet",
           },
           {
-              "action_text": "Buy a red herb",
+              "action_text": "Buy a slightly better Helmet",
               "action_type": location_actions.shop,
-              "price": 50,
-              "item_type": "stat_upgrade",
-              "item": materials.red_herb,
-              "name": "Red Herb",
-
+              "price": 100,
+              "item_type": "material",
+              "item": "Iron Helmet",
+              "name": "Helmet",
           },
+
       ],
     },
 
@@ -142,14 +133,15 @@ locations = [
             {
                 "action_type": location_actions.shop,
                 "action_text": "Buy a Potion of Strength",
-                "item": potions.enhance_strength,
+                "item_type": "Potion",
+                "item": "Potion of Strength",
                 "name": "Potion of Strength",
                 "price": 20,
             },
             {
                 "action_type": location_actions.shop,
                 "action_text": "Buy a Potion of Toughness",
-                "item": potions.enhance_toughness,
+                "item": "Potion of Toughness",
                 "name": "Potion of Toughness",
                 "price": 20,
             },
@@ -161,8 +153,20 @@ locations = [
     {
      "name": "Forest",
      "type": "Wilderness",
+     "enemy_chance": 200,
      "enemies": {
-         "Wild Boar": 1000,
+         enemies.wild_boar: 1000,
+     },
+
+     "item_find_chance": 1000,
+     "findable_items": {
+         "Red Herb": {2: 100, 1: 300},
+         "Green Herb": {2: 150, 1: 400},
+         "Stick": {2: 150, 1: 400},
+         "Small Rock": {2: 200, 1: 400},
+         "Mushroom": {2: 100, 1: 300},
+         "Poisonous Mushroom": {2: 100, 1: 300},
+         "Berrie": {3: 100, 2: 200, 1: 300},
      },
      "welcome_text": [
          "You have arrived at the forest!",
@@ -180,14 +184,13 @@ locations = [
                  "Go deeper into the Forest": "Dark Forest",
              },
          },
-
          {
              "action_text": "Look around.",
-             "action_type": combat.combat
+             "action_type": location_actions.look_around
          },
          {
-             "action_text": "Check Stats",
-             "action_type": user.check_player_stats
+             "action_text": "Look for enemies.",
+             "action_type": combat.combat
          },
          {
              "action_text": "Open Inventory.",
@@ -200,12 +203,17 @@ locations = [
     {
         "name": "Dark Forest",
         "type": "Wilderness",
+        "enemy_chance": 300,
         "enemies": {
-            "Green Herb": 100,
-            "Wild Boar": 300,
-            "Big Wild Boar": 1000,
-
+            enemies.wild_boar: 300,
+            enemies.big_wild_boar: 1000,
         },
+        "item_find_chance": 1000,
+        "findable_items": {
+            "Tough Stick": {2: 100, 1: 300},
+            "Sharp Stone": {2: 100, 1: 300},
+        },
+
         "welcome_text": [
             "You wandered deeper into the Forest!",
             "The treetops are blocking out most light and it's more difficult to see."
@@ -228,10 +236,13 @@ locations = [
                     "To Castell City": "Castell City"
                 },
             },
-
             {
                 "action_text": "Look around.",
                 "action_type": location_actions.inspect
+            },
+            {
+                "action_text": "Look for items.",
+                "action_type": location_actions.look_around
             },
             {
                 "action_text": "Search for enemies.",

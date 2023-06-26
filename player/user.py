@@ -2,12 +2,12 @@ import random
 from decoration import deco, colors
 
 Player = {
-    "hp": 100,
+    "hp": 1000,
     "hp_max": 100,
     "score": 0,
     "xp": 0,
     "lvl": 1,
-    "gold": 0,
+    "gold": 1000,
     "str": 10,
     "str_base": 10,
     "str_multi": 1,
@@ -41,34 +41,46 @@ Player_default = {
     ]
 }
 
+Equipped = {
+    "Head": "",
+    "Chest": "",
+    "Legs": "",
+    "Feet": "",
+    "Sword": "",
+    "Shield": "",
+    "Tool": "",
+}
+
+Equipped_default = {
+    "Head": "",
+    "Chest": "",
+    "Legs": "",
+    "Feet": "",
+    "Sword": "",
+    "Shield": "",
+    "Tool": "",
+}
+
 
 def restart():
     global Player
     global Player_default
+    global Equipped
+    global Equipped_default
     Player = Player_default
-
-
-def check_player_stats():
-    deco.clear_l(1)
-    print(f'You are {colors.turquoise}Level {Player["lvl"]}{colors.reset}.')
-    print(f'You have {colors.pink}{Player["xp"]} / {round(90 * pow(1.1, Player["lvl"]))} XP{colors.reset}.')
-    print(f'Your total strength is {colors.red}{round(player_atk(), 1)} atk{colors.reset}.')
-    print(f'You have {colors.green}{round(Player["hp"], 1)} / {round(Player["hp_max"], 1)}{colors.reset} HP.')
-    print(f'You have {colors.gray}{round(Player["def"], 1)} Defense{colors.reset}.')
-    print(f'You have {colors.gold}{round(Player["gold"], 1)} Gold{colors.reset}.')
-    print(f'You have {colors.light_blue}{round(Player["score"], 1)} Points{colors.reset}.')
+    Equipped = Equipped_default
 
 
 def user_input(max_num):
     u_input = True
-    u_action = str(input("Action:"))
+    u_action = input("Action:")
     full_check = range(1, max_num+1)
 
     while u_input:
         try:
-            if "1" <= u_action <= str(max_num):
+            if 1 <= int(u_action) <= max_num:
 
-                if float(u_action) in full_check:
+                if int(u_action) in full_check:
                     u_input = False
 
                 else:
@@ -82,6 +94,7 @@ def user_input(max_num):
                 u_action = str(input("Action:"))
 
         except ValueError:
+
             print(f"Please select a number between 1 and {max_num}")
             print("What will you do?")
             u_action = str(input("Action:"))
@@ -147,13 +160,44 @@ def lvl_up():
 
 
 def player_atk():
-    damage = Player["str_base"] * Player["str_multi"] + Player["str"]
+    damage = (Player["str_base"] + equip_check("str_base")) * (Player["str_multi"] + equip_check("str_multi")) + (
+        Player["str"] + equip_check("str"))
     return damage
 
 
 def player_def():
-    defense = Player["def_base"] * Player["def_multi"] + Player["def"]
+    defense = (Player["def_base"] + equip_check("def_base")) * (Player["def_multi"] + equip_check("def_multi")) + (
+                Player["def"] + equip_check("def"))
     return defense
+
+
+def equip_check(stat):
+    stat_increase = 0
+
+    for equip in Equipped:
+        if Equipped[equip] != "":
+            for item_stat, amount in Equipped[equip]["player_affected_stats"].items():
+                if item_stat == stat:
+                    stat_increase += amount
+
+    return stat_increase
+
+
+def equip_item(item):
+    global Equipped
+    if Equipped[item["player_slot"]] == item:
+        Equipped[item["player_slot"]] = ""
+        item["equipped"] = 0
+
+    elif Equipped[item["player_slot"]] == "":
+        Equipped[item["player_slot"]] = item
+        item["equipped"] = 1
+
+    else:
+        uneq_item = Equipped[item["player_slot"]]
+        uneq_item["equipped"] = 0
+        Equipped[item["player_slot"]] = item
+        item["equipped"] = 1
 
 
 def check_hp():
