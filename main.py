@@ -17,14 +17,7 @@
     Ask Surly about character
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Added:
-    Mob drop
-    More crafting recipies
-    Finding stuff instead of fighting mobs
-    more items
-    made a bit of stuff moar beautiful
-    working Equipment
-    changing Mob generation to functions
-
+    Made stuff moar beautiful
  """
 
 import time
@@ -68,7 +61,7 @@ while playing:
     story.intro_1()
     highscore = highscore_check()
 
-    deco.clear_l(s="", clear_all=1)
+    deco.clear_l(1, "")
 
     while user.Player["hp"] > 0:
 

@@ -14,8 +14,9 @@ def combat(current_location):
     temp_log = []
     total_hp_lost = 0
     hp_lost = 0
+    deco.clear_l(1, "")
     while fighting:
-        deco.clear_l(1)
+        deco.clear_l()
         print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
         deco.clear_l()
         if temp_log:
@@ -30,17 +31,22 @@ def combat(current_location):
             if pick == 3:
                 check_health_combat()
             elif pick == 2:
-                dex_try = dex_check(enemy)
-                if dex_try:
+                if dex_check(enemy):
+                    deco.clear_l(1, "")
                     return
                 else:
                     enemy, temp_log, hp_lost = attack(enemy, 1)
+                    deco.clear_l(1, "")
             elif pick == 1:
                 till_death = True
 
                 deco.clear_l(1)
                 print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
                 deco.clear_l()
+                if log:
+                    for line in log:
+                        print(line)
+                    time.sleep(.5)
 
                 while till_death:
                     enemy, temp_log, hp_lost = attack(enemy, 0)
@@ -67,9 +73,10 @@ def fight_won(enemy, hp_lost, temp_log):
     deco.clear_l(1)
     print(temp_log)
     print(f'You\'ve slain the {enemy["name"]}.')
-    print(f'The {enemy["name"]} damaged you for {colors.red}{round(hp_lost, 1)} hp{colors.reset} '
+    print(f'The {enemy["name"]} (lvl {enemy["lvl"]}) damaged you for {colors.red}{round(hp_lost, 1)} hp{colors.reset} '
           f'and you have {colors.green}{user.Player["hp"]:.1f} {colors.reset}hp left.')
-    print(f'You gained {colors.gold}{enemy["gold"]:.1f} Gold{colors.reset} and \033[38;5;93m{enemy["xp"]} xp\033[0;0m.')
+    print(f'You gained {colors.gold}{enemy["gold"]:.1f} Gold{colors.reset} and '
+          f'{colors.pink}{enemy["xp"]} XP{colors.reset}')
 
     enemy_drop(enemy)
 
@@ -80,7 +87,7 @@ def fight_won(enemy, hp_lost, temp_log):
     deco.clear_l()
     print()
     str(input("Press enter to continue."))
-    deco.clear_l(s="", clear_all=1)
+    deco.clear_l(1, "")
 
 
 def enemy_drop(enemy):
@@ -97,17 +104,17 @@ def enemy_drop(enemy):
 def check_health_combat():
     if user.Player["hp"] > 0.7 * user.Player["hp_max"]:
         deco.clear_l(1)
-        print("You feel fine.")
+        print(colors.green, "You feel fine.", colors.reset)
         deco.clear_l()
 
     elif user.Player["hp"] > 0.4 * user.Player["hp_max"]:
         deco.clear_l(1)
-        print("You don't feel that well...")
+        print(colors.gold, "You don't feel that well...", colors.reset)
         deco.clear_l()
 
     else:
         deco.clear_l(1)
-        print("You are felling unwell!")
+        print(colors.red, "You are felling unwell!", colors.reset)
         deco.clear_l()
 
 

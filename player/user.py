@@ -2,12 +2,12 @@ import random
 from decoration import deco, colors
 
 Player = {
-    "hp": 1000,
+    "hp": 100,
     "hp_max": 100,
     "score": 0,
     "xp": 0,
     "lvl": 1,
-    "gold": 1000,
+    "gold": 0,
     "str": 10,
     "str_base": 10,
     "str_multi": 1,

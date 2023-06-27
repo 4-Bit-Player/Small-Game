@@ -51,7 +51,7 @@ def change_location():
                 if i["name"] == pick:
                     past_location = location
                     location = i
-                    deco.clear_l(clear_all=1)
+                    deco.clear_l(1, "")
 
     else:
         print("Where would you like to go?")
@@ -67,13 +67,16 @@ def change_location():
         print(current_list[pick])
         if current_list[pick] == "back":
             location_back()
+            deco.clear_l(1, "")
 
         elif current_list[pick] != "stay":
             for i in locations:
                 if i["name"] == current_list[pick]:
                     past_location = location
                     location = i
-                    deco.clear_l(clear_all=1)
+                    deco.clear_l(1, "")
+        else:
+            deco.clear_l(1, "")
 
 
 def location_back():
@@ -83,7 +86,7 @@ def location_back():
     location = past_location
     past_location = temp
 
-    deco.clear_l(clear_all=1)
+    deco.clear_l(1, "")
 
 
 def go_to_location(location_name):
@@ -91,7 +94,7 @@ def go_to_location(location_name):
     global past_location
     past_location = location
     location = search_location(location_name["name"])
-    deco.clear_l(s="", clear_all=1)
+    deco.clear_l(1, "")
 
 
 def shop(item):
@@ -109,10 +112,10 @@ def shop(item):
         else:
             item_name = item["name"]
         article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
-        deco.clear_l(s="", clear_all=1)
+        deco.clear_l(1, "")
         print(f'You bought {article} {item_name}')
     else:
-        deco.clear_l(s="", clear_all=1)
+        deco.clear_l(1, "")
         if isinstance(item["name"], list):
             pick = int(user.random_pick_list(item["name"]))
             item_name = item["name"][pick]
@@ -216,4 +219,4 @@ def look_around(current_location):
             print("You didn't find anything useful...")
 
         str(input("Press enter to continue"))
-        deco.clear_l(s="", clear_all=1)
+        deco.clear_l(1, "")

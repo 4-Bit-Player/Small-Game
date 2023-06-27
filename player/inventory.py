@@ -4,7 +4,7 @@ from decoration import deco, colors
 
 def open_inventory():
     inv_open = True
-    deco.clear_l(s="", clear_all=1)
+    deco.clear_l(1, "")
     deco.player_hud()
 
     while inv_open:
@@ -24,7 +24,7 @@ def open_inventory():
             print("1. Close inventory")
             print("2. Inspect item")
             print("3. Craft stuff")
-            deco.print_header("Use Item")
+            deco.print_header("Use/Equip Item")
             for i, item in enumerate(user.Player["inv"]):
                 equipped = ""
                 try:
@@ -50,7 +50,7 @@ def open_inventory():
         elif pick >= 3:
             use_item(user.Player["inv"][pick - 3])
 
-    deco.clear_l(clear_all=1)
+    deco.clear_l(1, "")
 
 
 def use_item(item):
@@ -61,7 +61,7 @@ def use_item(item):
                 user.check_hp_max()
             crafting.remove_item(item)
 
-            deco.clear_l(s="", clear_all=1)
+            deco.clear_l(1, "")
 
             deco.player_hud()
 
@@ -70,7 +70,7 @@ def use_item(item):
             show_item_effects(item, already_did=1)
         else:
 
-            deco.clear_l(s="", clear_all=1)
+            deco.clear_l(1, "")
             deco.player_hud()
             print("You are at full HP already.")
 
@@ -87,7 +87,7 @@ def use_item(item):
                 user.check_hp_max()
             crafting.remove_item(item)
 
-            deco.clear_l(s="", clear_all=1)
+            deco.clear_l(1, "")
 
             deco.player_hud()
 
@@ -99,19 +99,19 @@ def use_item(item):
 
     elif item["item_type"] in ["equipment"]:
         user.equip_item(item)
-        deco.clear_l(s="", clear_all=1)
+        deco.clear_l(1, "")
 
         deco.player_hud()
 
     else:
-        deco.clear_l(s="", clear_all=1)
+        deco.clear_l(1, "")
         print(f'{colors.red}You can\'t use the {item["item_name"]} right now...{colors.reset}')
 
 
 def inv_inspect():
     inspecting = True
     while inspecting:
-        deco.clear_l(s="", clear_all=1)
+        deco.clear_l(1, "")
         deco.print_header("Inventory (Inspecting)")
 
         if len(user.Player["inv"]) <= 0:
@@ -129,7 +129,7 @@ def inv_inspect():
 
         if not pick:
             inspecting = False
-            deco.clear_l(s="", clear_all=1)
+            deco.clear_l(1, "")
             deco.player_hud()
 
         else:
@@ -140,10 +140,10 @@ def item_inspect(item):
     deco.print_header(item["item_name"], 1)
 
     deco.print_in_line(item["item_desc"])
-    try:
+    if item["item_type"] in ["potion", "equipment", "food"]:
         show_item_effects(item)
-    except KeyError:
-        pass
+    if item["item_type"] == "equipment":
+        print("Can be equipped")
     print()
     str(input("Press enter to close."))
 
@@ -194,7 +194,7 @@ def inv_crafting():
     active_crafting = True
     unlocked_recipies = []
 
-    deco.clear_l(s="", clear_all=1)
+    deco.clear_l(1, "")
 
     while active_crafting:
         deco.print_header("Craft Item")
@@ -225,7 +225,7 @@ def inv_crafting():
         pick = user.user_input(len(unlocked_recipies)+1)
 
         if not pick:
-            deco.clear_l(s="", clear_all=1)
+            deco.clear_l(1, "")
             deco.player_hud()
             return
         elif pick >= 1:

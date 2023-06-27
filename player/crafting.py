@@ -82,7 +82,7 @@ def item_search(item_name):
         if item["item_name"] == item_name:
             return item
 
-    deco.clear_l(s="")
+    deco.clear_l(1)
 
     print(f'Looking up the item "{item_name}" was not successful...')
     print("Fuck")
