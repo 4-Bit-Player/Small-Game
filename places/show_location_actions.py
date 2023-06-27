@@ -1,3 +1,4 @@
+import player.inventory
 from decoration import *
 from places import location_actions, locations
 from player import *
@@ -18,31 +19,58 @@ def show_location_actions(current_location):
 
     else:
         print()
-        print(f'You currently have{colors.gold} {round(user.Player["gold"], 1)} Gold{colors.reset}.')
         print("What do you want to do?")
         deco.clear_l()
 
-    pick = user.show_pick_actions_dict(current_location["list_of_actions"])
-    pot_function = current_location["list_of_actions"][pick]["action_type"]
+    user.show_pick_actions_dict(current_location["list_of_actions"])
 
-    if isinstance(pot_function, str):
+    try:
+        if current_location["type"] == "City":
+            num = len(current_location["list_of_actions"]) + 1
+            print(f"{num}. Open Inventory")
+            print(f"{num+1}. Retire here")
+            pick = int(user.user_input(num+1))
 
-        function = globals()[pot_function]
-        if pot_function == "re_encounter":
-            function(current_location)
-        elif pot_function == "inspect":
-            function(current_location)
-        elif pot_function == "shop":
-            function(current_location["list_of_actions"][pick])
+        elif current_location["type"] in ["Wilderness", "shop"]:
+            num = len(current_location["list_of_actions"]) + 1
+            print(f"{num}. Open Inventory")
+            pick = int(user.user_input(num))
+
         else:
-            function()
+            pick = int(user.user_input(len(current_location["list_of_actions"])))
 
-    if pot_function in [enemies.encounter, location_actions.inspect, combat.combat, location_actions.look_around]:
-        pot_function(current_location)
-    elif pot_function in [location_actions.shop, location_actions.go_to_location]:
-        pot_function(current_location["list_of_actions"][pick])
+    except TypeError:
+        pick = int(user.user_input(len(current_location["list_of_actions"])))
+
+    if pick <= len(current_location["list_of_actions"]) - 1:
+
+        pot_function = current_location["list_of_actions"][pick]["action_type"]
+
+        if isinstance(pot_function, str):
+
+            function = globals()[pot_function]
+            if pot_function == "re_encounter":
+                function(current_location)
+            elif pot_function == "inspect":
+                function(current_location)
+            elif pot_function == "shop":
+                function(current_location["list_of_actions"][pick])
+            else:
+                function()
+
+        if pot_function in [enemies.encounter, location_actions.inspect, combat.combat, location_actions.look_around]:
+            pot_function(current_location)
+        elif pot_function in [location_actions.shop, location_actions.go_to_location]:
+            pot_function(current_location["list_of_actions"][pick])
+        else:
+            pot_function()
+
     else:
-        pot_function()
+        if pick == len(current_location["list_of_actions"]):
+            player.inventory.open_inventory()
+
+        else:
+            location_actions.retire_check()
 
 
 def init_places():

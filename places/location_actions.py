@@ -169,8 +169,24 @@ def restart():
 
 
 def inspect(current_location):
-    story.show_text(current_location["inspect"])
-    combat.combat(current_location)
+    num = current_location["inspect_num"]
+    if num > len(current_location["inspect"]) - 1:
+        deco.clear_l(1)
+        print("You've seen everything here.")
+    else:
+        story.show_text(current_location["inspect"][num])
+
+    current_location["inspect_num"] += 1
+
+    if num <= len(current_location["unlock_list_of_actions"]) - 1:
+        action_unlock = current_location["unlock_list_of_actions"][num]
+        if action_unlock:
+            current_location["list_of_actions"].append(action_unlock)
+
+    deco.clear_l()
+    str(input("Press enter to continue..."))
+    deco.clear_l(1, "")
+    return current_location
 
 
 past_location = search_location("Forest")

@@ -15,6 +15,7 @@
     Inventory use
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Ask Surly about character
+    Add NPCs
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Added:
     Made stuff moar beautiful

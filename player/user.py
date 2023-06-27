@@ -1,7 +1,10 @@
 import random
-from decoration import deco, colors
+from decoration import colors
+
+name = str(input("What is your name?"))
 
 Player = {
+    "name": name,
     "hp": 100,
     "hp_max": 100,
     "score": 0,
@@ -22,6 +25,7 @@ Player = {
 }
 
 Player_default = {
+    "name": name,
     "hp": 100,
     "hp_max": 100,
     "score": 0,
@@ -113,8 +117,6 @@ def show_pick_actions_dict(from_dict):
             print(f'   {colors.gold}It costs {price_color}{action["price"]} Gold{colors.reset}')
         except KeyError:
             pass
-    pick = int(user_input(len(from_dict)))
-    return pick
 
 
 def show_pick_actions_list(from_list):
