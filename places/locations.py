@@ -22,38 +22,39 @@ locations = [
         ],
         "inspect_num": 0,
         "inspect": [
-            [
-                "As you walk around the city you spot a small shop that you haven't noticed before.",
-                "They sell bread and equipment...",
-                "Which is an odd combination, but who cares...",
-            ],
-            [
-                "As you continue to walk around you stumble upon a potion shop.",
-                "It looks a bit run down, but it seems like someone still runs it.",
-            ],
-            [
-                "You have enough from walking around in the city.",
-                "There are boars outside that are a threat to the people!",
-                "And you have to revenge your friend!",
-            ],
+            {
+                "broad_desc": "Walk through the streets of the city.",
+                "text": [
+                    "As you walk around the city you spot a small shop that you haven't noticed before.",
+                    "They sell bread and equipment...",
+                    "Which is an odd combination, but who cares...",
+                ],
+                "unlocks": "Castell Shop",
+                "unlock_location": "Castell City"
+
+            },
+            {
+                "broad_desc": "Walk around byways.",
+                "text": [
+                    "As you continue to walk around you stumble upon a potion shop.",
+                    "It looks a bit run down, but it seems like someone still runs it.",
+                ],
+                "unlocks": "Castell Potion Shop",
+                "unlock_location": "Castell City"
+            },
+            {
+                "broad_desc": "Walk to the gates.",
+                "text": [
+                    "You have enough from walking around in the city.",
+                    "There are boars outside that are a threat to the people!",
+                    "And you have to revenge your friend!",
+                ],
+                "unlocks": "Go to Forest",
+                "unlock_location": "Castell City"
+
+            }
         ],
-        "unlock_list_of_actions": [
-            {
-                "action_text": "Go to the shop.",
-                "action_type": location_actions.go_to_location,
-                "name": "Trinkets and Tincture Trove",
-            },
-            {
-                "action_text": "Go to the potion shop.",
-                "action_type": location_actions.go_to_location,
-                "name": "Potion shop",
-            },
-            {
-                "action_text": "Go to the Forest.",
-                "action_type": location_actions.go_to_location,
-                "name": "Forest",
-            },
-        ]
+
 
     },
 
@@ -209,25 +210,27 @@ locations = [
      ],
      "inspect_num": 0,
      "inspect": [
-            [
+         {
+             "broad_desc": "Enjoy the astonishing view",
+             "text": [
                 "As you look around the lush forest a scene of serene beauty unfolds before your eyes.",
                 "The dappled sunlight filters through the verdant canopy, ",
                 "casting a soft, ethereal glow on the forest floor.",
                 "The air is thick with the earthy scent of moss, damp soil, and the sweet fragrance of wildflowers."
-            ],
-            [
+                ],
+             "unlocks": {},
+             "unlock_location": "",
+         },
+         {
+             "broad_desc": "Look for hidden things",
+             "text": [
                 "You spot a path that leads deeper into the forest.",
                 "It the trees seem to be standing closer to each other there..."
-            ]
+                ],
+             "unlocks": "Go to Dark Forest",
+             "unlock_location": "Forest",
+         }
         ],
-     "unlock_list_of_actions": [
-            {},
-            {
-                "action_text": "Go deeper into the forest.",
-                "action_type": location_actions.go_to_location,
-                "name": "Dark Forest",
-            },
-        ]
     },
 
     # Dark Forest
@@ -251,9 +254,15 @@ locations = [
         ],
         "inspect_num": 0,
         "inspect":[
-            [
-                "It dark",
-            ],
+            {
+                "broad_desc": "Placeholder ^^",
+                "text": [
+                    "It dark",
+                ],
+                "unlocks": "Go to Bottom of the Mountain",
+                "unlock_location": "Dark Forest",
+            }
+
         ],
 
         "weather": [0, 60],
@@ -280,14 +289,6 @@ locations = [
                 "action_type": combat.combat
             },
         ],
-
-        "unlock_list_of_actions": [
-            {
-                "action_text": "Continue your journey.",
-                "action_type": location_actions.go_to_location,
-                "name": "Bottom of the Mountain",
-            },
-        ]
     },
 
     # Bottom of the Mountain
@@ -301,12 +302,24 @@ locations = [
         ],
         "inspect_num": 0,
         "inspect": [
-            [
-                "At the end of the forest you see a grand rocky mountain"
-            ],
-            [
-                "You see a small camp and a Blacksmith at the side of the road."
-            ],
+            {
+                "broad_desc": "Look at the surrounding area",
+                "text": [
+                    "At the end of the forest you see a grand rocky mountain"
+                ],
+                "unlocks": {},
+                "unlock_location": "",
+            },
+            {
+                "broad_desc": "Check out the camp at the side of the road",
+                "text": [
+                    "As you walk around the camp you see quiet a few people.",
+                    "You notice a blacksmith who is repairing the gear from an adventurer.",
+                    "Maybe he can repair your gear as well..."
+                ],
+                "unlocks": {},
+                "unlock_location": "",
+            }
         ],
 
         "weather": [70, 90],
@@ -325,14 +338,6 @@ locations = [
                 "action_type": location_actions.inspect
             },
         ],
-
-        "unlock_list_of_actions": [
-            {
-                "action_text": "Go to the shop.",
-                "action_type": location_actions.go_to_location,
-                "name": "Trinkets and Tincture Trove",
-            },
-        ]
     },
 
 

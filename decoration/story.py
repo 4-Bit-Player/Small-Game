@@ -45,9 +45,10 @@ def outro_death():
 
 def show_text(text):
     deco.clear_l(1)
-    for i in text:
-        deco.print_in_line(i)
-        time.sleep(len(i)/25)
+    for i, line in enumerate(text):
+        deco.print_in_line(line)
+        if i < len(text):
+            time.sleep(len(line)/25) if not user.test else time.sleep(0)
 
 
 outro_a0 = [

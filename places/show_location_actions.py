@@ -1,6 +1,6 @@
 import player.inventory
 from decoration import *
-from places import location_actions, locations
+from places import location_actions, locations, unlock
 from player import *
 import enemies
 import combat
@@ -75,3 +75,4 @@ def show_location_actions(current_location):
 
 def init_places():
     location_actions.location_init(copy.deepcopy(locations.locations))
+    location_actions.unlocks_init(copy.deepcopy(unlock.unlocks))

@@ -2,7 +2,7 @@ import random
 from decoration import colors
 
 name = str(input("What is your name?"))
-
+test = 0
 Player = {
     "name": name,
     "hp": 100,
@@ -212,3 +212,27 @@ def check_hp():
 def check_hp_max():
     if Player["hp"] > Player["hp_max"]:
         Player["hp"] = Player["hp_max"]
+
+
+if test:
+    # noinspection PyRedeclaration
+    Player = {
+        "name": name,
+        "hp": 1000,
+        "hp_max": 1000,
+        "score": 0,
+        "xp": 0,
+        "lvl": 1,
+        "gold": 1000,
+        "str": 10,
+        "str_base": 10,
+        "str_multi": 1,
+        "def": 0,
+        "def_base": 1,
+        "def_multi": 1,
+        "dex": 100,
+        "retired": False,
+        "inv": [
+
+        ]
+    }

@@ -1,24 +1,29 @@
 # To do:
 """
     Making everything moar beautiful
-    changing input, so you can navigate using text
-    unlocking stuff instead of fighting mobs
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     More locations
     more shops
     more items
     more recipes (and also switching to selection)
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Ask Surly about character
     Working inventory system
     Crafting system
     moar Equipment
     Inventory use
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Ask Surly about character
-    Add NPCs
+    At some point:
+    getting saves working
+    changing input, so you can navigate using text
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Added:
-    Made stuff moar beautiful
+    Add NPCs
+    upgrading of equipment
+    quests
+    selling stuff
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Added/Changed:
+    reworked unlocking
  """
 
 import time

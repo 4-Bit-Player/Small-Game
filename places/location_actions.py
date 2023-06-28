@@ -5,11 +5,16 @@ import combat
 from decoration import *
 from player import user, crafting
 
-
+unlocks = []
 locations = []
 location = locations
 weather_timer = 0
 weather_day = "sunny"
+
+
+def unlocks_init(list_of_unlocks):
+    global unlocks
+    unlocks = list_of_unlocks
 
 
 def location_init(list_of_locations):
@@ -169,19 +174,22 @@ def restart():
 
 
 def inspect(current_location):
-    num = current_location["inspect_num"]
-    if num > len(current_location["inspect"]) - 1:
+
+    if not current_location["inspect"]:
         deco.clear_l(1)
         print("You've seen everything here.")
+
     else:
-        story.show_text(current_location["inspect"][num])
+        deco.print_header("Where do you want to go?", 1)
+        for number, option in enumerate(current_location["inspect"]):
+            print(f'{number+1}. {option["broad_desc"]}')
 
-    current_location["inspect_num"] += 1
+        pick = user.user_input(len(current_location["inspect"]))
 
-    if num <= len(current_location["unlock_list_of_actions"]) - 1:
-        action_unlock = current_location["unlock_list_of_actions"][num]
-        if action_unlock:
-            current_location["list_of_actions"].append(action_unlock)
+        story.show_text(current_location["inspect"][pick]["text"])
+        if current_location["inspect"][pick]["unlocks"]:
+            unlock(current_location["inspect"][pick])
+        del current_location["inspect"][pick]
 
     deco.clear_l()
     str(input("Press enter to continue..."))
@@ -236,3 +244,24 @@ def look_around(current_location):
 
         str(input("Press enter to continue"))
         deco.clear_l(1, "")
+
+
+def unlock(stuff_to_unlock):
+    if type(stuff_to_unlock) == list:
+        for thing in stuff_to_unlock:
+            place = search_location(thing["unlock_location"])
+            real_unlock = search_for_unlock(thing["unlocks"])
+            if real_unlock["type"] == "actions":
+                place["list_of_actions"].append(real_unlock)
+
+    else:
+        place = search_location(stuff_to_unlock["unlock_location"])
+        real_unlock = search_for_unlock(stuff_to_unlock["unlocks"])
+        if real_unlock["type"] == "actions":
+            place["list_of_actions"].append(real_unlock)
+
+
+def search_for_unlock(name):
+    for i in unlocks:
+        if i["u_name"] == name:
+            return i
