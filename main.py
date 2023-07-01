@@ -27,31 +27,100 @@
  """
 
 import time
-
-
+import dill
 from decoration import story, deco, colors
 from player import user
 from places import show_location_actions, location_actions
 
 
-def highscore_check():
-    highscore_file = "highscore.txt"
+def name_init():
+    user.Player["name"] = user.Player_default["name"] = input("Please enter your name:")
 
+
+def save_check():
     try:
-        file_high = open(highscore_file, 'r')
-        try:
-            check_highscore = int(file_high.read())
-        except ValueError:
-            check_highscore = 0
-        file_high.close()
-        return check_highscore
-    except IOError:
-        open(highscore_file, 'w').close()
-        check_highscore = 0
-        return check_highscore
+        with open("save.pkl", "rb") as save_file:
+            save = dill.load(save_file)
+            save_file.close()
+            location_actions.highscore = save["highscore"]
+
+            deco.clear_l()
+            print("Save detected.")
+            print("Would you like to load saved data?")
+            print("1. Yes")
+            print("2. No")
+            deco.clear_l()
+
+            user_pick = user.user_input(2)
+
+            if not user_pick:
+                try:
+                    user.Player = save["Player"]
+                    user.Equipped = save["Player_equip"]
+                    location_actions.locations = save["locations"]
+                    location_actions.location = save["location"]
+                    location_actions.past_location = save["past_location"]
+                    location_actions.settings = save["settings"]
+                    show_location_actions.init_unlock()
+
+                    deco.clear_l(1)
+                    print(colors.green, "Save loaded successfully!", colors.reset)
+                    deco.clear_l()
+                    str(input("Press enter to continue your journey."))
+
+                except KeyError:
+                    deco.clear_l(1)
+                    print(colors.red, "Unable to load save!", colors.reset)
+                    deco.clear_l()
+                    str(input("Press enter to start from the beginning."))
+                    deco.clear_l(1, "")
+                    game_init()
+
+            else:
+                game_init()
+
+    except FileNotFoundError or KeyError:
+        game_init()
+
+
+def game_init():
+    deco.clear_l(1)
+    print("Do you want to play this game as a rogue like?")
+    print("1. No")
+    print("2. Yes")
+    deco.clear_l()
+    location_actions.settings["delete_save_on_death"] = user.user_input(2)
+    deco.clear_l(1, "")
+
+    show_location_actions.init_unlock()
+    show_location_actions.init_places()
+    name_init()
+    story.intro_1()
+
+
+def save_update_score():
+    try:
+        with open("save.pkl", "rb") as save_file:
+            save = dill.load(save_file)
+            save_file.close()
+
+            save["highscore"] = user.Player["score"]
+            updated_save = {key: value for key, value in save.items()}
+            with open("save.pkl", "wb") as u_save_file:
+                dill.dump(updated_save, u_save_file)
+                u_save_file.close()
+
+    except FileNotFoundError or TypeError:
+        save = {
+            "highscore": user.Player["score"]
+        }
+        with open("save.pkl", "wb") as save_file:
+            dill.dump(save, save_file)
+            save_file.close()
 
 
 def restart():
+    show_location_actions.init_unlock()
     show_location_actions.init_places()
     location_actions.restart()
     user.restart()
@@ -59,18 +128,15 @@ def restart():
 
 playing = True
 
-show_location_actions.init_places()
-
+save_check()
 
 while playing:
 
-    story.intro_1()
-    highscore = highscore_check()
-
+    highscore = location_actions.highscore_check()
     deco.clear_l(1, "")
 
     while user.Player["hp"] > 0:
-
+        print("highscore =", highscore)
         deco.player_hud()
 
         show_location_actions.show_location_actions(location_actions.location)
@@ -84,15 +150,20 @@ while playing:
     deco.clear_l(1)
 
     if user.Player["hp"] <= 0:
+        if location_actions.settings["delete_save_on_death"]:
+            location_actions.save_just_highscore()
         story.outro_death()
         time.sleep(1)
 
     deco.clear_l()
 
     if user.Player["score"] > highscore:
-        file = open("highscore.txt", 'w')
-        file.write(str(user.Player["score"]))
-        file.close()
+        if location_actions.settings["delete_save_on_death"]:
+            location_actions.save_just_highscore()
+
+        else:
+            save_update_score()
+
         print(f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
     else:
         print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')

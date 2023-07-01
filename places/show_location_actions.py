@@ -29,7 +29,8 @@ def show_location_actions(current_location):
             num = len(current_location["list_of_actions"]) + 1
             print(f"{num}. Open Inventory")
             print(f"{num+1}. Retire here")
-            pick = int(user.user_input(num+1))
+            print(f"{num+2}. Save/Load")
+            pick = int(user.user_input(num+2))
 
         elif current_location["type"] in ["Wilderness", "shop"]:
             num = len(current_location["list_of_actions"]) + 1
@@ -69,10 +70,23 @@ def show_location_actions(current_location):
         if pick == len(current_location["list_of_actions"]):
             player.inventory.open_inventory()
 
-        else:
+        elif pick == len(current_location["list_of_actions"]) + 1:
             location_actions.retire_check()
+
+        else:
+            location_actions.save_load()
 
 
 def init_places():
     location_actions.location_init(copy.deepcopy(locations.locations))
+
+
+def init_unlock():
     location_actions.unlocks_init(copy.deepcopy(unlock.unlocks))
+
+
+def settings_init():
+
+    settings = location_actions.settings = {
+        "delete_save_on_death": 0,
+    }

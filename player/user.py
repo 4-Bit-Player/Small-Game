@@ -1,11 +1,11 @@
 import random
 from decoration import colors
 
-name = str(input("What is your name?"))
+
 test = 0
 Player = {
-    "name": name,
-    "hp": 100,
+    "name": "",
+    "hp": 10,
     "hp_max": 100,
     "score": 0,
     "xp": 0,
@@ -25,7 +25,7 @@ Player = {
 }
 
 Player_default = {
-    "name": name,
+    "name": "",
     "hp": 100,
     "hp_max": 100,
     "score": 0,
@@ -217,7 +217,7 @@ def check_hp_max():
 if test:
     # noinspection PyRedeclaration
     Player = {
-        "name": name,
+        "name": "",
         "hp": 1000,
         "hp_max": 1000,
         "score": 0,

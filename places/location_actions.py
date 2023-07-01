@@ -2,14 +2,18 @@ import random
 import time
 
 import combat
-from decoration import *
+from decoration import deco, colors, story
 from player import user, crafting
+import dill
 
 unlocks = []
 locations = []
 location = locations
 weather_timer = 0
 weather_day = "sunny"
+settings = {
+    "delete_save_on_death": 0,
+}
 
 
 def unlocks_init(list_of_unlocks):
@@ -265,3 +269,132 @@ def search_for_unlock(name):
     for i in unlocks:
         if i["u_name"] == name:
             return i
+
+
+def save_load():
+    deco.print_header("What do you want to do?", 1)
+    options = [
+        "1. Go back.",
+        "2. Save the game",
+        "3. Load saved game"
+    ]
+    for line in options:
+        deco.print_in_line(line)
+    pick = user.user_input(3)
+    if not pick:
+        deco.clear_l(1, "")
+        return
+    if pick == 1:
+        save_all()
+    else:
+        load_all()
+
+
+def save_all():
+    options = [
+        "Are you sure?",
+        "Already saved data will be overwritten.",
+        "1. Yes",
+        "2. No"
+    ]
+    deco.print_header("Saving Game", 1)
+    for line in options:
+        deco.print_in_line(line)
+
+    pick = user.user_input(2)
+    if not pick:
+        highscore = highscore_check()
+
+        save = {
+            "Player": user.Player,
+            "Player_equip": user.Equipped,
+            "locations": locations,
+            "location": location,
+            "past_location": past_location,
+            "highscore": highscore,
+            "settings": settings,
+        }
+        with open("save.pkl", "wb") as save_file:
+            dill.dump(save, save_file)
+            save_file.close()
+
+            deco.clear_l(1)
+            print(colors.green, "Game saved successfully!", colors.reset)
+            deco.clear_l()
+            str(input("Press enter to continue."))
+            deco.clear_l(1, "")
+
+
+def load_all():
+    global location
+    global past_location
+    global locations
+    global settings
+
+    options = [
+        "Are you sure?",
+        "Your current progress will be overwritten.",
+        "1. Yes",
+        "2. No"
+    ]
+    deco.print_header("Loading Game", 1)
+    for line in options:
+        print(line)
+
+    pick = user.user_input(2)
+    if not pick:
+        try:
+            with open("save.pkl", "rb") as save_file:
+                save = dill.load(save_file)
+                save_file.close()
+
+                user.Player = save["Player"]
+                user.Equipped = save["Player_equip"]
+                locations = save["locations"]
+                location = save["location"]
+                past_location = save["past_location"]
+                settings = save["settings"]
+
+                deco.clear_l(1)
+                print(colors.green, "Save loaded successfully!", colors.reset)
+                deco.clear_l()
+                str(input("Press enter to continue."))
+                deco.clear_l(1, "")
+
+        except FileNotFoundError:
+            deco.clear_l(1)
+            print(colors.red, "No save was found...", colors.reset)
+            deco.clear_l()
+            str(input("Press enter to continue."))
+
+            deco.clear_l(1, "")
+
+
+def highscore_check():
+    try:
+        with open("save.pkl", "rb") as save_file:
+            saved_data = dill.load(save_file)
+            save_file.close()
+            score = saved_data["highscore"]
+
+    except FileNotFoundError or KeyError:
+        score = 0
+
+    return score
+
+
+def save_just_highscore():
+    try:
+        with open("save.pkl", "rb") as save_file:
+            saved_data = dill.load(save_file)
+            save_file.close()
+            saved_score = saved_data["highscore"]
+    except FileNotFoundError or TypeError:
+        saved_score = 0
+
+    score = user.Player["score"] if user.Player["score"] >= saved_score else saved_score
+    save_data = {"highscore": score}
+    
+    with open("save.pkl", "wb") as save_file:
+        dill.dump(save_data, save_file)
+        save_file.close()
