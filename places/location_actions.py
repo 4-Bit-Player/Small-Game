@@ -183,6 +183,15 @@ def inspect(current_location):
         deco.clear_l(1)
         print("You've seen everything here.")
 
+    elif user.test:
+
+        for thing in current_location["inspect"]:
+            if thing["unlocks"]:
+                unlock(thing)
+        current_location["inspect"].clear()
+        deco.clear_l(1, "")
+        return
+
     else:
         deco.print_header("Where do you want to go?", 1)
         for number, option in enumerate(current_location["inspect"]):
@@ -198,7 +207,7 @@ def inspect(current_location):
     deco.clear_l()
     str(input("Press enter to continue..."))
     deco.clear_l(1, "")
-    return current_location
+    return
 
 
 past_location = search_location("Forest")

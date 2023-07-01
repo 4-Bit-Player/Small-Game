@@ -1,4 +1,5 @@
 from places import location_actions
+from player import crafting
 import combat
 import enemies
 
@@ -269,12 +270,9 @@ locations = [
         "true_weather": "cloudy",
         "list_of_actions": [
             {
-                "action_text": "Go back.",
-                "action_type": location_actions.location_back,
-                "available_locations": {
-                    "Stay": "stay",
-                    "To Castell City": "Castell City"
-                },
+                "action_text": "Go back to the Forest.",
+                "action_type": location_actions.go_to_location,
+                "name": "Forest",
             },
             {
                 "action_text": "Look around.",
@@ -317,8 +315,8 @@ locations = [
                     "You notice a blacksmith who is repairing the gear from an adventurer.",
                     "Maybe he can repair your gear as well..."
                 ],
-                "unlocks": {},
-                "unlock_location": "",
+                "unlocks": "Go to Blacksmith",
+                "unlock_location": "Bottom of the Mountain",
             }
         ],
 
@@ -340,6 +338,30 @@ locations = [
         ],
     },
 
+    # Blacksmith
+    {
+        "name": "Blacksmith",
+        "type": "Forge",
+        "welcome_text": [
+            f"Greetings, traveler.",
+            "Welcome to my small tent.",
+            "Can I help you somehow?"
+        ],
+        "list_of_actions": [
+            {
+                "action_text": "Leave the shop.",
+                "action_type": location_actions.change_location,
+                "available_locations": {
+                    "Go back": "back"
+                },
+            },
+            {
+                "action_text": "Upgrade equipment.",
+                "action_type": crafting.upgrading
+            },
+
+        ],
+    },
 
 ]
 

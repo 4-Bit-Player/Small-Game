@@ -6,8 +6,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A leather helmet to protect you from scratches.",
         "item_amount": 1,
+        "upgrades": [0, 1],
         "player_affected_stats": {
-            "def_base": 1
+            "def_base": 1,
         },
     },
     {
@@ -17,8 +18,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"An iron helmet to protect you from small injuries.",
         "item_amount": 1,
+        "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 2
+            "def_base": 2,
         },
     },
     {
@@ -28,8 +30,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A basic wooden club to bash in some heads.",
         "item_amount": 1,
+        "upgrades": [0, 1],
         "player_affected_stats": {
-            "str_base": 5
+            "str_base": 5,
         },
     },
     {
@@ -39,8 +42,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A very primitive sword. Hopefully you know how to handle it...",
         "item_amount": 1,
+        "upgrades": [0, 1],
         "player_affected_stats": {
-            "str_base": 10
+            "str_base": 10,
         },
     },
     {
@@ -50,8 +54,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A very tough stick. Pretty sturdy and heavy.",
         "item_amount": 1,
+        "upgrades": [0, 0],
         "player_affected_stats": {
-            "str_base": 5
+            "str_base": 5,
         },
     },
     {
@@ -61,8 +66,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A pretty sharp stone. It's difficult to not cut oneself while handling it.",
         "item_amount": 1,
+        "upgrades": [0, 0],
         "player_affected_stats": {
-            "str_base": 3
+            "str_base": 3,
         },
     },
     {
@@ -72,8 +78,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A pretty sharp stone. It's difficult to not cut oneself while handling it.",
         "item_amount": 1,
+        "upgrades": [0, 3],
         "player_affected_stats": {
-            "str_base": 15
+            "str_base": 15,
         },
     },
     {
@@ -83,8 +90,9 @@ equipment = [
         "equipped": 0,
         "item_desc": f"A basic wooden shield to block some damage.",
         "item_amount": 1,
+        "upgrades": [0, 2],
         "player_affected_stats": {
-            "def_base": 3
+            "def_base": 3,
         },
     },
 ]

@@ -12,7 +12,7 @@ def show_location_actions(current_location):
     for i in current_location["welcome_text"]:
         deco.print_in_line(i)
 
-    if current_location["type"] != "shop":
+    if current_location["type"] not in ["shop", "Blacksmith"]:
         current_location = location_actions.weather(current_location)
         print(f'It is a {current_location["true_weather"]} day.')
         deco.clear_l()

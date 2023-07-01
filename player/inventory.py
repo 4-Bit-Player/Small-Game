@@ -27,14 +27,17 @@ def open_inventory():
             deco.print_header("Use/Equip Item")
             for i, item in enumerate(user.Player["inv"]):
                 equipped = ""
+                upgraded = ""
                 try:
                     if item["equipped"] == 1:
                         equipped = "  (equipped)"
+                    if item["upgrades"][0] >= 1:
+                        upgraded = " *"
                 except KeyError:
                     pass
 
                 print(f'{i+4}. {item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}'
-                      f'{equipped}')
+                      f'{equipped}{upgraded}')
 
             pick = user.user_input(len(user.Player["inv"]) + 3)
 
@@ -67,7 +70,7 @@ def use_item(item):
 
             article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
             print(f'You ate {article} {item["item_name"]}')
-            show_item_effects(item, already_did=1)
+            crafting.show_item_effects(item, already_did=1)
         else:
 
             deco.clear_l(1, "")
@@ -93,7 +96,7 @@ def use_item(item):
 
             article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
             print(f'You used {article} {item["item_name"]}')
-            show_item_effects(item, already_did=1)
+            crafting.show_item_effects(item, already_did=1)
         else:
             print("You are already at max hp.")
 
@@ -141,53 +144,12 @@ def item_inspect(item):
 
     deco.print_in_line(item["item_desc"])
     if item["item_type"] in ["potion", "equipment", "food"]:
-        show_item_effects(item)
+        crafting.show_item_effects(item)
     if item["item_type"] == "equipment":
+        print(f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}')
         print("Can be equipped")
     print()
     str(input("Press enter to close."))
-
-
-def show_item_effects(item, already_did=0):
-
-    if not already_did:
-        for i, k in item["player_affected_stats"].items():
-            if k > 0:
-                if i == "hp":
-                    print(f"{colors.green}It heals you for {k} HP{colors.reset}.")
-                elif i == "hp_max":
-                    print(f"{colors.green}It increases your max HP by {k} HP{colors.reset}.")
-                elif i == "str":
-                    print(f"{colors.red}It increases your strength by {k}{colors.reset}.")
-                elif i == "str_base":
-                    print(f"{colors.red}It increases your base strength by {k}{colors.reset}.")
-                elif i == "dex":
-                    print(f"{colors.light_blue}It increases your dexterity by {k}{colors.reset}.")
-                elif i == "def":
-                    print(f"{colors.light_blue}It increases your defense by {k}{colors.reset}.")
-                elif i == "def_base":
-                    print(f"{colors.light_blue}It increases your base defense by {k}{colors.reset}.")
-                elif i == "xp":
-                    print(f"{colors.green}It increases your xp by {k} points{colors.reset}.")
-                elif i == "lvl":
-                    print(f"{colors.green}It increases your Level by {k} Level{colors.reset}.")
-    else:
-        for i, k in item["player_affected_stats"].items():
-            if k > 0:
-                if i == "hp":
-                    print(f"{colors.green}It healed you for {k} HP{colors.reset}.")
-                elif i == "hp_max":
-                    print(f"{colors.green}It increased your max HP by {k} HP{colors.reset}.")
-                elif i == "str":
-                    print(f"{colors.red}It increased your strength by {k}{colors.reset}.")
-                elif i == "dex":
-                    print(f"{colors.light_blue}It increased your dexterity by {k}{colors.reset}.")
-                elif i == "def":
-                    print(f"{colors.light_blue}It increased your defense by {k}{colors.reset}.")
-                elif i == "xp":
-                    print(f"{colors.green}It increased your xp by {k} points{colors.reset}.")
-                elif i == "lvl":
-                    print(f"{colors.green}It increased your Level by {k} Level{colors.reset}.")
 
 
 def inv_crafting():

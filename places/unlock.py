@@ -38,4 +38,11 @@ unlocks = [
         "action_type": location_actions.go_to_location,
         "name": "Bottom of the Mountain",
     },
+    {
+        "u_name": "Go to Blacksmith",
+        "type": "actions",
+        "action_text": "Visit the Blacksmith",
+        "action_type": location_actions.go_to_location,
+        "name": "Blacksmith",
+    },
 ]

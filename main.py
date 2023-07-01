@@ -44,6 +44,12 @@ def save_check():
             save_file.close()
             location_actions.highscore = save["highscore"]
 
+            test = save["Player"]
+
+            if not save:
+                game_init()
+                return
+
             deco.clear_l()
             print("Save detected.")
             print("Would you like to load saved data?")
@@ -104,7 +110,7 @@ def save_update_score():
             save = dill.load(save_file)
             save_file.close()
 
-            save["highscore"] = user.Player["score"]
+            save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
             updated_save = {key: value for key, value in save.items()}
             with open("save.pkl", "wb") as u_save_file:
                 dill.dump(updated_save, u_save_file)
@@ -136,7 +142,6 @@ while playing:
     deco.clear_l(1, "")
 
     while user.Player["hp"] > 0:
-        print("highscore =", highscore)
         deco.player_hud()
 
         show_location_actions.show_location_actions(location_actions.location)
@@ -144,26 +149,24 @@ while playing:
         if user.Player["retired"]:
             break
 
+    if location_actions.settings["delete_save_on_death"]:
+        location_actions.save_just_highscore()
+
+    else:
+        save_update_score()
+
     if user.Player["hp"] > 0:
         story.outro_alive()
 
     deco.clear_l(1)
 
     if user.Player["hp"] <= 0:
-        if location_actions.settings["delete_save_on_death"]:
-            location_actions.save_just_highscore()
         story.outro_death()
         time.sleep(1)
 
     deco.clear_l()
 
     if user.Player["score"] > highscore:
-        if location_actions.settings["delete_save_on_death"]:
-            location_actions.save_just_highscore()
-
-        else:
-            save_update_score()
-
         print(f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
     else:
         print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
