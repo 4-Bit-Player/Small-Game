@@ -1,4 +1,4 @@
-from places import location_actions
+from places import location_actions, shop
 from player import crafting
 import combat
 import enemies
@@ -76,7 +76,7 @@ locations = [
           },
           {
               "action_text": "Buy Food",
-              "action_type": location_actions.shop,
+              "action_type": shop.buy,
               "player_affected_stats": {
                   "hp": 20
               },
@@ -89,11 +89,11 @@ locations = [
           },
           {
               "action_text": "Upgrade your Sword",
-              "action_type": location_actions.shop,
+              "action_type": shop.buy,
               "player_affected_stats": {
                   "str": 5
               },
-              "price": 50,
+              "price": 30,
               "item_type": "item",
               "item": "Sharpening Stone",
               "name": "Sharpening Stone",
@@ -101,11 +101,11 @@ locations = [
           },
           {
               "action_text": "Upgrade your Shield",
-              "action_type": location_actions.shop,
+              "action_type": shop.buy,
               "player_affected_stats": {
                   "def": 1
               },
-              "price": 50,
+              "price": 30,
               "item_type": "item",
               "item": "Polishing Fluid",
               "name": "Polishing Fluid",
@@ -113,7 +113,7 @@ locations = [
           },
           {
               "action_text": "Buy a Helmet",
-              "action_type": location_actions.shop,
+              "action_type": shop.buy,
               "price": 50,
               "item_type": "material",
               "item": "Leather Helmet",
@@ -121,7 +121,7 @@ locations = [
           },
           {
               "action_text": "Buy a slightly better Helmet",
-              "action_type": location_actions.shop,
+              "action_type": shop.buy,
               "price": 100,
               "item_type": "material",
               "item": "Iron Helmet",
@@ -147,7 +147,11 @@ locations = [
                 },
             },
             {
-                "action_type": location_actions.shop,
+                "action_text": "Sell items",
+                "action_type": shop.shop_sell,
+            },
+            {
+                "action_type": shop.buy,
                 "action_text": "Buy a Potion of Strength",
                 "item_type": "Potion",
                 "item": "Potion of Strength",
@@ -155,7 +159,7 @@ locations = [
                 "price": 20,
             },
             {
-                "action_type": location_actions.shop,
+                "action_type": shop.buy,
                 "action_text": "Buy a Potion of Toughness",
                 "item": "Potion of Toughness",
                 "name": "Potion of Toughness",
@@ -324,12 +328,9 @@ locations = [
         "true_weather": "sunny",
         "list_of_actions": [
             {
-                "action_text": "Go back.",
-                "action_type": location_actions.location_back,
-                "available_locations": {
-                    "Stay": "stay",
-                    "To Castell City": "Castell City"
-                },
+                "action_text": "Go back to the Dark Forest.",
+                "action_type": location_actions.go_to_location,
+                "name": "Dark Forest"
             },
             {
                 "action_text": "Look around.",
@@ -341,7 +342,7 @@ locations = [
     # Blacksmith
     {
         "name": "Blacksmith",
-        "type": "Forge",
+        "type": "forge",
         "welcome_text": [
             f"Greetings, traveler.",
             "Welcome to my small tent.",

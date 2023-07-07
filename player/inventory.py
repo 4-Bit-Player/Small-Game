@@ -6,7 +6,10 @@ def open_inventory():
     inv_open = True
     deco.clear_l(1, "")
     deco.player_hud()
-
+    available_items = []
+    show_items = "All"
+    show_items_list = ["All", "Use-Ables", "Equipment", "Materials"]
+    items_list_index = 0
     while inv_open:
 
         deco.print_header("Inventory")
@@ -19,27 +22,17 @@ def open_inventory():
             print("3. Craft stuff")
             deco.clear_l()
 
-            pick = user.user_input(len(user.Player["inv"]) + 3)
+            pick = user.user_input(3)
         else:
             print("1. Close inventory")
             print("2. Inspect item")
             print("3. Craft stuff")
-            deco.print_header("Use/Equip Item")
-            for i, item in enumerate(user.Player["inv"]):
-                equipped = ""
-                upgraded = ""
-                try:
-                    if item["equipped"] == 1:
-                        equipped = "  (equipped)"
-                    if item["upgrades"][0] >= 1:
-                        upgraded = " *"
-                except KeyError:
-                    pass
+            print("4. Cycle through All/Use-ables/Equip/Materials")
+            deco.print_header(show_items)
 
-                print(f'{i+4}. {item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}'
-                      f'{equipped}{upgraded}')
+            available_items = list_inventory(5, show_items)
 
-            pick = user.user_input(len(user.Player["inv"]) + 3)
+            pick = user.user_input(len(available_items) + 5)
 
         if not pick:
             inv_open = False
@@ -50,8 +43,14 @@ def open_inventory():
         elif pick == 2:
             inv_crafting()
 
-        elif pick >= 3:
-            use_item(user.Player["inv"][pick - 3])
+        elif pick == 3:
+            items_list_index = (items_list_index + 1) % len(show_items_list)
+            show_items = show_items_list[items_list_index]
+            deco.clear_l(1, "")
+            deco.player_hud()
+
+        elif pick >= 4:
+            use_item(available_items[pick - 4])
 
     deco.clear_l(1, "")
 
@@ -194,3 +193,37 @@ def inv_crafting():
             crafting.craft(unlocked_recipies[pick - 1])
 
 
+def list_inventory(start_number=1, item_type="All"):
+    available_items = []
+    show_text = []
+
+    if item_type == "Use-Ables":
+        allowed_items = ["potion", "food"]
+    elif item_type == "Equipment":
+        allowed_items = ["equipment"]
+    elif item_type == "Materials":
+        allowed_items = ["material", "item"]
+    else:
+        allowed_items = ["material", "item", "equipment", "potion", "food"]
+
+    for item in user.Player["inv"]:
+        if item["item_type"] in allowed_items:
+            equipped = ""
+            upgraded = ""
+            try:
+                if item["equipped"] == 1:
+                    equipped = "  (equipped)"
+                if item["upgrades"][0] >= 1:
+                    upgraded = " *"
+            except KeyError:
+                pass
+
+            available_items.append(item)
+
+            show_text.append(f'{item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else""}'
+                             f'{equipped}{upgraded}')
+
+    for i, text in enumerate(show_text):
+        print(f'{i+start_number}. {text}')
+
+    return available_items

@@ -356,21 +356,23 @@ def load_all():
             with open("save.pkl", "rb") as save_file:
                 save = dill.load(save_file)
                 save_file.close()
+                check = save["Player"]
 
-                user.Player = save["Player"]
-                user.Equipped = save["Player_equip"]
-                locations = save["locations"]
-                location = save["location"]
-                past_location = save["past_location"]
-                settings = save["settings"]
+                if check:
+                    user.Player = save["Player"]
+                    user.Equipped = save["Player_equip"]
+                    locations = save["locations"]
+                    location = save["location"]
+                    past_location = save["past_location"]
+                    settings = save["settings"]
 
-                deco.clear_l(1)
-                print(colors.green, "Save loaded successfully!", colors.reset)
-                deco.clear_l()
-                str(input("Press enter to continue."))
-                deco.clear_l(1, "")
+                    deco.clear_l(1)
+                    print(colors.green, "Save loaded successfully!", colors.reset)
+                    deco.clear_l()
+                    str(input("Press enter to continue."))
+                    deco.clear_l(1, "")
 
-        except FileNotFoundError:
+        except (FileNotFoundError, KeyError):
             deco.clear_l(1)
             print(colors.red, "No save was found...", colors.reset)
             deco.clear_l()
@@ -386,7 +388,7 @@ def highscore_check():
             save_file.close()
             score = saved_data["highscore"]
 
-    except FileNotFoundError or KeyError:
+    except (FileNotFoundError, KeyError):
         score = 0
 
     return score
@@ -398,7 +400,7 @@ def save_just_highscore():
             saved_data = dill.load(save_file)
             save_file.close()
             saved_score = saved_data["highscore"]
-    except FileNotFoundError or TypeError:
+    except (FileNotFoundError, KeyError):
         saved_score = 0
 
     score = user.Player["score"] if user.Player["score"] >= saved_score else saved_score

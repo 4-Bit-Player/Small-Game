@@ -46,7 +46,7 @@ def save_check():
 
             test = save["Player"]
 
-            if not save:
+            if not test:
                 game_init()
                 return
 
@@ -85,7 +85,7 @@ def save_check():
             else:
                 game_init()
 
-    except FileNotFoundError or KeyError:
+    except (FileNotFoundError, KeyError):
         game_init()
 
 
@@ -116,13 +116,17 @@ def save_update_score():
                 dill.dump(updated_save, u_save_file)
                 u_save_file.close()
 
-    except FileNotFoundError or TypeError:
+    except (FileNotFoundError, KeyError):
         save = {
             "highscore": user.Player["score"]
         }
         with open("save.pkl", "wb") as save_file:
             dill.dump(save, save_file)
             save_file.close()
+
+
+def partial_restart():
+    user.restart()
 
 
 def restart():
@@ -171,13 +175,29 @@ while playing:
     else:
         print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
 
-    print("I hope you've had fun with my small project. :)")
-    str(input("You can make a screenshot to save the score. ^^"))
-    print("Would you like to restart?")
-    print("1. Yes")
-    print("2. No")
-    pick = user.user_input(2)
-    if pick == 1:
-        break
+    if not location_actions.settings["delete_save_on_death"]:
+        print("I hope you've had fun with my small project. :)")
+        str(input("You can make a screenshot to save the score. ^^"))
+        print("What would you like to do?")
+        print("1. Quit")
+        print("2. Complete restart")
+        print("3. Partial restart")
+        pick = user.user_input(3)
+        if not pick:
+            break
+        elif pick == 2:
+            partial_restart()
+        else:
+            restart()
+
     else:
-        restart()
+        print("I hope you've had fun with my small project. :)")
+        str(input("You can make a screenshot to save the score. ^^"))
+        print("What would you like to do?")
+        print("1. Quit")
+        print("2. Restart")
+        pick = user.user_input(2)
+        if not pick:
+            break
+        else:
+            game_init()

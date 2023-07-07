@@ -1,6 +1,6 @@
 import player.inventory
 from decoration import *
-from places import location_actions, locations, unlock
+from places import location_actions, locations, unlock, shop
 from player import *
 import enemies
 import combat
@@ -12,7 +12,7 @@ def show_location_actions(current_location):
     for i in current_location["welcome_text"]:
         deco.print_in_line(i)
 
-    if current_location["type"] not in ["shop", "Blacksmith"]:
+    if current_location["type"] not in ["shop", "forge"]:
         current_location = location_actions.weather(current_location)
         print(f'It is a {current_location["true_weather"]} day.')
         deco.clear_l()
@@ -61,7 +61,7 @@ def show_location_actions(current_location):
 
         if pot_function in [enemies.encounter, location_actions.inspect, combat.combat, location_actions.look_around]:
             pot_function(current_location)
-        elif pot_function in [location_actions.shop, location_actions.go_to_location]:
+        elif pot_function in [location_actions.shop, location_actions.go_to_location, shop.buy]:
             pot_function(current_location["list_of_actions"][pick])
         else:
             pot_function()

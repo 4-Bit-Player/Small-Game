@@ -5,6 +5,7 @@ equipment = [
         "player_slot": "Head",
         "equipped": 0,
         "item_desc": f"A leather helmet to protect you from scratches.",
+        "sell_price": 10,
         "item_amount": 1,
         "upgrades": [0, 1],
         "player_affected_stats": {
@@ -17,6 +18,7 @@ equipment = [
         "player_slot": "Head",
         "equipped": 0,
         "item_desc": f"An iron helmet to protect you from small injuries.",
+        "sell_price": 15,
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
@@ -29,6 +31,7 @@ equipment = [
         "player_slot": "Sword",
         "equipped": 0,
         "item_desc": f"A basic wooden club to bash in some heads.",
+        "sell_price": 5,
         "item_amount": 1,
         "upgrades": [0, 1],
         "player_affected_stats": {
@@ -41,6 +44,7 @@ equipment = [
         "player_slot": "Sword",
         "equipped": 0,
         "item_desc": f"A very primitive sword. Hopefully you know how to handle it...",
+        "sell_price": 5,
         "item_amount": 1,
         "upgrades": [0, 1],
         "player_affected_stats": {
@@ -53,6 +57,7 @@ equipment = [
         "player_slot": "Sword",
         "equipped": 0,
         "item_desc": f"A very tough stick. Pretty sturdy and heavy.",
+        "sell_price": 5,
         "item_amount": 1,
         "upgrades": [0, 0],
         "player_affected_stats": {
@@ -64,7 +69,8 @@ equipment = [
         "item_type": "equipment",
         "player_slot": "Sword",
         "equipped": 0,
-        "item_desc": f"A pretty sharp stone. It's difficult to not cut oneself while handling it.",
+        "item_desc": f"A pretty sharp stone. It's difficult not to cut oneself while handling it.",
+        "sell_price": 3,
         "item_amount": 1,
         "upgrades": [0, 0],
         "player_affected_stats": {
@@ -76,7 +82,8 @@ equipment = [
         "item_type": "equipment",
         "player_slot": "Sword",
         "equipped": 0,
-        "item_desc": f"A pretty sharp stone. It's difficult to not cut oneself while handling it.",
+        "item_desc": f"A good Axe. Almost made with good craftsmanship.",
+        "sell_price": 10,
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
@@ -89,6 +96,7 @@ equipment = [
         "player_slot": "Shield",
         "equipped": 0,
         "item_desc": f"A basic wooden shield to block some damage.",
+        "sell_price": 4,
         "item_amount": 1,
         "upgrades": [0, 2],
         "player_affected_stats": {
