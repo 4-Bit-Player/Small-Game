@@ -1,5 +1,7 @@
-from player import user, crafting, recipes
+from player import user, crafting
 from decoration import deco, colors
+import importlib
+from recipies import armor, use_ables, weapons
 
 
 def open_inventory():
@@ -8,7 +10,7 @@ def open_inventory():
     deco.player_hud()
     available_items = []
     show_items = "All"
-    show_items_list = ["All", "Use-Ables", "Equipment", "Materials"]
+    show_items_list = ["All", "Use-Ables", "Weapons", "Armor", "Materials"]
     items_list_index = 0
     while inv_open:
 
@@ -28,7 +30,7 @@ def open_inventory():
             print("2. Inspect item")
             print("3. Craft stuff")
             print("4. Cycle through All/Use-ables/Equip/Materials")
-            deco.print_header(show_items)
+            deco.print_header(show_items, s="~")
 
             available_items = list_inventory(5, show_items)
 
@@ -113,8 +115,7 @@ def use_item(item):
 def inv_inspect():
     inspecting = True
     while inspecting:
-        deco.clear_l(1, "")
-        deco.print_header("Inventory (Inspecting)")
+        deco.print_header("Inventory (Inspecting)", 1)
 
         if len(user.Player["inv"]) <= 0:
             deco.clear_l()
@@ -154,22 +155,39 @@ def item_inspect(item):
 def inv_crafting():
     active_crafting = True
     unlocked_recipies = []
+    show_items = "All"
+    show_items_list = ["All", "Use-Ables", "Weapons", "Armor"]
+    items_list_index = 0
+
+    package = importlib.import_module("recipies")
+    module_names = package.__all__
+
+    crafting_list = []
+    for module_name in module_names:
+        module = importlib.import_module(f"{'recipies'}.{module_name}")
+        if hasattr(module, module_name):
+            crafting_list.extend(getattr(module, module_name))
+
+    for c_recipies in crafting_list:
+        if c_recipies["req_lvl"] <= user.Player["lvl"]:
+            unlocked_recipies.append(c_recipies)
 
     deco.clear_l(1, "")
 
     while active_crafting:
         deco.print_header("Craft Item")
         print("1. Stop Crafting")
-        option = 2
+        print("2. Cycle through All/Use-ables/Weapons/Armor")
+        deco.print_header(show_items, s="~")
+        option = 3
 
-        for c_recipies in recipes.recipies:
-            if c_recipies["req_lvl"] <= user.Player["lvl"]:
+        shown_recipes = list_recipes(unlocked_recipies, show_items)
 
-                unlocked_recipies.append(c_recipies)
-
-                print(f'{option}. {c_recipies["name"]}')
-                requirements = []
-                for req_items in c_recipies["req_res"]:
+        for c_recipies in shown_recipes:
+            print(f'{option}. {c_recipies["name"]}')
+            requirements = []
+            for req_items in c_recipies["req_res"]:
+                if req_items:
                     for u_item in user.Player["inv"]:
                         if req_items == u_item["item_name"]:
                             if c_recipies["req_res"][req_items] <= u_item["item_amount"]:
@@ -178,19 +196,31 @@ def inv_crafting():
 
                     else:
                         requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
-
+            if requirements:
                 print(f'You need ' + ", ".join(requirements) + colors.reset)
+            else:
+                print()
 
-                option += 1
+            option += 1
 
-        pick = user.user_input(len(unlocked_recipies)+1)
+        pick = user.user_input(len(shown_recipes)+2)
 
         if not pick:
             deco.clear_l(1, "")
             deco.player_hud()
             return
-        elif pick >= 1:
-            crafting.craft(unlocked_recipies[pick - 1])
+
+        elif pick == 1:
+            items_list_index = (items_list_index + 1) % len(show_items_list)
+            show_items = show_items_list[items_list_index]
+            deco.clear_l(1, "")
+
+        elif pick >= 2:
+            # noinspection PyTypeChecker
+            if shown_recipes[pick - 2]["type"] not in ["armor_list"]:
+                crafting.craft(shown_recipes[pick - 2])
+            else:
+                crafting.craft_list(shown_recipes[pick - 2])
 
 
 def list_inventory(start_number=1, item_type="All"):
@@ -203,8 +233,11 @@ def list_inventory(start_number=1, item_type="All"):
         allowed_items = ["equipment"]
     elif item_type == "Materials":
         allowed_items = ["material", "item"]
+    elif item_type == "Armor":
+        allowed_items = ["armor"]
+
     else:
-        allowed_items = ["material", "item", "equipment", "potion", "food"]
+        allowed_items = ["material", "item", "equipment", "potion", "food", "armor"]
 
     for item in user.Player["inv"]:
         if item["item_type"] in allowed_items:
@@ -225,5 +258,26 @@ def list_inventory(start_number=1, item_type="All"):
 
     for i, text in enumerate(show_text):
         print(f'{i+start_number}. {text}')
+
+    return available_items
+
+
+def list_recipes(c_recipes, item_type="All",):
+    available_items = []
+    if item_type == "Use-Ables":
+        allowed_items = ["potion", "food"]
+    elif item_type == "Weapons":
+        allowed_items = ["equipment"]
+    elif item_type == "Armor":
+        allowed_items = ["armor", "armor_list"]
+    elif item_type == "Materials":
+        allowed_items = ["material", "item"]
+    else:
+        allowed_items = ["material", "item", "equipment", "potion", "food", "armor", "armor_list"]
+
+    for item in c_recipes:
+        if item["type"] in allowed_items:
+
+            available_items.append(item)
 
     return available_items

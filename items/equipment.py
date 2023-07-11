@@ -1,31 +1,5 @@
 equipment = [
     {
-        "item_name": "Leather Helmet",
-        "item_type": "equipment",
-        "player_slot": "Head",
-        "equipped": 0,
-        "item_desc": f"A leather helmet to protect you from scratches.",
-        "sell_price": 10,
-        "item_amount": 1,
-        "upgrades": [0, 1],
-        "player_affected_stats": {
-            "def_base": 1,
-        },
-    },
-    {
-        "item_name": "Iron Helmet",
-        "item_type": "equipment",
-        "player_slot": "Head",
-        "equipped": 0,
-        "item_desc": f"An iron helmet to protect you from small injuries.",
-        "sell_price": 15,
-        "item_amount": 1,
-        "upgrades": [0, 3],
-        "player_affected_stats": {
-            "def_base": 2,
-        },
-    },
-    {
         "item_name": "Wooden Club",
         "item_type": "equipment",
         "player_slot": "Sword",

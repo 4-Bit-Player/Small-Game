@@ -3,4 +3,6 @@ __all__ = [
     "potions",
     "items",
     "materials",
+    "equipment",
+    "armor"
 ]

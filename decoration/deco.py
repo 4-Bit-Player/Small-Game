@@ -3,16 +3,15 @@ from player import user
 from decoration import colors
 
 
-def clear_l(clear_first=0, s='=', clear_all=0):
+def clear_l(clear_first=0, s='='):
     os.system('cls' * clear_first)
     print(s * 40)
-    os.system('cls' * clear_all)
 
 
-def print_header(text, clear_first=0):
-    clear_l(s="", clear_all=clear_first)
+def print_header(text, clear_first=0, s="="):
+    clear_l(clear_first, "")
     header = " " + text + " "
-    header = str.center(header, 40, "=")
+    header = str.center(header, 40, s)
     print(header)
 
 

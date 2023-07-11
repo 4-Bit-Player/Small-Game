@@ -5,25 +5,25 @@
     More locations
     more shops
     more items
-    more recipes (and also switching to selection)
+    more recipies (and also switching to selection)
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Ask Surly about character
     Working inventory system
-    Crafting system
     moar Equipment
     Inventory use
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     At some point:
-    getting saves working
     changing input, so you can navigate using text
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Add NPCs
-    upgrading of equipment
     quests
-    selling stuff
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Added/Changed:
-    reworked unlocking
+    Saves work
+    Improved Crafting inventory
+    upgrading of equipment
+    possible to sell stuff
+    moar Equipment
  """
 
 import time

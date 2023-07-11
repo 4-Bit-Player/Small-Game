@@ -1,16 +1,8 @@
 from player import user
 from decoration import colors, deco
 import copy
-from items import items, potions, food, materials, equipment
-
-
-def available_crafting_list():
-    item_list = []
-    for item in user.Player["inv"]:
-        if item["item_type"] == "equipment":
-            item_list.append(item)
-
-    return item_list
+from items import items, potions, food, materials, equipment, armor
+import importlib
 
 
 def craft(recipe):
@@ -20,7 +12,7 @@ def craft(recipe):
                 if item == u_item["item_name"]:
                     remove_item(u_item, quantity)
 
-        recipe_item = item_search(recipe["result"])
+        recipe_item = item_search(recipe["result"], recipe["type"])
         item_add(recipe_item, recipe["re_amount"])
 
         deco.clear_l(1)
@@ -65,27 +57,48 @@ def item_add(_item, amount=1):
     user.Player["inv"].append(copy.deepcopy(_item))
 
 
-def item_search(item_name):
+def item_search(item_name, search_in="All"):
+    if search_in in ["potion", "item", "material"]:
+        search_in = search_in + "s"
 
-    for item in items.items:
-        if item["item_name"] == item_name:
-            return item
+    if search_in != "All":
+        package = importlib.import_module("items")
+        module_names = package.__all__
+        found_lists = []
 
-    for item in potions.potions:
-        if item["item_name"] == item_name:
-            return item
+        for module_name in module_names:
+            module = importlib.import_module(f"{'items'}.{module_name}")
+            if hasattr(module, search_in):
+                found_lists.extend(getattr(module, search_in))
 
-    for item in materials.materials:
-        if item["item_name"] == item_name:
-            return item
+        for item in found_lists:
+            if item["item_name"] == item_name:
+                return item
 
-    for item in food.food:
-        if item["item_name"] == item_name:
-            return item
+    else:
+        for item in items.items:
+            if item["item_name"] == item_name:
+                return item
 
-    for item in equipment.equipment:
-        if item["item_name"] == item_name:
-            return item
+        for item in potions.potions:
+            if item["item_name"] == item_name:
+                return item
+
+        for item in materials.materials:
+            if item["item_name"] == item_name:
+                return item
+
+        for item in food.food:
+            if item["item_name"] == item_name:
+                return item
+
+        for item in equipment.equipment:
+            if item["item_name"] == item_name:
+                return item
+
+        for item in armor.armor:
+            if item["item_name"] == item_name:
+                return item
 
     deco.clear_l(1)
 
@@ -95,13 +108,22 @@ def item_search(item_name):
     str(input("Press enter to crash the program. :)"))
 
 
+def available_equipment_list():
+    item_list = []
+    for item in user.Player["inv"]:
+        if item["item_type"] in ["equipment", "armor"]:
+            item_list.append(item)
+
+    return item_list
+
+
 def upgrading():
     working = True
 
     while working:
         deco.clear_l(1)
         options = 1
-        item_list = available_crafting_list()
+        item_list = available_equipment_list()
         if item_list:
 
             print(f"{options}. Don't upgrade anything.")
@@ -240,3 +262,53 @@ def show_item_effects(item, already_did=0):
                 print(f"{colors.green}It {word_time} your xp by {k} points{colors.reset}.")
             elif i == "lvl":
                 print(f"{colors.green}It {word_time} your Level by {k} Level{colors.reset}.")
+
+
+def craft_list(c_list):
+
+    deco.clear_l(1, "")
+
+    while colors:
+        deco.clear_l()
+        option = 2
+
+        print("1. Back")
+
+        deco.print_header(c_list["name"])
+        for c_recipies in c_list["parts"]:
+            print(f'{option}. {c_recipies["name"]}')
+            requirements = []
+            if user.Player["lvl"] < c_recipies["req_lvl"]:
+                print(f'{colors.red}You have to be lvl {c_recipies["req_lvl"]} to craft this item{colors.reset}')
+            else:
+                for req_items in c_recipies["req_res"]:
+                    if req_items:
+                        for u_item in user.Player["inv"]:
+                            if req_items == u_item["item_name"]:
+                                if c_recipies["req_res"][req_items] <= u_item["item_amount"]:
+                                    requirements.append(f'{colors.green}'
+                                                        f'{c_recipies["req_res"][req_items]}x {req_items}')
+                                    break
+
+                        else:
+                            requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
+                if requirements:
+                    print(f'You need ' + ", ".join(requirements) + colors.reset)
+                else:
+                    print()
+
+                option += 1
+
+        pick = user.user_input(len(c_list["parts"]) + 1)
+
+        if not pick:
+            deco.clear_l(1, "")
+            return
+
+        else:
+            deco.clear_l(1)
+            if user.Player["lvl"] >= c_list["parts"][pick-1]["req_lvl"]:
+                craft(c_list["parts"][pick-1])
+            else:
+                print(f'{colors.red}You have to be level {c_list["parts"][pick-1]["req_lvl"]} to craft this item.'
+                      f'{colors.reset}')
