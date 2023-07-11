@@ -141,57 +141,80 @@ def upgrading():
 
 
 def upgrade_equipment(equip_to_upgrade):
-    if equip_to_upgrade["upgrades"][0] >= equip_to_upgrade["upgrades"][1]:
-        print("You can't upgrade this item anymore.")
-        return
+    up_equipment = 1
+    deco.clear_l(1, "")
+    while up_equipment:
+        deco.clear_l()
+        print(f'Upgrading {equip_to_upgrade["item_name"]} '
+              f'{equip_to_upgrade["upgrades"][0]}/{equip_to_upgrade["upgrades"][1]}')
+        deco.clear_l()
 
-    available_material = []
-    option = 1
-    print("1. Don't upgrade it.")
+        if equip_to_upgrade["upgrades"][0] >= equip_to_upgrade["upgrades"][1]:
+            print("You can't upgrade this item anymore.")
+            deco.clear_l()
+            str(input("Continue"))
+            return
 
-    for item in user.Player["inv"]:
-        if item["item_type"] == "item":
-            if equip_to_upgrade["player_slot"] in item["compatible_slots"]:
-                option += 1
-                print(f'{option}. {item["item_name"]}')
-                show_item_effects(item)
-                available_material.append(item)
+        available_material = []
+        option = 1
+        print("1. Don't upgrade anything.")
 
-    pick = user.user_input(len(available_material) + 1)
+        for item in user.Player["inv"]:
+            if item["item_type"] == "item":
+                if equip_to_upgrade["player_slot"] in item["compatible_slots"]:
+                    option += 1
+                    print(f'{option}. {item["item_name"]}')
+                    show_item_effects(item)
+                    available_material.append(item)
+        if not available_material:
+            print("You don't have any material for upgrading this weapon.")
 
-    if not pick:
-        return
+        pick = user.user_input(len(available_material) + 1)
 
-    used_item = available_material[pick - 1]
+        if not pick:
+            deco.clear_l(1, "")
+            return
 
-    upgraded_item = copy.deepcopy(equip_to_upgrade)
-    upgraded_item["item_amount"] = 1
+        used_item = available_material[pick - 1]
 
-    remove_item(equip_to_upgrade)
+        upgraded_item = copy.deepcopy(equip_to_upgrade)
+        upgraded_item["item_amount"] = 1
 
-    # noinspection PyTypeChecker
-    for stat, amount in used_item["player_affected_stats"].items():
-        if stat in upgraded_item["player_affected_stats"]:
-            upgraded_item["player_affected_stats"][stat] += amount
+        if equip_to_upgrade["equipped"]:
+            user.equip_item(equip_to_upgrade)
 
-        else:
-            upgraded_item["player_affected_stats"][stat] = amount
+        remove_item(equip_to_upgrade)
 
-    remove_item(used_item)
-    upgraded_item["upgrades"][0] += 1
-    added = 0
-    for item in user.Player["inv"]:
-        if item == upgraded_item:
-            item["item_amount"] += 1
-            added += 1
-            break
+        # noinspection PyTypeChecker
+        for stat, amount in used_item["player_affected_stats"].items():
+            if stat in upgraded_item["player_affected_stats"]:
+                upgraded_item["player_affected_stats"][stat] += amount
 
-    if not added:
-        user.Player["inv"].append(upgraded_item)
+            else:
+                upgraded_item["player_affected_stats"][stat] = amount
 
-    deco.clear_l(1)
-    print(f'{colors.green}Successfully upgraded the {upgraded_item["item_name"]}{colors.reset}')
-    deco.clear_l()
+        remove_item(used_item)
+        upgraded_item["upgrades"][0] += 1
+        added = 0
+        for item in user.Player["inv"]:
+            if item["item_name"] == upgraded_item["item_name"] and \
+                    item["player_affected_stats"] == upgraded_item["player_affected_stats"] and \
+                    item["upgrades"] == upgraded_item["upgrades"]:
+
+                item["item_amount"] += 1
+                added += 1
+                break
+
+        if not added:
+            user.Player["inv"].append(upgraded_item)
+
+        if upgraded_item["equipped"]:
+            user.equip_item(upgraded_item)
+
+        deco.clear_l(1)
+        print(f'{colors.green}Successfully upgraded the {upgraded_item["item_name"]}{colors.reset}')
+        deco.clear_l()
+        equip_to_upgrade = upgraded_item
 
 
 def show_item_effects(item, already_did=0):
