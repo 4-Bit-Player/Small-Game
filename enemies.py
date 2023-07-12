@@ -48,13 +48,13 @@ def encounter(current_location):
 
     enemy = {
         "name": name,
-        "hp": enemy_hp,
+        "lvl": round(enemy_lvl),
+        "hp": round(enemy_hp, 1),
         "str": round(enemy_str, 1),
+        "def": round(enemy_def, 1),
         "xp": round(enemy_xp),
         "gold": round(enemy_gold, 1),
-        "lvl": round(enemy_lvl),
-        "def": round(enemy_def, 1),
-        "dex": enemy_dex,
+        "dex": round(enemy_dex, 1),
         "drop": drop
         }
     print(enemy)

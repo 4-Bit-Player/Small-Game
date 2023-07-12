@@ -18,23 +18,24 @@ def open_inventory():
 
         if len(user.Player["inv"]) <= 0:
 
-            print("Your inventory is currently empty.")
             print("1. Close inventory")
             print("2. Inspect item")
             print("3. Craft stuff")
             deco.clear_l()
+            print("Your inventory is currently empty.")
+            print()
 
             pick = user.user_input(3)
         else:
             print("1. Close inventory")
             print("2. Inspect item")
             print("3. Craft stuff")
-            print("4. Cycle through All/Use-ables/Equip/Materials")
+            print("4. Cycle through All/Use-ables/Weapons/Armor/Materials")
             deco.print_header(show_items, s="~")
 
             available_items = list_inventory(5, show_items)
 
-            pick = user.user_input(len(available_items) + 5)
+            pick = user.user_input(len(available_items) + 4)
 
         if not pick:
             inv_open = False
@@ -229,7 +230,7 @@ def list_inventory(start_number=1, item_type="All"):
 
     if item_type == "Use-Ables":
         allowed_items = ["potion", "food"]
-    elif item_type == "Equipment":
+    elif item_type in ["Equipment", "Weapons"]:
         allowed_items = ["equipment"]
     elif item_type == "Materials":
         allowed_items = ["material", "item"]

@@ -311,7 +311,10 @@ def save_all():
         deco.print_in_line(line)
 
     pick = user.user_input(2)
-    if not pick:
+    if pick:
+        deco.clear_l(1, "")
+
+    else:
         highscore = highscore_check()
 
         save = {
@@ -351,7 +354,9 @@ def load_all():
         print(line)
 
     pick = user.user_input(2)
-    if not pick:
+    if pick:
+        deco.clear_l(1, "")
+    else:
         try:
             with open("save.pkl", "rb") as save_file:
                 save = dill.load(save_file)
