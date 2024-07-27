@@ -2,10 +2,10 @@ import random
 from decoration import colors
 
 
-test = 0
+test = False
 Player = {
     "name": "",
-    "hp": 10,
+    "hp": 100,
     "hp_max": 100,
     "score": 0,
     "xp": 0,

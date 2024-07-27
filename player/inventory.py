@@ -147,6 +147,8 @@ def item_inspect(item):
     if item["item_type"] in ["potion", "equipment", "food"]:
         crafting.show_item_effects(item)
     if item["item_type"] == "equipment":
+    if item["item_type"] in ["potion", "equipment", "food", "armor"]:
+    if item["item_type"] in ["equipment", "armor"]:
         print(f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}')
         print("Can be equipped")
     print()
