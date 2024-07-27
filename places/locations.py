@@ -1,5 +1,5 @@
 from places import location_actions, shop
-from player import crafting
+from player import crafting, inventory
 import combat
 import enemies
 
@@ -19,6 +19,10 @@ locations = [
             {
                 "action_text": "Look around.",
                 "action_type": location_actions.inspect
+            },
+            {
+                "action_text": "Open Inventory",
+                "action_type": inventory.open_inventory
             },
         ],
         "inspect_num": 0,
@@ -73,6 +77,10 @@ locations = [
               "available_locations": {
                   "To Castell City": "back"
               },
+          },
+          {
+              "action_text": "Open Inventory",
+              "action_type": inventory.open_inventory
           },
           {
               "action_text": "Buy Food",
@@ -147,6 +155,10 @@ locations = [
                 },
             },
             {
+                "action_text": "Open Inventory",
+                "action_type": inventory.open_inventory
+            },
+            {
                 "action_text": "Sell items",
                 "action_type": shop.shop_sell,
             },
@@ -199,6 +211,10 @@ locations = [
              "action_text": "Go to Castell.",
              "action_type": location_actions.go_to_location,
              "name": "Castell City",
+         },
+         {
+             "action_text": "Open Inventory",
+             "action_type": inventory.open_inventory
          },
          {
              "action_text": "Look around.",
@@ -279,6 +295,10 @@ locations = [
                 "name": "Forest",
             },
             {
+                "action_text": "Open Inventory",
+                "action_type": inventory.open_inventory
+            },
+            {
                 "action_text": "Look around.",
                 "action_type": location_actions.inspect
             },
@@ -331,6 +351,10 @@ locations = [
                 "action_text": "Go back to the Dark Forest.",
                 "action_type": location_actions.go_to_location,
                 "name": "Dark Forest"
+            },
+            {
+                "action_text": "Open Inventory",
+                "action_type": inventory.open_inventory
             },
             {
                 "action_text": "Look around.",

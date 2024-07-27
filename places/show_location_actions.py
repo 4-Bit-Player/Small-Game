@@ -27,14 +27,12 @@ def show_location_actions(current_location):
     try:
         if current_location["type"] == "City":
             num = len(current_location["list_of_actions"]) + 1
-            print(f"{num}. Open Inventory")
-            print(f"{num+1}. Retire here")
-            print(f"{num+2}. Save/Load")
-            pick = int(user.user_input(num+2))
+            print(f"{num}. Retire here")
+            print(f"{num+1}. Save/Load")
+            pick = int(user.user_input(num+1))
 
         elif current_location["type"] in ["Wilderness", "shop"]:
-            num = len(current_location["list_of_actions"]) + 1
-            print(f"{num}. Open Inventory")
+            num = len(current_location["list_of_actions"])
             pick = int(user.user_input(num))
 
         else:
@@ -68,9 +66,6 @@ def show_location_actions(current_location):
 
     else:
         if pick == len(current_location["list_of_actions"]):
-            player.inventory.open_inventory()
-
-        elif pick == len(current_location["list_of_actions"]) + 1:
             location_actions.retire_check()
 
         else:

@@ -1,3 +1,4 @@
+import u_KeyInput
 from player import user
 from decoration import colors, deco
 import copy
@@ -16,10 +17,10 @@ def craft(recipe):
         item_add(recipe_item, recipe["re_amount"])
 
         deco.clear_l(1)
-        print(f'{colors.green}You crafted {recipe["re_amount"]}x {recipe["name"]}.{colors.reset}')
+        return [f'{colors.green}You crafted {recipe["re_amount"]}x {recipe["name"]}.{colors.reset}']
     else:
         deco.clear_l(1)
-        print(f"{colors.red}You don't have all Materials{colors.reset}")
+        return [f"{colors.red}You don't have all Materials{colors.reset}"]
 
 
 def crafting_check(recipe):
@@ -76,29 +77,10 @@ def item_search(item_name, search_in="All"):
                 return item
 
     else:
-        for item in items.items:
-            if item["item_name"] == item_name:
-                return item
-
-        for item in potions.potions:
-            if item["item_name"] == item_name:
-                return item
-
-        for item in materials.materials:
-            if item["item_name"] == item_name:
-                return item
-
-        for item in food.food:
-            if item["item_name"] == item_name:
-                return item
-
-        for item in equipment.equipment:
-            if item["item_name"] == item_name:
-                return item
-
-        for item in armor.armor:
-            if item["item_name"] == item_name:
-                return item
+        for item_list in [items.items, potions.potions, materials.materials, armor.armor, equipment.equipment, food.food]:
+            for item in item_list:
+                if item["item_name"] == item_name:
+                    return item
 
     deco.clear_l(1)
 
@@ -133,23 +115,20 @@ def upgrading():
                 options += 1
 
                 av_upgrades = f'{item["upgrades"][0]}/{item["upgrades"][1]}'
+                item_text = f'{options}. {item["item_name"]} {av_upgrades}'
+                eq = "(equipped)" if item["equipped"] else ""
 
                 if item["upgrades"][0] >= item["upgrades"][1]:
-                    print(f'{options}. {colors.red}{item["item_name"]} {av_upgrades} {colors.reset}'
-                          f'{("x " + str(item["item_amount"])) if item["item_amount"] > 1 else ""} *')
+                    item_text = f'{options}. {colors.red}{item["item_name"]} {av_upgrades}{colors.reset}'
 
-                elif item["upgrades"][0] >= 1:
-                    print(f'{options}. {item["item_name"]} {av_upgrades} '
-                          f'{("x "+str(item["item_amount"])) if item["item_amount"]>1 else ""} *')
-
-                else:
-                    print(f'{options}. {item["item_name"]} {av_upgrades} '
-                          f' {("x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
+                print(item_text +
+                      f'{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""} {eq}')
 
             deco.clear_l()
             pick = user.user_input(len(item_list) + 1)
 
             if not pick:
+                deco.clear_l(1, "")
                 return
 
             upgrade_equipment(item_list[pick-1])
@@ -186,7 +165,8 @@ def upgrade_equipment(equip_to_upgrade):
                 if equip_to_upgrade["player_slot"] in item["compatible_slots"]:
                     option += 1
                     print(f'{option}. {item["item_name"]}')
-                    show_item_effects(item)
+                    for i in show_item_effects(item):
+                        print(i)
                     available_material.append(item)
         if not available_material:
             print("You don't have any material for upgrading this weapon.")
@@ -241,45 +221,72 @@ def upgrade_equipment(equip_to_upgrade):
 
 def show_item_effects(item, already_did=0):
     word_time = 'increases' if not already_did else 'increased'
+    overflow = []
+    for i, k in item["player_affected_stats"].items():
+        if k > 0:
+            if i == "hp":
+                overflow.append(f"{colors.green}It heal{'s' if not already_did else 'ed'} you for {k} HP{colors.reset}.")
+            elif i == "hp_max":
+                overflow.append(f"{colors.green}It {word_time} your max HP by {k} HP{colors.reset}.")
+            elif i == "str":
+                overflow.append(f"{colors.red}It {word_time} your strength by {k}{colors.reset}.")
+            elif i == "str_base":
+                overflow.append(f"{colors.red}It {word_time} your base strength by {k}{colors.reset}.")
+            elif i == "dex":
+                overflow.append(f"{colors.light_blue}It {word_time} your dexterity by {k}{colors.reset}.")
+            elif i == "def":
+                overflow.append(f"{colors.light_blue}It {word_time} your defense by {k}{colors.reset}.")
+            elif i == "def_base":
+                overflow.append(f"{colors.light_blue}It {word_time} your base defense by {k}{colors.reset}.")
+            elif i == "xp":
+                overflow.append(f"{colors.green}It {word_time} your xp by {k} points{colors.reset}.")
+            elif i == "lvl":
+                overflow.append(f"{colors.green}It {word_time} your Level by {k} Level{colors.reset}.")
+    return overflow
+
+
+def show_item_effects_r(item, already_did=0):
+    word_time = 'increases' if not already_did else 'increased'
 
     for i, k in item["player_affected_stats"].items():
         if k > 0:
             if i == "hp":
-                print(f"{colors.green}It heal{'s' if not already_did else 'ed'} you for {k} HP{colors.reset}.")
+                return f"{colors.green}It heal{'s' if not already_did else 'ed'} you for {k} HP{colors.reset}."
             elif i == "hp_max":
-                print(f"{colors.green}It {word_time} your max HP by {k} HP{colors.reset}.")
+                return f"{colors.green}It {word_time} your max HP by {k} HP{colors.reset}."
             elif i == "str":
-                print(f"{colors.red}It {word_time} your strength by {k}{colors.reset}.")
+                return f"{colors.red}It {word_time} your strength by {k}{colors.reset}."
             elif i == "str_base":
-                print(f"{colors.red}It {word_time} your base strength by {k}{colors.reset}.")
+                return f"{colors.red}It {word_time} your base strength by {k}{colors.reset}."
             elif i == "dex":
-                print(f"{colors.light_blue}It {word_time} your dexterity by {k}{colors.reset}.")
+                return f"{colors.light_blue}It {word_time} your dexterity by {k}{colors.reset}."
             elif i == "def":
-                print(f"{colors.light_blue}It {word_time} your defense by {k}{colors.reset}.")
+                return f"{colors.light_blue}It {word_time} your defense by {k}{colors.reset}."
             elif i == "def_base":
-                print(f"{colors.light_blue}It {word_time} your base defense by {k}{colors.reset}.")
+                return f"{colors.light_blue}It {word_time} your base defense by {k}{colors.reset}."
             elif i == "xp":
-                print(f"{colors.green}It {word_time} your xp by {k} points{colors.reset}.")
+                return f"{colors.green}It {word_time} your xp by {k} points{colors.reset}."
             elif i == "lvl":
-                print(f"{colors.green}It {word_time} your Level by {k} Level{colors.reset}.")
+                return f"{colors.green}It {word_time} your Level by {k} Level{colors.reset}."
 
 
 def craft_list(c_list):
 
     deco.clear_l(1, "")
-
+    overflow = []
     while colors:
+        selection = []
         deco.clear_l()
-        option = 2
 
-        print("1. Back")
+        selection.append("1. Back")
 
         deco.print_header(c_list["name"])
         for c_recipies in c_list["parts"]:
-            print(f'{option}. {c_recipies["name"]}')
+            selection.append(f'{c_recipies["name"]}')
             requirements = []
             if user.Player["lvl"] < c_recipies["req_lvl"]:
-                print(f'{colors.red}You have to be lvl {c_recipies["req_lvl"]} to craft this item{colors.reset}')
+                selection.append([f'   {colors.red}'
+                                  f'You have to be lvl {c_recipies["req_lvl"]} to craft this item{colors.reset}'])
             else:
                 for req_items in c_recipies["req_res"]:
                     if req_items:
@@ -293,13 +300,12 @@ def craft_list(c_list):
                         else:
                             requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
                 if requirements:
-                    print(f'You need ' + ", ".join(requirements) + colors.reset)
+                    selection.append([f'   You need ' + ", ".join(requirements) + colors.reset])
                 else:
-                    print()
-
-                option += 1
-
-        pick = user.user_input(len(c_list["parts"]) + 1)
+                    selection.append([""])
+        if overflow:
+            selection.append(overflow)
+        pick = u_KeyInput.keyinput(selection)
 
         if not pick:
             deco.clear_l(1, "")
@@ -308,7 +314,7 @@ def craft_list(c_list):
         else:
             deco.clear_l(1)
             if user.Player["lvl"] >= c_list["parts"][pick-1]["req_lvl"]:
-                craft(c_list["parts"][pick-1])
+                overflow = craft(c_list["parts"][pick-1])
             else:
-                print(f'{colors.red}You have to be level {c_list["parts"][pick-1]["req_lvl"]} to craft this item.'
-                      f'{colors.reset}')
+                overflow = ([f'{colors.red}   You have to be level {c_list["parts"][pick-1]["req_lvl"]} to craft this '
+                            f'item.{colors.reset}'])

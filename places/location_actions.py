@@ -153,12 +153,15 @@ def check_money(price):
 
 
 def retire_check():
+    deco.clear_l(1, "")
     print("Are you sure that you want to retire?")
     print("1. Yes")
     print("2. No")
     pick = user.user_input(2)
     if pick == 0:
         user.Player["retired"] = True
+    else:
+        deco.clear_l(1, "")
 
 
 def search_location(location_name):

@@ -10,7 +10,7 @@ armor = [
                 "type": "armor",
                 "req_lvl": 0,
                 "req_res": {
-                    "Boar Hide": 4,
+                    "Boar Hide": 3,
                 },
                 "result": "Leather Helmet",
                 "re_amount": 1,
@@ -20,7 +20,7 @@ armor = [
                 "type": "armor",
                 "req_lvl": 3,
                 "req_res": {
-                    "Boar Hide": 3,
+                    "Boar Hide": 4,
                 },
                 "result": "Leather Chestplate",
                 "re_amount": 1,
@@ -30,7 +30,7 @@ armor = [
                 "type": "armor",
                 "req_lvl": 2,
                 "req_res": {
-                    "Boar Hide": 6,
+                    "Boar Hide": 4,
                 },
                 "result": "Leather Leggings",
                 "re_amount": 1,
@@ -40,7 +40,7 @@ armor = [
                 "type": "armor",
                 "req_lvl": 1,
                 "req_res": {
-                    "Boar Hide": 4,
+                    "Boar Hide": 3,
                 },
                 "result": "Leather Boots",
                 "re_amount": 1,

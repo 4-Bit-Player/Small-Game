@@ -161,10 +161,8 @@ while playing:
 
     if user.Player["hp"] > 0:
         story.outro_alive()
-
-    deco.clear_l(1)
-
-    if user.Player["hp"] <= 0:
+        time.sleep(1)
+    else:
         story.outro_death()
         time.sleep(1)
 
