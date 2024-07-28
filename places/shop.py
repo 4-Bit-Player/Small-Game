@@ -4,33 +4,26 @@ from decoration import deco, colors
 
 def buy(item):
 
-    if check_money(item["price"]):
+    if isinstance(item["name"], list):
+        pick = int(user.random_pick_list(item["name"]))
 
+        item_name = item["name"][pick]
+
+    else:
+        item_name = item["name"]
+    article = "an " if item_name[0].lower() in ["a", "e", "i", "o", "u"] else "a "
+    article = article if item_name[-1] not in ["s", "c", "i"] else ""
+
+    if check_money(item["price"]):
         r_item = crafting.item_search(item["item"])
         crafting.item_add(r_item)
 
-        if isinstance(item["name"], list):
-            pick = int(user.random_pick_list(item["name"]))
-
-            item_name = item["name"][pick]
-
-        else:
-            item_name = item["name"]
-        article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
         deco.clear_l(1, "")
-        print(f'You bought {article} {item_name}')
+        print(f'You bought {article}{item_name}')
+        deco.clear_l()
     else:
         deco.clear_l(1, "")
-        if isinstance(item["name"], list):
-            pick = int(user.random_pick_list(item["name"]))
-            item_name = item["name"][pick]
-
-        else:
-            item_name = item["name"]
-        article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
-
-        deco.clear_l()
-        print(f'{colors.red}You don\'t have enough money to buy {article} {item_name} right now.{colors.reset}')
+        print(f'{colors.red}You don\'t have enough money to buy {article}{item_name} right now.{colors.reset}')
         deco.clear_l()
     return
 

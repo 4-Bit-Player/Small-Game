@@ -92,8 +92,13 @@ locations = [
               "price": 20,
               "item_type": "food",
               "item": "Basic Food",
-              "name": ["Beagle", "Burger", "Banana", "Hot Pocket",  "Doughnut", "Pizza", "Waffle", "Beef Stew",
-                       "Apple", "Cheese-wheel"]
+              "name": [
+                  "Beagle", "Burger", "Banana", "Hot Pocket", "Doughnut", "Pizza", "Waffle", "Beef Stew", "Apple",
+                  "Cheese-Wheel", "Steamed Ham", "Sandwich", "Noodles", "Ramen", "Salad", "Cucumber", "Fried Rice",
+                  "Pancake", "Melon", "Rice Cracker", "Bread", "Sushi", "Fruit Salad", "Strawberry", "Pineapple",
+                  "Block of Butter", "Salami", "Lettuce", "Chips", "Fries", "Fish", "Onion", "Peanuts", "Sausage",
+                  "Garlic", "Hazelnuts", "Tinned Tuna", "Fried Plaice", "Turkey", "Mayonnaise"
+              ]
           },
           {
               "action_text": "Upgrade your Sword",
