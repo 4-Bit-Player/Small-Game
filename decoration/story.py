@@ -48,7 +48,9 @@ def show_text(text):
     for i, line in enumerate(text):
         deco.print_in_line(line)
         if i < len(text):
-            time.sleep(len(line)/25) if not user.test else time.sleep(0)
+            if not user.test:
+                time.sleep((len(line)/25))
+
 
 
 outro_a0 = [

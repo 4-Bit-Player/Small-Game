@@ -15,11 +15,11 @@ def open_inventory():
     index = []
     overflow = []
     while inv_open:
-        a_selection: list = [deco.player_hud_r(), [deco.print_header_r("Inventory")]]
+        a_selection: list = [deco.player_hud(False), [deco.print_header_r("Inventory")]]
         if index:
             a_selection.insert(0, index)
 
-        if len(user.Player["inv"]) <= 0:
+        if len(user.Player["inv"]) == 0:
             a_selection.append([1, "Close inventory",
                                 "Inspect item", "Craft stuff",
                                 "Cycle through All/Use-ables/Weapons/Armor/Materials"])
@@ -121,9 +121,9 @@ def inv_inspect():
             show.insert(0, index)
 
         if len(user.Player["inv"]) <= 0:
-            show.append(deco.line_r())
+            show.append([deco.line_r()])
             show.append("Stop inspecting")
-            show.append(deco.line_r())
+            show.append([deco.line_r()])
 
         else:
             show.append("Stop inspecting")

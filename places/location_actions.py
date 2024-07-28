@@ -107,9 +107,7 @@ def go_to_location(location_name):
 
 
 def shop(item):
-
     if check_money(item["price"]):
-
         r_item = crafting.item_search(item["item"])
         crafting.item_add(r_item)
 

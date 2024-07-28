@@ -1,4 +1,6 @@
 import random
+from copy import deepcopy
+import items.armor
 from decoration import colors
 
 
@@ -73,6 +75,8 @@ def restart():
     global Equipped_default
     Player = Player_default
     Equipped = Equipped_default
+    Player = deepcopy(Player_default)
+    Equipped = deepcopy(Equipped_default)
 
 
 def user_input(max_num):
