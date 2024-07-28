@@ -73,10 +73,36 @@ def restart():
     global Player_default
     global Equipped
     global Equipped_default
-    Player = Player_default
-    Equipped = Equipped_default
     Player = deepcopy(Player_default)
     Equipped = deepcopy(Equipped_default)
+
+
+def combining_words(actions, iteration):
+    checking = True
+    while checking:
+        if actions[iteration] in ["the", "at", "to", "for", "in"]:
+            iteration += 1
+        else:
+            return iteration
+
+
+def user_input_new(options):
+    print(options)
+    u_input = True
+    while u_input:
+        iteration = 0
+        u_action = str(input("Action:")).lower()
+        actions = u_action.split()
+        if actions[iteration] in ["go", "walk", "run", "jog"]:
+            print("Yay!")
+
+        if actions[iteration] in ["check", "look", "inspect"]:
+            iteration += 1
+            iteration = combining_words(actions, iteration)
+            if actions[iteration] in ["around", "surrounding", "area"]:
+                for option in options["list_of_actions"]:
+                    if option["action_text"] == "Look around.":
+                        print("nice! :)")
 
 
 def user_input(max_num):
