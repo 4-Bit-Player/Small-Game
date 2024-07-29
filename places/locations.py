@@ -1,10 +1,5 @@
-from places import location_actions, shop
-from player import crafting, inventory
-import combat
-import enemies
 
 locations = [
-
     # Castell City
     {
         "name": "Castell City",
@@ -18,11 +13,11 @@ locations = [
         "list_of_actions": [
             {
                 "action_text": "Look around.",
-                "action_type": location_actions.inspect
+                "action_type": "inspect"
             },
             {
                 "action_text": "Open Inventory",
-                "action_type": inventory.open_inventory
+                "action_type": "open_inventory"
             },
         ],
         "inspect_num": 0,
@@ -73,18 +68,18 @@ locations = [
       "list_of_actions": [
           {
               "action_text": "Leave the shop.",
-              "action_type": location_actions.change_location,
+              "action_type": "change_location",
               "available_locations": {
                   "To Castell City": "back"
               },
           },
           {
               "action_text": "Open Inventory",
-              "action_type": inventory.open_inventory
+              "action_type": "open_inventory"
           },
           {
               "action_text": "Buy Food",
-              "action_type": shop.buy,
+              "action_type": "buy",
               "player_affected_stats": {
                   "hp": 20
               },
@@ -102,7 +97,7 @@ locations = [
           },
           {
               "action_text": "Upgrade your Sword",
-              "action_type": shop.buy,
+              "action_type": "buy",
               "player_affected_stats": {
                   "str": 5
               },
@@ -114,7 +109,7 @@ locations = [
           },
           {
               "action_text": "Upgrade your Shield",
-              "action_type": shop.buy,
+              "action_type": "buy",
               "player_affected_stats": {
                   "def": 1
               },
@@ -126,7 +121,7 @@ locations = [
           },
           {
               "action_text": "Buy a Helmet",
-              "action_type": shop.buy,
+              "action_type": "buy",
               "price": 50,
               "item_type": "material",
               "item": "Leather Helmet",
@@ -134,7 +129,7 @@ locations = [
           },
           {
               "action_text": "Buy a slightly better Helmet",
-              "action_type": shop.buy,
+              "action_type": "buy",
               "price": 100,
               "item_type": "material",
               "item": "Iron Helmet",
@@ -154,21 +149,21 @@ locations = [
         "list_of_actions": [
             {
                 "action_text": "Leave the shop.",
-                "action_type": location_actions.change_location,
+                "action_type": "change_location",
                 "available_locations": {
                     "To Castell City": "back"
                 },
             },
             {
                 "action_text": "Open Inventory",
-                "action_type": inventory.open_inventory
+                "action_type": "open_inventory"
             },
             {
                 "action_text": "Sell items",
-                "action_type": shop.shop_sell,
+                "action_type": "upgrading",
             },
             {
-                "action_type": shop.buy,
+                "action_type": "buy",
                 "action_text": "Buy a Potion of Strength",
                 "item_type": "Potion",
                 "item": "Potion of Strength",
@@ -176,7 +171,7 @@ locations = [
                 "price": 20,
             },
             {
-                "action_type": shop.buy,
+                "action_type": "buy",
                 "action_text": "Buy a Potion of Toughness",
                 "item": "Potion of Toughness",
                 "name": "Potion of Toughness",
@@ -192,7 +187,7 @@ locations = [
      "type": "Wilderness",
      "enemy_chance": 200,
      "enemies": {
-         enemies.wild_boar: 1000,
+         "wild_boar": 1000,
      },
 
      "item_find_chance": 1000,
@@ -214,24 +209,24 @@ locations = [
      "list_of_actions": [
          {
              "action_text": "Go to Castell.",
-             "action_type": location_actions.go_to_location,
+             "action_type": "go_to_location",
              "name": "Castell City",
          },
          {
              "action_text": "Open Inventory",
-             "action_type": inventory.open_inventory
+             "action_type": "open_inventory"
          },
          {
              "action_text": "Look around.",
-             "action_type": location_actions.inspect
+             "action_type": "inspect"
          },
          {
              "action_text": "Look for items.",
-             "action_type": location_actions.look_around
+             "action_type": "look_around"
          },
          {
              "action_text": "Look for enemies.",
-             "action_type": combat.combat
+             "action_type": "combat"
          },
      ],
      "inspect_num": 0,
@@ -265,8 +260,8 @@ locations = [
         "type": "Wilderness",
         "enemy_chance": 300,
         "enemies": {
-            enemies.wild_boar: 300,
-            enemies.big_wild_boar: 1000,
+            "wild_boar": 300,
+            "big_wild_boar": 1000,
         },
         "item_find_chance": 1000,
         "findable_items": {
@@ -279,7 +274,7 @@ locations = [
             "The treetops are blocking out most light and it's more difficult to see."
         ],
         "inspect_num": 0,
-        "inspect":[
+        "inspect": [
             {
                 "broad_desc": "Placeholder ^^",
                 "text": [
@@ -296,24 +291,24 @@ locations = [
         "list_of_actions": [
             {
                 "action_text": "Go back to the Forest.",
-                "action_type": location_actions.go_to_location,
+                "action_type": "go_to_location",
                 "name": "Forest",
             },
             {
                 "action_text": "Open Inventory",
-                "action_type": inventory.open_inventory
+                "action_type": "open_inventory"
             },
             {
                 "action_text": "Look around.",
-                "action_type": location_actions.inspect
+                "action_type": "inspect"
             },
             {
                 "action_text": "Look for items.",
-                "action_type": location_actions.look_around
+                "action_type": "look_around"
             },
             {
                 "action_text": "Search for enemies.",
-                "action_type": combat.combat
+                "action_type": "combat"
             },
         ],
     },
@@ -354,16 +349,16 @@ locations = [
         "list_of_actions": [
             {
                 "action_text": "Go back to the Dark Forest.",
-                "action_type": location_actions.go_to_location,
+                "action_type": "go_to_location",
                 "name": "Dark Forest"
             },
             {
                 "action_text": "Open Inventory",
-                "action_type": inventory.open_inventory
+                "action_type": "open_inventory"
             },
             {
                 "action_text": "Look around.",
-                "action_type": location_actions.inspect
+                "action_type": "inspect"
             },
         ],
     },
@@ -380,14 +375,14 @@ locations = [
         "list_of_actions": [
             {
                 "action_text": "Leave the shop.",
-                "action_type": location_actions.change_location,
+                "action_type": "change_location",
                 "available_locations": {
                     "Go back": "back"
                 },
             },
             {
                 "action_text": "Upgrade equipment.",
-                "action_type": crafting.upgrading
+                "action_type": "upgrading"
             },
 
         ],
@@ -397,7 +392,7 @@ locations = [
 
 #            {
 #                "action_text": "Go somewhere else.",
-#                "action_type": location_actions.change_location,
+#                "action_type": "change_location",
 #                "available_locations": {
 #                    "Stay": "stay",
 #                    "Go to the Forest": "Forest",

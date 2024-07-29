@@ -1,14 +1,19 @@
+import pickle
 import random
 import time
-
+from places import unlock
+from places import locations as loc
+from copy import deepcopy
 import combat
 from decoration import deco, colors, story
 from player import user, crafting
-import dill
+
 
 unlocks = []
+unlocked = {}
 locations = []
-location = locations
+location = {}
+past_location = {}
 weather_timer = 0
 weather_day = "sunny"
 settings = {
@@ -16,16 +21,18 @@ settings = {
 }
 
 
-def unlocks_init(list_of_unlocks):
+def unlocks_init():
     global unlocks
-    unlocks = list_of_unlocks
+    unlocks = deepcopy(unlock.unlocks)
 
 
-def location_init(list_of_locations):
+def location_init():
     global locations
     global location
-    locations = list_of_locations
+    global past_location
+    locations = deepcopy(loc.locations)
     location = locations[0]
+    past_location = location
 
 
 def weather(current_location):
@@ -91,10 +98,7 @@ def change_location():
 def location_back():
     global location
     global past_location
-    temp = location
-    location = past_location
-    past_location = temp
-
+    location, past_location = past_location, location
     deco.clear_l(1, "")
 
 
@@ -162,7 +166,7 @@ def retire_check():
         deco.clear_l(1, "")
 
 
-def search_location(location_name):
+def search_location(location_name: str):
     for i in locations:
         if i["name"] == location_name:
             return i
@@ -179,16 +183,20 @@ def restart():
 
 
 def inspect(current_location):
-
+    curr_name = current_location["name"]
     if not current_location["inspect"]:
         deco.clear_l(1)
         print("You've seen everything here.")
 
     elif user.test:
-
         for thing in current_location["inspect"]:
             if thing["unlocks"]:
-                unlock(thing)
+                unlock_stuff(thing)
+            if curr_name not in unlocked:
+                unlocked[curr_name] = {}
+                unlocked[curr_name]["inspect"] = [thing]
+                continue
+            unlocked[curr_name]["inspect"].append(thing)
         current_location["inspect"].clear()
         deco.clear_l(1, "")
         return
@@ -200,18 +208,21 @@ def inspect(current_location):
 
         pick = user.user_input(len(current_location["inspect"]))
 
-        story.show_text(current_location["inspect"][pick]["text"])
-        if current_location["inspect"][pick]["unlocks"]:
-            unlock(current_location["inspect"][pick])
-        del current_location["inspect"][pick]
+        to_unlock = current_location["inspect"].pop(pick)
+
+        story.show_text(to_unlock["text"])
+        if to_unlock["unlocks"]:
+            unlock_stuff(to_unlock)
+        if curr_name not in unlocked:
+            unlocked[curr_name] = {}
+            unlocked[curr_name]["inspect"] = [to_unlock]
+        else:
+            unlocked[curr_name]["inspect"].append(to_unlock)
 
     deco.clear_l()
     str(input("Press enter to continue..."))
     deco.clear_l(1, "")
     return
-
-
-past_location = search_location("Forest")
 
 
 def look_around(current_location):
@@ -260,25 +271,35 @@ def look_around(current_location):
         deco.clear_l(1, "")
 
 
-def unlock(stuff_to_unlock):
-    if type(stuff_to_unlock) == list:
+def unlock_stuff(stuff_to_unlock):
+    if isinstance(stuff_to_unlock, list):
         for thing in stuff_to_unlock:
             place = search_location(thing["unlock_location"])
             real_unlock = search_for_unlock(thing["unlocks"])
             if real_unlock["type"] == "actions":
                 place["list_of_actions"].append(real_unlock)
+        return
 
-    else:
-        place = search_location(stuff_to_unlock["unlock_location"])
-        real_unlock = search_for_unlock(stuff_to_unlock["unlocks"])
-        if real_unlock["type"] == "actions":
-            place["list_of_actions"].append(real_unlock)
+    place = search_location(stuff_to_unlock["unlock_location"])
+    real_unlock = search_for_unlock(stuff_to_unlock["unlocks"])
+    if real_unlock["type"] == "actions":
+        place["list_of_actions"].append(real_unlock)
 
 
 def search_for_unlock(name):
     for i in unlocks:
         if i["u_name"] == name:
             return i
+
+
+def load_unlocked(stuff_to_unlock: dict):
+    for place, sec_dict in stuff_to_unlock.items():
+        t_location = search_location(place)
+        for unlock_type, u_locks in sec_dict.items():
+            for u_lock in u_locks:
+                print(u_lock)
+                t_location[unlock_type].remove(u_lock)
+                unlock_stuff(u_lock)
 
 
 def save_load():
@@ -321,14 +342,16 @@ def save_all():
         save = {
             "Player": user.Player,
             "Player_equip": user.Equipped,
-            "locations": locations,
-            "location": location,
-            "past_location": past_location,
             "highscore": highscore,
             "settings": settings,
+            "Version": user.Version,
+            "unlocked": unlocked,
+            "location": location["name"],
+            "past_location": past_location["name"],
+
         }
         with open("save.pkl", "wb") as save_file:
-            dill.dump(save, save_file)
+            pickle.dump(save, save_file)
             save_file.close()
 
             deco.clear_l(1)
@@ -339,11 +362,6 @@ def save_all():
 
 
 def load_all():
-    global location
-    global past_location
-    global locations
-    global settings
-
     options = [
         "Are you sure?",
         "Your current progress will be overwritten.",
@@ -356,41 +374,37 @@ def load_all():
 
     pick = user.user_input(2)
     if pick:
-        deco.clear_l(1, "")
+        deco.clear_l(1)
+        return
+
+    try:
+        with open("save.pkl", "rb") as file:
+            data = pickle.load(file)
+    except FileNotFoundError:
+        print(colors.red, "No file found!", colors.reset)
+        str(input("Press enter to continue."))
+        return
+    if "Version" not in data:
+        pass
+    elif data["Version"] not in user.Compatible_versions:
+        pass
     else:
-        try:
-            with open("save.pkl", "rb") as save_file:
-                save = dill.load(save_file)
-                save_file.close()
-                check = save["Player"]
-
-                if check:
-                    user.Player = save["Player"]
-                    user.Equipped = save["Player_equip"]
-                    locations = save["locations"]
-                    location = save["location"]
-                    past_location = save["past_location"]
-                    settings = save["settings"]
-
-                    deco.clear_l(1)
-                    print(colors.green, "Save loaded successfully!", colors.reset)
-                    deco.clear_l()
-                    str(input("Press enter to continue."))
-                    deco.clear_l(1, "")
-
-        except (FileNotFoundError, KeyError):
-            deco.clear_l(1)
-            print(colors.red, "No save was found...", colors.reset)
-            deco.clear_l()
-            str(input("Press enter to continue."))
-
-            deco.clear_l(1, "")
+        try_load_save(data)
+        return
+    out = ("Version not compatible. Should only the Character get loaded?\n",
+           "1. Yes\n",
+           "2. No")
+    print(out)
+    pick = user.user_input(2)
+    if pick:
+        return
+    try_load_saved_player(data)
 
 
 def highscore_check():
     try:
         with open("save.pkl", "rb") as save_file:
-            saved_data = dill.load(save_file)
+            saved_data = pickle.load(save_file)
             save_file.close()
             score = saved_data["highscore"]
 
@@ -403,7 +417,7 @@ def highscore_check():
 def save_just_highscore():
     try:
         with open("save.pkl", "rb") as save_file:
-            saved_data = dill.load(save_file)
+            saved_data = pickle.load(save_file)
             save_file.close()
             saved_score = saved_data["highscore"]
     except (FileNotFoundError, KeyError):
@@ -413,5 +427,79 @@ def save_just_highscore():
     save_data = {"highscore": score}
     
     with open("save.pkl", "wb") as save_file:
-        dill.dump(save_data, save_file)
+        pickle.dump(save_data, save_file)
         save_file.close()
+
+
+def try_load_save(save, active_game=False):
+    global location
+    global past_location
+    global settings
+    global unlocked
+    unlocks_init()
+    location_init()
+    lookup = ["Player", "Player_equip", "location", "past_location", "settings", "unlocked"]
+    broken = False
+    for thing in lookup:
+        if thing not in save:
+            broken = True
+            break
+
+    if not broken:
+        user.Player = save["Player"]
+        user.Equipped = save["Player_equip"]
+        location = search_location(save["location"])
+        past_location = search_location(save["past_location"])
+        settings = save["settings"]
+        unlocked = save["unlocked"]
+        load_unlocked(unlocked)
+
+        deco.clear_l(1)
+        print(colors.green, "Save loaded successfully!", colors.reset)
+        deco.clear_l()
+        str(input("Press enter to continue your journey."))
+        deco.clear_l(1, "")
+        return True
+
+    else:
+        deco.clear_l(1)
+        print(colors.red, "Unable to load save!", colors.reset)
+        deco.clear_l()
+        if not active_game:
+            str(input("Press enter to start from the beginning."))
+        else:
+            str(input("Press enter to continue."))
+        deco.clear_l(1, "")
+        return False
+
+
+def try_load_saved_player(save, active_game=False):
+    global settings
+    unlocks_init()
+    location_init()
+    broken = False
+    lookup = ["Player", "Player_equip", "settings"]
+    for thing in lookup:
+        if thing not in save:
+            broken = True
+            break
+    if not broken:
+        user.Player = save["Player"]
+        user.Equipped = save["Player_equip"]
+        settings = save["settings"]
+        deco.clear_l(1)
+        print(colors.green, "Player data loaded successfully!", colors.reset)
+        deco.clear_l()
+        str(input("Press enter to continue your journey."))
+        return True
+
+    else:
+        deco.clear_l(1)
+        print(colors.red, "Unable to load player data!", colors.reset)
+        deco.clear_l()
+        if not active_game:
+            str(input("Press enter to start from the beginning."))
+        else:
+            str(input("Press enter to continue."))
+        deco.clear_l(1, "")
+        return False

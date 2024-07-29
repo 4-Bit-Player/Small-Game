@@ -5,27 +5,8 @@ from decoration import colors
 
 
 test = False
-Player = {
-    "name": "",
-    "hp": 100,
-    "hp_max": 100,
-    "score": 0,
-    "xp": 0,
-    "lvl": 1,
-    "gold": 0,
-    "str": 10,
-    "str_base": 10,
-    "str_multi": 1,
-    "def": 0,
-    "def_base": 1,
-    "def_multi": 1,
-    "dex": 100,
-    "retired": False,
-    "inv": [
-
-    ]
-}
-
+Version = "0.6.8.3"
+Compatible_versions = ["0.6.8.3"]
 Player_default = {
     "name": "",
     "hp": 100,
@@ -47,15 +28,9 @@ Player_default = {
     ]
 }
 
-Equipped = {
-    "Head": "",
-    "Chest": "",
-    "Legs": "",
-    "Feet": "",
-    "Sword": "",
-    "Shield": "",
-    "Tool": "",
-}
+Player = deepcopy(Player_default)
+
+deaths = 0
 
 Equipped_default = {
     "Head": "",
@@ -66,6 +41,8 @@ Equipped_default = {
     "Shield": "",
     "Tool": "",
 }
+
+Equipped = deepcopy(Equipped_default)
 
 
 def restart():
@@ -109,18 +86,12 @@ def user_input(max_num):
     u_input = True
     u_action = input("Action:")
     full_check = range(1, max_num+1)
-
+    actual_action = 0
     while u_input:
         try:
-            if 1 <= int(u_action) <= max_num:
-
-                if int(u_action) in full_check:
-                    u_input = False
-
-                else:
-                    print(f"Please select a whole number between 1 and {max_num}")
-                    print("What will you do?")
-                    u_action = str(input("Action:"))
+            actual_action = int(u_action)
+            if 1 <= actual_action <= max_num:
+                u_input = False
 
             else:
                 print(f"Please select a number between 1 and {max_num}")
@@ -133,8 +104,7 @@ def user_input(max_num):
             print("What will you do?")
             u_action = str(input("Action:"))
 
-    u_action = int(u_action) - 1
-    return u_action
+    return actual_action - 1
 
 
 def show_pick_actions_dict(from_dict):

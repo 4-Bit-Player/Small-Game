@@ -5,12 +5,9 @@
     More locations
     more shops
     more items
-    more recipies (and also switching to selection)
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Ask Surly about character
-    Working inventory system
     moar Equipment
-    Inventory use
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     At some point:
     changing input, so you can navigate using text
@@ -19,6 +16,8 @@
     quests
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Added/Changed:
+    more recipies (and also switching to selection)
+    Working inventory system
     Saves work
     Improved Crafting inventory
     upgrading of equipment
@@ -27,7 +26,7 @@
  """
 
 import time
-import dill
+import pickle
 from decoration import story, deco, colors
 from player import user
 from places import show_location_actions, location_actions
@@ -40,50 +39,46 @@ def name_init():
 def save_check():
     try:
         with open("save.pkl", "rb") as save_file:
-            save = dill.load(save_file)
-            save_file.close()
-            location_actions.highscore = save["highscore"]
+            save = pickle.load(save_file)
 
-            test = save["Player"]
+        location_actions.highscore = save["highscore"]
 
-            if not test:
-                game_init()
-                return
+        test = save["Player"]
 
+        if not test:
+            game_init()
+            return
+
+        if "Version" not in save:
+            pass
+        elif save["Version"] not in user.Compatible_versions:
+            pass
+        else:
             deco.clear_l()
-            print("Save detected.")
-            print("Would you like to load saved data?")
-            print("1. Yes")
-            print("2. No")
+            print("Save detected.\n"
+                  "Would you like to load saved data?\n"
+                  "1. Yes\n"
+                  "2. No")
             deco.clear_l()
 
             user_pick = user.user_input(2)
 
             if not user_pick:
-                try:
-                    user.Player = save["Player"]
-                    user.Equipped = save["Player_equip"]
-                    location_actions.locations = save["locations"]
-                    location_actions.location = save["location"]
-                    location_actions.past_location = save["past_location"]
-                    location_actions.settings = save["settings"]
-                    show_location_actions.init_unlock()
-
-                    deco.clear_l(1)
-                    print(colors.green, "Save loaded successfully!", colors.reset)
-                    deco.clear_l()
-                    str(input("Press enter to continue your journey."))
-
-                except KeyError:
-                    deco.clear_l(1)
-                    print(colors.red, "Unable to load save!", colors.reset)
-                    deco.clear_l()
-                    str(input("Press enter to start from the beginning."))
-                    deco.clear_l(1, "")
+                if not location_actions.try_load_save(save):
                     game_init()
-
-            else:
+                return
+            game_init()
+            return
+        print("Non Compatible save detected.\n"
+              "Would you like to try and load the character?\n"
+              "1. Yes\n"
+              "2. No")
+        user_pick = user.user_input(2)
+        if not user_pick:
+            if not location_actions.try_load_saved_player(save):
                 game_init()
+            return
+        game_init()
 
     except (FileNotFoundError, KeyError):
         game_init()
@@ -98,8 +93,8 @@ def game_init():
     location_actions.settings["delete_save_on_death"] = user.user_input(2)
     deco.clear_l(1, "")
 
-    show_location_actions.init_unlock()
-    show_location_actions.init_places()
+    location_actions.unlocks_init()
+    location_actions.location_init()
     name_init()
     story.intro_1()
 
@@ -107,21 +102,22 @@ def game_init():
 def save_update_score():
     try:
         with open("save.pkl", "rb") as save_file:
-            save = dill.load(save_file)
+            save = pickle.load(save_file)
             save_file.close()
 
             save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
+
             updated_save = {key: value for key, value in save.items()}
-            with open("save.pkl", "wb") as u_save_file:
-                dill.dump(updated_save, u_save_file)
-                u_save_file.close()
+        with open("save.pkl", "wb") as u_save_file:
+            pickle.dump(updated_save, u_save_file)
+            u_save_file.close()
 
     except (FileNotFoundError, KeyError):
         save = {
             "highscore": user.Player["score"]
         }
         with open("save.pkl", "wb") as save_file:
-            dill.dump(save, save_file)
+            pickle.dump(save, save_file)
             save_file.close()
 
 
@@ -130,8 +126,8 @@ def partial_restart():
 
 
 def restart():
-    show_location_actions.init_unlock()
-    show_location_actions.init_places()
+    location_actions.unlocks_init()
+    location_actions.location_init()
     location_actions.restart()
     user.restart()
 
@@ -171,15 +167,16 @@ while playing:
     if user.Player["score"] > highscore:
         print(f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
     else:
-        print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
+        print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
+              f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.')
 
     if not location_actions.settings["delete_save_on_death"]:
         print("I hope you've had fun with my small project. :)")
         str(input("You can make a screenshot to save the score. ^^"))
-        print("What would you like to do?")
-        print("1. Quit")
-        print("2. Complete restart")
-        print("3. Partial restart")
+        print("What would you like to do?\n",
+              "1. Quit\n",
+              "2. Complete restart\n",
+              "3. Partial restart",)
         pick = user.user_input(3)
         if not pick:
             break
@@ -191,9 +188,9 @@ while playing:
     else:
         print("I hope you've had fun with my small project. :)")
         str(input("You can make a screenshot to save the score. ^^"))
-        print("What would you like to do?")
-        print("1. Quit")
-        print("2. Restart")
+        print("What would you like to do?\n",
+              "1. Quit\n",
+              "2. Restart")
         pick = user.user_input(2)
         if not pick:
             break

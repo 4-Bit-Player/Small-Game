@@ -1,10 +1,8 @@
-import player.inventory
 from decoration import *
 from places import location_actions, locations, unlock, shop
 from player import *
 import enemies
 import combat
-import copy
 
 
 def show_location_actions(current_location):
@@ -46,23 +44,15 @@ def show_location_actions(current_location):
         pot_function = current_location["list_of_actions"][pick]["action_type"]
 
         if isinstance(pot_function, str):
-
-            function = globals()[pot_function]
-            if pot_function == "re_encounter":
-                function(current_location)
-            elif pot_function == "inspect":
-                function(current_location)
-            elif pot_function == "shop":
-                function(current_location["list_of_actions"][pick])
+            if pot_function in ["encounter", "inspect", "combat", "look_around"]:
+                actions[pot_function](current_location)
+            elif pot_function in ["shop", "go_to_location", "buy"]:
+                actions[pot_function](current_location["list_of_actions"][pick])
             else:
-                function()
+                actions[pot_function]()
 
-        if pot_function in [enemies.encounter, location_actions.inspect, combat.combat, location_actions.look_around]:
-            pot_function(current_location)
-        elif pot_function in [location_actions.shop, location_actions.go_to_location, shop.buy]:
-            pot_function(current_location["list_of_actions"][pick])
         else:
-            pot_function()
+            print("Something is wrong with the actions: ", pot_function)
 
     else:
         if pick == len(current_location["list_of_actions"]):
@@ -72,16 +62,16 @@ def show_location_actions(current_location):
             location_actions.save_load()
 
 
-def init_places():
-    location_actions.location_init(copy.deepcopy(locations.locations))
-
-
-def init_unlock():
-    location_actions.unlocks_init(copy.deepcopy(unlock.unlocks))
-
-
-def settings_init():
-
-    settings = location_actions.settings = {
-        "delete_save_on_death": 0,
-    }
+actions = {"encounter": enemies.encounter,
+           "inspect": location_actions.inspect,
+           "combat": combat.combat,
+           "look_around": location_actions.look_around,
+           "shop": location_actions.shop,
+           "go_to_location": location_actions.go_to_location,
+           "buy": shop.buy,
+           "shop_sell": shop.shop_sell,
+           "re_encounter": 0,
+           "change_location": location_actions.change_location,
+           "open_inventory": inventory.open_inventory,
+           "upgrading": crafting.upgrading,
+           }

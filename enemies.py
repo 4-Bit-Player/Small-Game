@@ -17,19 +17,21 @@ def encounter(current_location):
 
     try:
         for e, p in current_location["enemies"].items():
-
             if pick <= p:
-                name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop = e()
+                if e in all_enemies:
+                    name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop = all_enemies[e]()
+                else:
+                    name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop = e()
                 break
-            else:
-                name = f'bugged {name}'
-                enemy_lvl = 1
-                enemy_hp = 1
-                enemy_str = 1
-                enemy_gold = 1
-                enemy_def = 1
-                enemy_dex = 1
-                drop = {}
+        else:
+            name = f'bugged {name}'
+            enemy_lvl = 1
+            enemy_hp = 1
+            enemy_str = 1
+            enemy_gold = 1
+            enemy_def = 1
+            enemy_dex = 1
+            drop = {}
 
     except TypeError:
         name = f'Type error: {current_location["enemies"]}'
@@ -88,3 +90,10 @@ def big_wild_boar():
         "Large Boar Tusk": {2: 100, 1: 300},
     }
     return name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop
+
+
+all_enemies = {
+    "wild_boar": wild_boar,
+    "big_wild_boar": big_wild_boar,
+
+}

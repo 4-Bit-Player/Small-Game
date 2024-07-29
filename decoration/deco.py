@@ -133,18 +133,18 @@ def player_hud(printing=True):
         return [header, header2, header3, header4, last_line]
 
 
-def print_in_line(text, line_length=line_len):
-    if len(text) <= line_length:
+def print_in_line(text):
+    if len(text) <= line_len:
         print(text)
     else:
         start = 0
-        end = line_length
+        end = line_len
         while end < len(text):
             if text[end] != ' ':
                 while end > start and text[end] != ' ':
                     end -= 1
                 if end == start:
-                    end = start + line_length
+                    end = start + line_len
             line = text[start:end]
 
             if line[0] == " ":
@@ -153,13 +153,13 @@ def print_in_line(text, line_length=line_len):
             print(line)
 
             start = end + 1
-            end = start + line_length
+            end = start + line_len
 
         print(text[start:])
 
 
-def print_in_line_wb(text, line_length=line_len):
-    true_line_length = line_length - 2
+def print_in_line_wb(text):
+    true_line_length = line_len - 2
     characters = {
         "corner_tl": "╭", "line_vert": "─", "corner_tr": "╮",
         "line_down": "│", "corner_bl": "╰", "corner_br": "╯"
@@ -185,7 +185,7 @@ def print_in_line_wb(text, line_length=line_len):
             print(characters["line_down"] + line + characters["line_down"])
 
             start = end + 1
-            end = start + line_length
+            end = start + line_len
         text = text[start:].rjust(38)
         print(characters["line_down"] + text[start:] + characters["line_down"])
     print(characters["corner_bl"] + characters["line_vert"] * true_line_length + characters["corner_br"])
