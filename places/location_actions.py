@@ -1,7 +1,7 @@
 import pickle
 import random
 import time
-from places import unlock
+from places import unlock, quests, quest_logic
 from places import locations as loc
 from copy import deepcopy
 import combat
@@ -30,7 +30,7 @@ def location_init():
     global locations
     global location
     global past_location
-    locations = deepcopy(loc.locations)
+    locations = loc.locations = deepcopy(loc.default_locations)
     location = locations[0]
     past_location = location
 
@@ -219,7 +219,6 @@ def inspect(current_location):
         else:
             unlocked[curr_name]["inspect"].append(to_unlock)
 
-    deco.clear_l()
     str(input("Press enter to continue..."))
     deco.clear_l(1, "")
     return
@@ -282,6 +281,8 @@ def unlock_stuff(stuff_to_unlock):
 
     place = search_location(stuff_to_unlock["unlock_location"])
     real_unlock = search_for_unlock(stuff_to_unlock["unlocks"])
+    if real_unlock is None:
+        return
     if real_unlock["type"] == "actions":
         place["list_of_actions"].append(real_unlock)
 
@@ -338,7 +339,7 @@ def save_all():
 
     else:
         highscore = highscore_check()
-
+        finished_quests, active_quests = quest_logic.generate_quests_for_save()
         save = {
             "Player": user.Player,
             "Player_equip": user.Equipped,
@@ -348,6 +349,9 @@ def save_all():
             "unlocked": unlocked,
             "location": location["name"],
             "past_location": past_location["name"],
+            "finished_quests": finished_quests,
+            "active_quests": active_quests,
+            "deaths": user.deaths
 
         }
         with open("save.pkl", "wb") as save_file:
@@ -359,6 +363,7 @@ def save_all():
             deco.clear_l()
             str(input("Press enter to continue."))
             deco.clear_l(1, "")
+        user.character_loaded = True
 
 
 def load_all():
@@ -438,7 +443,8 @@ def try_load_save(save, active_game=False):
     global unlocked
     unlocks_init()
     location_init()
-    lookup = ["Player", "Player_equip", "location", "past_location", "settings", "unlocked"]
+    lookup = ["Player", "Player_equip", "location", "past_location", "settings",
+              "unlocked", "finished_quests", "active_quests", "deaths"]
     broken = False
     for thing in lookup:
         if thing not in save:
@@ -448,12 +454,17 @@ def try_load_save(save, active_game=False):
     if not broken:
         user.Player = save["Player"]
         user.Equipped = save["Player_equip"]
+        user.deaths = save["deaths"]
+        user.character_loaded = True
         location = search_location(save["location"])
         past_location = search_location(save["past_location"])
         settings = save["settings"]
         unlocked = save["unlocked"]
-        load_unlocked(unlocked)
+        finished_quests = save["finished_quests"]
+        active_quests = save["active_quests"]
+        quest_logic.load_saved_quests(finished_quests, active_quests)
 
+        load_unlocked(unlocked)
         deco.clear_l(1)
         print(colors.green, "Save loaded successfully!", colors.reset)
         deco.clear_l()
@@ -487,6 +498,11 @@ def try_load_saved_player(save, active_game=False):
         user.Player = save["Player"]
         user.Equipped = save["Player_equip"]
         settings = save["settings"]
+        if "deaths" in save:
+            user.deaths = save["deaths"]
+        else:
+            user.deaths = 0
+        user.character_loaded = True
         deco.clear_l(1)
         print(colors.green, "Player data loaded successfully!", colors.reset)
         deco.clear_l()

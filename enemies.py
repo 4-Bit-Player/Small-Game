@@ -52,6 +52,7 @@ def encounter(current_location):
         "name": name,
         "lvl": round(enemy_lvl),
         "hp": round(enemy_hp, 1),
+        "max_hp": round(enemy_hp, 1),
         "str": round(enemy_str, 1),
         "def": round(enemy_def, 1),
         "xp": round(enemy_xp),

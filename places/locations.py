@@ -1,5 +1,14 @@
 
-locations = [
+locations = []
+
+
+def search_location(location_name: str):
+    for i in locations:
+        if i["name"] == location_name:
+            return i
+
+
+default_locations = [
     # Castell City
     {
         "name": "Castell City",
@@ -12,13 +21,17 @@ locations = [
         "true_weather": "sunny",
         "list_of_actions": [
             {
-                "action_text": "Look around.",
+                "action_text": "Look around",
                 "action_type": "inspect"
             },
             {
                 "action_text": "Open Inventory",
                 "action_type": "open_inventory"
             },
+            {
+                "action_text": "Look at active Quests",
+                "action_type": "check_active_quests"
+            }
         ],
         "inspect_num": 0,
         "inspect": [
@@ -67,7 +80,7 @@ locations = [
       ],
       "list_of_actions": [
           {
-              "action_text": "Leave the shop.",
+              "action_text": "Leave the shop",
               "action_type": "change_location",
               "available_locations": {
                   "To Castell City": "back"
@@ -160,7 +173,7 @@ locations = [
             },
             {
                 "action_text": "Sell items",
-                "action_type": "upgrading",
+                "action_type": "shop_sell",
             },
             {
                 "action_type": "buy",
@@ -242,15 +255,6 @@ locations = [
              "unlocks": {},
              "unlock_location": "",
          },
-         {
-             "broad_desc": "Look for hidden things",
-             "text": [
-                "You spot a path that leads deeper into the forest.",
-                "It the trees seem to be standing closer to each other there..."
-                ],
-             "unlocks": "Go to Dark Forest",
-             "unlock_location": "Forest",
-         }
         ],
     },
 
@@ -275,14 +279,6 @@ locations = [
         ],
         "inspect_num": 0,
         "inspect": [
-            {
-                "broad_desc": "Placeholder ^^",
-                "text": [
-                    "It dark",
-                ],
-                "unlocks": "Go to Bottom of the Mountain",
-                "unlock_location": "Dark Forest",
-            }
 
         ],
 
@@ -327,7 +323,7 @@ locations = [
             {
                 "broad_desc": "Look at the surrounding area",
                 "text": [
-                    "At the end of the forest you see a grand rocky mountain"
+                    "At the end of the forest you see a grand rocky mountain."
                 ],
                 "unlocks": {},
                 "unlock_location": "",

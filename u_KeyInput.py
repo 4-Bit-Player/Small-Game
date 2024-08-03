@@ -84,7 +84,7 @@ def handle_arrow_key(sel_list):
 
 def screen_prt_h(lists, start=1):
     num = start
-    selected = lists[0][1]
+    selected = 0
     lines = []
     for line in lists:
         if line[0] == "index":
@@ -106,7 +106,6 @@ def screen_prt_h(lists, start=1):
                     lines.append(l)
 
         else:
-
             if num == selected:
                 l_line = colors.negative + str(num) + ". " + str(line) + " " + colors.reset
             else:
@@ -194,6 +193,8 @@ def keyinput(options: list, header: list = None, start_at=1, hud=0, vertical=0):
         elif key == b'\x08':
             if temp_input:
                 temp_input = temp_input[:-1]
+        elif key == b'\x03':
+            raise KeyboardInterrupt
         else:
             print(key)
 

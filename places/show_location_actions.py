@@ -1,5 +1,5 @@
 from decoration import *
-from places import location_actions, locations, unlock, shop
+from places import location_actions, locations, unlock, shop, quest_logic
 from player import *
 import enemies
 import combat
@@ -74,4 +74,5 @@ actions = {"encounter": enemies.encounter,
            "change_location": location_actions.change_location,
            "open_inventory": inventory.open_inventory,
            "upgrading": crafting.upgrading,
+           "check_active_quests": quest_logic.check_active_quests
            }

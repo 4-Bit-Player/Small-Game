@@ -3,6 +3,7 @@ from player import user, crafting
 from decoration import deco, colors
 import time
 import enemies
+from places import quest_logic
 
 
 def combat(current_location):
@@ -28,15 +29,14 @@ def combat(current_location):
             fighting = False
         else:
             pick = user.show_pick_actions_list(fighting_options)
+            deco.clear_l(1, "")
             if pick == 3:
                 check_health_combat()
             elif pick == 2:
                 if dex_check(enemy):
-                    deco.clear_l(1, "")
                     return
                 else:
                     enemy, temp_log, hp_lost = attack(enemy, 1)
-                    deco.clear_l(1, "")
             elif pick == 1:
                 till_death = True
 
@@ -70,6 +70,14 @@ def combat(current_location):
 
 
 def fight_won(enemy, hp_lost, temp_log):
+
+    event = {
+        "type": "Hunt",
+        "enemy": enemy,
+    }
+    quest_logic.progress(event)
+
+
     deco.clear_l(1)
     print(temp_log)
     print(f'You\'ve slain the {enemy["name"]}.')

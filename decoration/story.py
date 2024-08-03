@@ -78,7 +78,7 @@ outro_a500 = [
     "You've decided to retire after revenging your friend."
 ]
 
-outro_d500 =[
+outro_d500 = [
     "You've sworn yourself to kill as many boars as possible to revenge your friend.",
     "And you did!",
     "You've cleared a wide area around the village so the travelers are safe.",

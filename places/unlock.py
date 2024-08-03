@@ -8,7 +8,6 @@ unlocks = [
         "action_type": "go_to_location",
         "name": "Trinkets and Tincture Trove",
     },
-
     {
         "u_name": "Castell Potion Shop",
         "type": "actions",
@@ -16,7 +15,6 @@ unlocks = [
         "action_type": "go_to_location",
         "name": "Potion shop",
     },
-
     {
         "u_name": "Go to Forest",
         "type": "actions",

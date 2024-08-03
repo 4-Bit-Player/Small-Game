@@ -5,8 +5,8 @@ from decoration import colors
 
 
 test = False
-Version = "0.6.8.3"
-Compatible_versions = ["0.6.8.3"]
+Version = "0.6.8"
+Compatible_versions = ["0.6.8"]
 Player_default = {
     "name": "",
     "hp": 100,
@@ -29,7 +29,7 @@ Player_default = {
 }
 
 Player = deepcopy(Player_default)
-
+character_loaded = False
 deaths = 0
 
 Equipped_default = {
@@ -47,11 +47,16 @@ Equipped = deepcopy(Equipped_default)
 
 def restart():
     global Player
-    global Player_default
     global Equipped
-    global Equipped_default
-    Player = deepcopy(Player_default)
+    global character_loaded
+    global deaths
+    if test:
+        Player = deepcopy(Test_Player)
+    else:
+        Player = deepcopy(Player_default)
     Equipped = deepcopy(Equipped_default)
+    character_loaded = False
+    deaths = 0
 
 
 def combining_words(actions, iteration):

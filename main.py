@@ -13,12 +13,12 @@
     changing input, so you can navigate using text
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Add NPCs
-    quests
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Added/Changed:
+    Quests
     more recipies (and also switching to selection)
     Working inventory system
-    Saves work
+    Saves work + completely revamped
     Improved Crafting inventory
     upgrading of equipment
     possible to sell stuff
@@ -28,8 +28,8 @@
 import time
 import pickle
 from decoration import story, deco, colors
-from player import user
-from places import show_location_actions, location_actions
+from player import user, crafting
+from places import show_location_actions, location_actions, quest_logic, quests
 
 
 def name_init():
@@ -92,11 +92,12 @@ def game_init():
     deco.clear_l()
     location_actions.settings["delete_save_on_death"] = user.user_input(2)
     deco.clear_l(1, "")
-
+    quests.init_quests()
     location_actions.unlocks_init()
     location_actions.location_init()
     name_init()
     story.intro_1()
+    user.restart()
 
 
 def save_update_score():
@@ -105,11 +106,12 @@ def save_update_score():
             save = pickle.load(save_file)
             save_file.close()
 
-            save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
+        save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
+        if user.character_loaded:
+            save["deaths"] = user.deaths
 
-            updated_save = {key: value for key, value in save.items()}
         with open("save.pkl", "wb") as u_save_file:
-            pickle.dump(updated_save, u_save_file)
+            pickle.dump(save, u_save_file)
             u_save_file.close()
 
     except (FileNotFoundError, KeyError):
@@ -126,6 +128,7 @@ def partial_restart():
 
 
 def restart():
+    quests.init_quests()
     location_actions.unlocks_init()
     location_actions.location_init()
     location_actions.restart()
@@ -133,7 +136,7 @@ def restart():
 
 
 playing = True
-
+crafting.item_init()
 save_check()
 
 while playing:
@@ -142,12 +145,14 @@ while playing:
     deco.clear_l(1, "")
 
     while user.Player["hp"] > 0:
-        deco.player_hud()
 
         show_location_actions.show_location_actions(location_actions.location)
 
         if user.Player["retired"]:
             break
+
+    if user.Player["hp"] <= 0:
+        user.deaths += 1
 
     if location_actions.settings["delete_save_on_death"]:
         location_actions.save_just_highscore()
@@ -169,6 +174,9 @@ while playing:
     else:
         print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
               f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.')
+
+    if user.deaths > 1:
+        print(f'You died {colors.red}{user.deaths} times{colors.reset} to get this far.\n')
 
     if not location_actions.settings["delete_save_on_death"]:
         print("I hope you've had fun with my small project. :)")
