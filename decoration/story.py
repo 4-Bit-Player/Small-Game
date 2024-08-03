@@ -14,9 +14,6 @@ def intro_1():
 
     if intro_a == 0:
         show_text(intro_text)
-
-        deco.clear_l()
-
         str(input("Start adventure!"))
 
 
@@ -43,14 +40,14 @@ def outro_death():
         show_text(outro_d500)
 
 
-def show_text(text):
-    deco.clear_l(1)
+def show_text(text, clear_first=True):
+    deco.clear_l(clear_first)
     for i, line in enumerate(text):
         deco.print_in_line(line)
         if i < len(text):
             if not user.test:
                 time.sleep((len(line)/25))
-
+    deco.clear_l(False)
 
 
 outro_a0 = [

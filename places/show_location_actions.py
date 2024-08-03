@@ -6,6 +6,7 @@ import combat
 
 
 def show_location_actions(current_location):
+    deco.player_hud()
     deco.print_header(current_location["name"])
     for i in current_location["welcome_text"]:
         deco.print_in_line(i)
@@ -16,8 +17,7 @@ def show_location_actions(current_location):
         deco.clear_l()
 
     else:
-        print()
-        print("What do you want to do?")
+        print("\nWhat do you want to do?")
         deco.clear_l()
 
     user.show_pick_actions_dict(current_location["list_of_actions"])

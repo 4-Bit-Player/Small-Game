@@ -127,15 +127,16 @@ def inv_inspect():
 
         else:
             show.append("Stop inspecting")
+            show.append([deco.line_r("~")])
             for item in user.Player["inv"]:
 
                 show.append(f'{item["item_name"]} {("x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
 
         pick = u_KeyInput.keyinput(show)
-
+        deco.clear_l(1, "")
         if not pick:
             inspecting = False
-            deco.clear_l(1, "")
+
             deco.player_hud()
 
         else:
@@ -179,14 +180,13 @@ def inv_crafting():
         if c_recipies["req_lvl"] <= user.Player["lvl"]:
             unlocked_recipies.append(c_recipies)
     overflow = []
-    index = []
+    show = []
     while active_crafting:
-        show = [[deco.print_header_r("Craft Item")],
-                "Stop Crafting",
-                "Cycle through All/Use-ables/Weapons/Armor",
-                [deco.print_header_r(show_items, s="~")]]
-        if index:
-            show.insert(0, index)
+        show += [
+            [deco.print_header_r("Craft Item")],
+            "Stop Crafting",
+            "Cycle through All/Use-ables/Weapons/Armor",
+            [deco.print_header_r(show_items, s="~")]]
 
         shown_recipes = list_recipes(unlocked_recipies, show_items)
 
@@ -200,7 +200,6 @@ def inv_crafting():
                             if c_recipies["req_res"][req_items] <= u_item["item_amount"]:
                                 requirements.append(f'{colors.green}{c_recipies["req_res"][req_items]}x {req_items}')
                                 break
-
                     else:
                         requirements.append(f'{colors.red}{c_recipies["req_res"][req_items]}x {req_items}')
             if requirements:
@@ -210,14 +209,13 @@ def inv_crafting():
         if overflow:
             show.append(overflow)
         pick = u_KeyInput.keyinput(show)
-
+        deco.clear_l(1, "")
         if not pick:
             return
 
         elif pick == 1:
             items_list_index = (items_list_index + 1) % len(show_items_list)
             show_items = show_items_list[items_list_index]
-            deco.clear_l(1, "")
 
         elif pick >= 2:
             # noinspection PyTypeChecker
@@ -227,7 +225,7 @@ def inv_crafting():
                 crafting.craft_list(shown_recipes[pick - 2])
 
         if show[0][0] == "index":
-            index = show[0]
+            show = [show[0]]
 
 
 def list_inventory(start_number=1, item_type="All"):

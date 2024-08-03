@@ -15,7 +15,8 @@ def line_r(s='='):
 
 
 def print_header(text, clear_first=0, s="="):
-    clear_l(clear_first, "")
+    if clear_first:
+        clear_l(1, "")
     header = " " + text + " "
     header = str.center(header, line_len, s)
     print(header)
@@ -82,50 +83,51 @@ def player_hud(printing=True):
     sc_len = max(len(score), len(sc_name))
     score = str.center(score, sc_len)
     sc_name = str.center(sc_name, sc_len)
-
+    straight_line = characters[0]["line"]
     header = (characters[0]["corner_tl"] +
-        characters[0]["line"] * lvl_len + characters[0]["top_d"] +
-        characters[0]["line"] * xp_len + characters[0]["top_d"] +
-        characters[0]["line"] * hp_len + characters[0]["top_d"] +
-        characters[0]["line"] * dam_len + characters[0]["top_d"] +
-        characters[0]["line"] * defense_len + characters[0]["top_d"] +
-        characters[0]["line"] * gold_len + characters[0]["top_d"] +
-        characters[0]["line"] * sc_len + characters[0]["corner_tr"])
+              straight_line * lvl_len + characters[0]["top_d"] +
+              straight_line * xp_len + characters[0]["top_d"] +
+              straight_line * hp_len + characters[0]["top_d"] +
+              straight_line * dam_len + characters[0]["top_d"] +
+              straight_line * defense_len + characters[0]["top_d"] +
+              straight_line * gold_len + characters[0]["top_d"] +
+              straight_line * sc_len + characters[0]["corner_tr"])
 
     header2 = str(characters[0]["middle_s"] +
-          colors.turquoise + lvl_name + colors.reset + characters[0]["middle_s"] +
-          colors.pink + xp_name + colors.reset + characters[0]["middle_s"] +
-          colors.green + hp_name + colors.reset + characters[0]["middle_s"] +
-          colors.red + dam_name + colors.reset + characters[0]["middle_s"] +
-          colors.gray + defense_name + colors.reset + characters[0]["middle_s"] +
-          colors.gold + gold_name + colors.reset + characters[0]["middle_s"] +
-          colors.light_blue + sc_name + colors.reset + characters[0]["middle_s"])
+                  colors.turquoise + lvl_name + colors.reset + characters[0]["middle_s"] +
+                  colors.pink + xp_name + colors.reset + characters[0]["middle_s"] +
+                  colors.green + hp_name + colors.reset + characters[0]["middle_s"] +
+                  colors.red + dam_name + colors.reset + characters[0]["middle_s"] +
+                  colors.gray + defense_name + colors.reset + characters[0]["middle_s"] +
+                  colors.gold + gold_name + colors.reset + characters[0]["middle_s"] +
+                  colors.light_blue + sc_name + colors.reset + characters[0]["middle_s"])
 
-    header3 = str(characters[0]["middle_l"] + characters[0]["line"] * lvl_len + characters[0]["middle_c"] +
-          characters[0]["line"] * xp_len + characters[0]["middle_c"] +
-          characters[0]["line"] * hp_len + characters[0]["middle_c"] +
-          characters[0]["line"] * dam_len + characters[0]["middle_c"] +
-          characters[0]["line"] * defense_len + characters[0]["middle_c"] +
-          characters[0]["line"] * gold_len + characters[0]["middle_c"] +
-          characters[0]["line"] * sc_len + characters[0]["middle_r"])
+    header3 = str(characters[0]["middle_l"] +
+                  straight_line * lvl_len + characters[0]["middle_c"] +
+                  straight_line * xp_len + characters[0]["middle_c"] +
+                  straight_line * hp_len + characters[0]["middle_c"] +
+                  straight_line * dam_len + characters[0]["middle_c"] +
+                  straight_line * defense_len + characters[0]["middle_c"] +
+                  straight_line * gold_len + characters[0]["middle_c"] +
+                  straight_line * sc_len + characters[0]["middle_r"])
 
     header4 = str(characters[0]["middle_s"] +
-          colors.turquoise + lvl + colors.reset + characters[0]["middle_s"] +
-          colors.pink + xp + colors.reset + characters[0]["middle_s"] +
-          colors.green + hp + colors.reset + characters[0]["middle_s"] +
-          colors.red + damage + colors.reset + characters[0]["middle_s"] +
-          colors.gray + defense + colors.reset + characters[0]["middle_s"] +
-          colors.gold + gold + colors.reset + characters[0]["middle_s"] +
-          colors.light_blue + score + colors.reset + characters[0]["middle_s"])
+                  colors.turquoise + lvl + colors.reset + characters[0]["middle_s"] +
+                  colors.pink + xp + colors.reset + characters[0]["middle_s"] +
+                  colors.green + hp + colors.reset + characters[0]["middle_s"] +
+                  colors.red + damage + colors.reset + characters[0]["middle_s"] +
+                  colors.gray + defense + colors.reset + characters[0]["middle_s"] +
+                  colors.gold + gold + colors.reset + characters[0]["middle_s"] +
+                  colors.light_blue + score + colors.reset + characters[0]["middle_s"])
 
-    last_line = str(characters[0]["corner_bl"] + characters[0]["line"] * lvl_len + characters[0]["bottom_u"] +
-                 characters[0]["line"] * xp_len + characters[0]["bottom_u"] +
-                 characters[0]["line"] * hp_len + characters[0]["bottom_u"] +
-                 characters[0]["line"] * dam_len + characters[0]["bottom_u"] +
-                 characters[0]["line"] * defense_len + characters[0]["bottom_u"] +
-                 characters[0]["line"] * gold_len + characters[0]["bottom_u"] +
-                 characters[0]["line"] * sc_len + characters[0]["corner_br"])
-
+    last_line = str(characters[0]["corner_bl"] +
+                    straight_line * lvl_len + characters[0]["bottom_u"] +
+                    straight_line * xp_len + characters[0]["bottom_u"] +
+                    straight_line * hp_len + characters[0]["bottom_u"] +
+                    straight_line * dam_len + characters[0]["bottom_u"] +
+                    straight_line * defense_len + characters[0]["bottom_u"] +
+                    straight_line * gold_len + characters[0]["bottom_u"] +
+                    straight_line * sc_len + characters[0]["corner_br"])
     line_len = len(last_line)
     if printing:
         print(header + "\n" + header2 + "\n" + header3 + "\n" + header4 + "\n" + last_line)
@@ -166,7 +168,7 @@ def print_in_line_wb(text):
     }
     print(characters["corner_tl"] + characters["line_vert"] * true_line_length + characters["corner_tr"])
     if len(text) <= true_line_length:
-        text = text.rjust(38)
+        text = text.center(true_line_length)
         print(characters["line_down"] + text + characters["line_down"])
     else:
         start = 0
@@ -181,11 +183,11 @@ def print_in_line_wb(text):
 
             if line[0] == " ":
                 line = line[1:]
-            line = line.rjust(38)
+            line = line.center(true_line_length)
             print(characters["line_down"] + line + characters["line_down"])
 
             start = end + 1
             end = start + line_len
-        text = text[start:].rjust(38)
-        print(characters["line_down"] + text[start:] + characters["line_down"])
+        last_line = text[start:].center(true_line_length)
+        print(characters["line_down"] + last_line + characters["line_down"])
     print(characters["corner_bl"] + characters["line_vert"] * true_line_length + characters["corner_br"])

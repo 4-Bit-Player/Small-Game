@@ -3,7 +3,7 @@ from decoration import deco, colors
 
 
 def buy(item):
-
+    deco.clear_l(1, "")
     if isinstance(item["name"], list):
         pick = int(user.random_pick_list(item["name"]))
 
@@ -15,16 +15,12 @@ def buy(item):
     article = article if item_name[-1] not in ["s", "c", "i"] else ""
 
     if check_money(item["price"]):
-        r_item = crafting.item_search(item["item"])
-        crafting.item_add(r_item)
-
-        deco.clear_l(1, "")
+        crafting.item_add(item["item"])
         print(f'You bought {article}{item_name}')
-        deco.clear_l()
     else:
-        deco.clear_l(1, "")
         print(f'{colors.red}You don\'t have enough money to buy {article}{item_name} right now.{colors.reset}')
-        deco.clear_l()
+
+    deco.clear_l()
     return
 
 

@@ -1,25 +1,32 @@
 import u_KeyInput
 from player import user
 from decoration import colors, deco
-import copy
+from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
 import importlib
 
+all_items = {}
+
+
+def item_init():
+    global all_items
+    for item_list in [items.items, potions.potions, materials.materials, armor.armor, equipment.equipment, food.food]:
+        for item in item_list:
+            all_items[item["item_name"]] = item
+
 
 def craft(recipe):
+
     if crafting_check(recipe):
         for item, quantity in recipe["req_res"].items():
             for u_item in user.Player["inv"]:
                 if item == u_item["item_name"]:
                     remove_item(u_item, quantity)
 
-        recipe_item = item_search(recipe["result"], recipe["type"])
-        item_add(recipe_item, recipe["re_amount"])
+        item_add(recipe["result"], recipe["re_amount"], recipe["type"])
 
-        deco.clear_l(1)
         return [f'{colors.green}You crafted {recipe["re_amount"]}x {recipe["name"]}.{colors.reset}']
     else:
-        deco.clear_l(1)
         return [f"{colors.red}You don't have all Materials{colors.reset}"]
 
 
@@ -30,9 +37,7 @@ def crafting_check(recipe):
             if item == u_item["item_name"]:
                 if u_item["item_amount"] >= quantity:
                     found = True
-
-            if found:
-                break
+                    break
 
         if not found:
             return False
@@ -49,16 +54,20 @@ def remove_item(_item, amount=1):
         user.Player["inv"] = [item for item in user.Player["inv"] if item != _item]
 
 
-def item_add(_item, amount=1):
+def item_add(item_name, amount=1, search_in="All"):
+    _item = item_search(item_name, search_in)
     for item in user.Player["inv"]:
-        if _item["item_name"] == item["item_name"]:
+        if item["item_name"] == item_name:
             item["item_amount"] += amount
             return
-    _item["item_amount"] = amount
-    user.Player["inv"].append(copy.deepcopy(_item))
+    n_item = deepcopy(_item)
+    n_item["item_amount"] = amount
+    user.Player["inv"].append(n_item)
 
 
 def item_search(item_name, search_in="All"):
+    if item_name in all_items:
+        return all_items[item_name]
     if search_in in ["potion", "item", "material"]:
         search_in = search_in + "s"
 
@@ -179,7 +188,7 @@ def upgrade_equipment(equip_to_upgrade):
 
         used_item = available_material[pick - 1]
 
-        upgraded_item = copy.deepcopy(equip_to_upgrade)
+        upgraded_item = deepcopy(equip_to_upgrade)
         upgraded_item["item_amount"] = 1
 
         if equip_to_upgrade["equipped"]:
@@ -274,11 +283,14 @@ def craft_list(c_list):
 
     deco.clear_l(1, "")
     overflow = []
+    selection = []
     while colors:
-        selection = []
         deco.clear_l()
-
-        selection.append("1. Back")
+        selection += [
+            [deco.line_r("~")],
+            "Back",
+            [deco.line_r("~")]
+        ]
 
         deco.print_header(c_list["name"])
         for c_recipies in c_list["parts"]:
@@ -306,15 +318,18 @@ def craft_list(c_list):
         if overflow:
             selection.append(overflow)
         pick = u_KeyInput.keyinput(selection)
+        deco.clear_l(1, "")
 
         if not pick:
-            deco.clear_l(1, "")
             return
 
+        if user.Player["lvl"] >= c_list["parts"][pick-1]["req_lvl"]:
+            overflow = craft(c_list["parts"][pick-1])
         else:
-            deco.clear_l(1)
-            if user.Player["lvl"] >= c_list["parts"][pick-1]["req_lvl"]:
-                overflow = craft(c_list["parts"][pick-1])
-            else:
-                overflow = ([f'{colors.red}   You have to be level {c_list["parts"][pick-1]["req_lvl"]} to craft this '
-                            f'item.{colors.reset}'])
+            overflow = ([f'{colors.red}You have to be level {c_list["parts"][pick-1]["req_lvl"]} to craft this '
+                        f'item.{colors.reset}'])
+
+        if selection[0][0] == "index":
+            selection = [selection[0]]
+        else:
+            selection = []

@@ -103,8 +103,7 @@ def enemy_drop(enemy):
         pick = random.randint(1, 1000)
         for amount, chance in enemy["drop"][item].items():
             if pick <= chance:
-                real_item = crafting.item_search(item)
-                crafting.item_add(real_item, amount)
+                crafting.item_add(item, amount)
                 print(f'The {enemy["name"]} dropped {amount}x {item}')
                 break
 

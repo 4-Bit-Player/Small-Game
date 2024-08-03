@@ -112,8 +112,7 @@ def go_to_location(location_name):
 
 def shop(item):
     if check_money(item["price"]):
-        r_item = crafting.item_search(item["item"])
-        crafting.item_add(r_item)
+        crafting.item_add(item["item"])
 
         if isinstance(item["name"], list):
             pick = int(user.random_pick_list(item["name"]))
@@ -251,8 +250,7 @@ def look_around(current_location):
             drop_chances = current_location["findable_items"][item]
             for amount, chance in drop_chances.items():
                 if it_pick <= chance - drop_malus:
-                    real_item = crafting.item_search(item)
-                    crafting.item_add(real_item, amount)
+                    crafting.item_add(item, amount)
                     drop_malus += 100
                     if amount >= 2:
                         item_ending = "s"
