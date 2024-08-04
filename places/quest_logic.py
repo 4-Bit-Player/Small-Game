@@ -106,7 +106,7 @@ def check_quests():
 def unlock_quest(quest):
     unlock = quest_unlocks.unlocks[quest["unlocks"]]
     q_type = unlock["type"]
-    if q_type == "inspection":
+    if q_type == "inspect":
         location = locations.search_location(unlock["place"])
         location["inspect"].append(unlock["unlocks"])
 

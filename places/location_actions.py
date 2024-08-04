@@ -9,7 +9,7 @@ from decoration import deco, colors, story
 from player import user, crafting
 
 
-unlocks = []
+unlocks = {}
 unlocked = {}
 locations = []
 location = {}
@@ -23,7 +23,14 @@ settings = {
 
 def unlocks_init():
     global unlocks
-    unlocks = deepcopy(unlock.unlocks)
+    unlocks = unlock.unlocks
+
+
+def load_saved_unlocks(things:list):
+    r_unlocks = []
+    for u_lock in things:
+        r_unlocks.append(search_for_unlock(u_lock))
+    return r_unlocks
 
 
 def location_init():
@@ -193,9 +200,9 @@ def inspect(current_location):
                 unlock_stuff(thing)
             if curr_name not in unlocked:
                 unlocked[curr_name] = {}
-                unlocked[curr_name]["inspect"] = [thing]
+                unlocked[curr_name]["inspect"] = [thing["u_name"]]
                 continue
-            unlocked[curr_name]["inspect"].append(thing)
+            unlocked[curr_name]["inspect"].append(thing["u_name"])
         current_location["inspect"].clear()
         deco.clear_l(1, "")
         return
@@ -208,15 +215,14 @@ def inspect(current_location):
         pick = user.user_input(len(current_location["inspect"]))
 
         to_unlock = current_location["inspect"].pop(pick)
-
         story.show_text(to_unlock["text"])
         if to_unlock["unlocks"]:
             unlock_stuff(to_unlock)
         if curr_name not in unlocked:
             unlocked[curr_name] = {}
-            unlocked[curr_name]["inspect"] = [to_unlock]
+            unlocked[curr_name]["inspect"] = [to_unlock["u_name"]]
         else:
-            unlocked[curr_name]["inspect"].append(to_unlock)
+            unlocked[curr_name]["inspect"].append(to_unlock["u_name"])
 
     str(input("Press enter to continue..."))
     deco.clear_l(1, "")
@@ -286,17 +292,18 @@ def unlock_stuff(stuff_to_unlock):
 
 
 def search_for_unlock(name):
-    for i in unlocks:
-        if i["u_name"] == name:
-            return i
+    return unlocks[name]
 
 
 def load_unlocked(stuff_to_unlock: dict):
     for place, sec_dict in stuff_to_unlock.items():
         t_location = search_location(place)
         for unlock_type, u_locks in sec_dict.items():
-            for u_lock in u_locks:
-                print(u_lock)
+            for u_lock_name in u_locks:
+                print(u_lock_name, "\n", unlock_type)
+                if u_lock_name not in unlocks:
+                    continue
+                u_lock = search_for_unlock(u_lock_name)
                 t_location[unlock_type].remove(u_lock)
                 unlock_stuff(u_lock)
 
@@ -458,9 +465,9 @@ def try_load_save(save, active_game=False):
         past_location = search_location(save["past_location"])
         settings = save["settings"]
         unlocked = save["unlocked"]
-        finished_quests = save["finished_quests"]
-        active_quests = save["active_quests"]
-        quest_logic.load_saved_quests(finished_quests, active_quests)
+        finished_q = save["finished_quests"]
+        active_q = save["active_quests"]
+        quest_logic.load_saved_quests(finished_q, active_q)
 
         load_unlocked(unlocked)
         deco.clear_l(1)

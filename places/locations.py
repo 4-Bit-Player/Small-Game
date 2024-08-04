@@ -1,4 +1,4 @@
-
+from places.unlock import unlocks
 locations = []
 
 
@@ -35,37 +35,9 @@ default_locations = [
         ],
         "inspect_num": 0,
         "inspect": [
-            {
-                "broad_desc": "Walk through the streets of the city.",
-                "text": [
-                    "As you walk around the city you spot a small shop that you haven't noticed before.",
-                    "They sell bread and equipment...",
-                    "Which is an odd combination, but who cares...",
-                ],
-                "unlocks": "Castell Shop",
-                "unlock_location": "Castell City"
-
-            },
-            {
-                "broad_desc": "Walk around byways.",
-                "text": [
-                    "As you continue to walk around you stumble upon a potion shop.",
-                    "It looks a bit run down, but it seems like someone still runs it.",
-                ],
-                "unlocks": "Castell Potion Shop",
-                "unlock_location": "Castell City"
-            },
-            {
-                "broad_desc": "Walk to the gates.",
-                "text": [
-                    "You have enough from walking around in the city.",
-                    "There are boars outside that are a threat to the people!",
-                    "And you have to revenge your friend!",
-                ],
-                "unlocks": "Go to Forest",
-                "unlock_location": "Castell City"
-
-            }
+            unlocks["Castell 1"],
+            unlocks["Castell 2"],
+            unlocks["Castell 3"],
         ],
 
 
@@ -244,17 +216,7 @@ default_locations = [
      ],
      "inspect_num": 0,
      "inspect": [
-         {
-             "broad_desc": "Enjoy the astonishing view",
-             "text": [
-                "As you look around the lush forest a scene of serene beauty unfolds before your eyes.",
-                "The dappled sunlight filters through the verdant canopy, ",
-                "casting a soft, ethereal glow on the forest floor.",
-                "The air is thick with the earthy scent of moss, damp soil, and the sweet fragrance of wildflowers."
-                ],
-             "unlocks": {},
-             "unlock_location": "",
-         },
+         unlocks["Forest 1"],
         ],
     },
 
@@ -320,24 +282,8 @@ default_locations = [
         ],
         "inspect_num": 0,
         "inspect": [
-            {
-                "broad_desc": "Look at the surrounding area",
-                "text": [
-                    "At the end of the forest you see a grand rocky mountain."
-                ],
-                "unlocks": {},
-                "unlock_location": "",
-            },
-            {
-                "broad_desc": "Check out the camp at the side of the road",
-                "text": [
-                    "As you walk around the camp you see quiet a few people.",
-                    "You notice a blacksmith who is repairing the gear from an adventurer.",
-                    "Maybe he can repair your gear as well..."
-                ],
-                "unlocks": "Go to Blacksmith",
-                "unlock_location": "Bottom of the Mountain",
-            }
+            unlocks["Dark Forest 1"],
+            unlocks["Dark Forest 2"],
         ],
 
         "weather": [70, 90],

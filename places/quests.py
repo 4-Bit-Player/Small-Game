@@ -22,7 +22,7 @@ quests = {
     "Unlock Dark Forest": {
         "name": "Unlock Dark Forest",
         "type": "Hunt",
-        "req": {"Wild Boar": 1},
+        "req": {"Wild Boar": 10},
         "progress": {"Wild Boar": 0},
         "unlocks": "Unlock Dark Forest",
         "refresh_on_load": True,
@@ -34,7 +34,7 @@ quests = {
     "Unlock Bottom Of Mountain": {
         "name": "Unlock Bottom Of Mountain",
         "type": "Hunt",
-        "req": {"Big Wild Boar": 1},
+        "req": {"Big Wild Boar": 5},
         "progress": {"Big Wild Boar": 0},
         "unlocks": "Unlock Bottom Of Mountain",
         "refresh_on_load": True,
