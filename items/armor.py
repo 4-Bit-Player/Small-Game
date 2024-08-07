@@ -74,7 +74,7 @@ armor = [
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 3,
+            "def_base": 5,
         },
     },
     {
@@ -87,7 +87,7 @@ armor = [
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 3,
+            "def_base": 4,
         },
     },
     {
@@ -114,7 +114,7 @@ armor = [
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 3,
+            "def_base": 5,
         },
     },
     {
@@ -127,7 +127,7 @@ armor = [
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 5,
+            "def_base": 7,
         },
     },
     {
@@ -140,7 +140,7 @@ armor = [
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 3,
+            "def_base": 6,
         },
     },
     {
@@ -153,7 +153,7 @@ armor = [
         "item_amount": 1,
         "upgrades": [0, 3],
         "player_affected_stats": {
-            "def_base": 3,
+            "def_base": 5,
         },
     },
 ]

@@ -47,11 +47,13 @@ def crafting_check(recipe):
 
 def remove_item(_item, amount=1):
     _item["item_amount"] -= amount
-    if _item["item_amount"] <= 0:
-        if _item["item_type"] == "equipment":
+    if _item["item_amount"] > 0:
+        return
+    if _item["item_type"] == "equipment":
+        if _item["equipped"]:
             user.equip_item(_item)
 
-        user.Player["inv"] = [item for item in user.Player["inv"] if item != _item]
+    user.Player["inv"] = [item for item in user.Player["inv"] if item != _item]
 
 
 def item_add(item_name, amount=1, search_in="All"):
@@ -229,28 +231,31 @@ def upgrade_equipment(equip_to_upgrade):
 
 
 def show_item_effects(item, already_did=0):
-    word_time = 'increases' if not already_did else 'increased'
     overflow = []
     for i, k in item["player_affected_stats"].items():
-        if k > 0:
-            if i == "hp":
-                overflow.append(f"{colors.green}It heal{'s' if not already_did else 'ed'} you for {k} HP{colors.reset}.")
-            elif i == "hp_max":
-                overflow.append(f"{colors.green}It {word_time} your max HP by {k} HP{colors.reset}.")
-            elif i == "str":
-                overflow.append(f"{colors.red}It {word_time} your strength by {k}{colors.reset}.")
-            elif i == "str_base":
-                overflow.append(f"{colors.red}It {word_time} your base strength by {k}{colors.reset}.")
-            elif i == "dex":
-                overflow.append(f"{colors.light_blue}It {word_time} your dexterity by {k}{colors.reset}.")
-            elif i == "def":
-                overflow.append(f"{colors.light_blue}It {word_time} your defense by {k}{colors.reset}.")
-            elif i == "def_base":
-                overflow.append(f"{colors.light_blue}It {word_time} your base defense by {k}{colors.reset}.")
-            elif i == "xp":
-                overflow.append(f"{colors.green}It {word_time} your xp by {k} points{colors.reset}.")
-            elif i == "lvl":
-                overflow.append(f"{colors.green}It {word_time} your Level by {k} Level{colors.reset}.")
+        word_time = 'increases' if not already_did else 'increased'
+
+        if k < 0:
+            word_time = "de" + word_time[2:]
+            k = abs(k)
+        if i == "hp":
+            overflow.append(f"{colors.green}It heal{'s' if not already_did else 'ed'} you for {k} HP{colors.reset}.")
+        elif i == "hp_max":
+            overflow.append(f"{colors.green}It {word_time} your max HP by {k} HP{colors.reset}.")
+        elif i == "str":
+            overflow.append(f"{colors.red}It {word_time} your strength by {k}{colors.reset}.")
+        elif i == "str_base":
+            overflow.append(f"{colors.red}It {word_time} your base strength by {k}{colors.reset}.")
+        elif i == "dex":
+            overflow.append(f"{colors.light_blue}It {word_time} your dexterity by {k}{colors.reset}.")
+        elif i == "def":
+            overflow.append(f"{colors.light_blue}It {word_time} your defense by {k}{colors.reset}.")
+        elif i == "def_base":
+            overflow.append(f"{colors.light_blue}It {word_time} your base defense by {k}{colors.reset}.")
+        elif i == "xp":
+            overflow.append(f"{colors.green}It {word_time} your xp by {k} points{colors.reset}.")
+        elif i == "lvl":
+            overflow.append(f"{colors.green}It {word_time} your Level by {k} Level{colors.reset}.")
     return overflow
 
 

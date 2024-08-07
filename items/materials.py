@@ -70,4 +70,18 @@ materials = [
         "sell_price": 3,
         "item_amount": 1,
     },
+    {
+        "item_name": "Bone",
+        "item_type": "material",
+        "item_desc": f"A Bone from a skeleton. Not that common.",
+        "sell_price": 5,
+        "item_amount": 1,
+    },
+    {
+        "item_name": "Shiny Crystal",
+        "item_type": "material",
+        "item_desc": f"A Shiny Crystal. It's very rare and valuable.",
+        "sell_price": 100,
+        "item_amount": 1,
+    },
 ]

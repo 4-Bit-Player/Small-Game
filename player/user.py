@@ -178,6 +178,10 @@ def player_def():
     return defense
 
 
+def player_dex():
+    return Player["dex"] + equip_check("dex")
+
+
 def equip_check(stat):
     stat_increase = 0
 

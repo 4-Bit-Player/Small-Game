@@ -88,6 +88,7 @@ def screen_prt_h(lists, start=1):
     lines = []
     for line in lists:
         if line[0] == "index":
+            selected = lists[0][1]
             continue
 
         if isinstance(line, list):
@@ -162,7 +163,7 @@ def keyinput(options: list, header: list = None, start_at=1, hud=0, vertical=0):
                 print(line)
         screen_prt_h(options, start_at)
         if invalid:
-            deco.clear_l()
+            #deco.clear_l()
             temp_input = ""
             print(f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}")
         if temp_input:

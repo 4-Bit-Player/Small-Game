@@ -153,14 +153,14 @@ default_locations = [
                 "item_type": "Potion",
                 "item": "Potion of Strength",
                 "name": "Potion of Strength",
-                "price": 20,
+                "price": 100,
             },
             {
                 "action_type": "buy",
                 "action_text": "Buy a Potion of Toughness",
                 "item": "Potion of Toughness",
                 "name": "Potion of Toughness",
-                "price": 20,
+                "price": 100,
             },
 
         ],
@@ -241,6 +241,7 @@ default_locations = [
         ],
         "inspect_num": 0,
         "inspect": [
+            unlocks["Dark Forest 1"]
 
         ],
 
@@ -282,8 +283,8 @@ default_locations = [
         ],
         "inspect_num": 0,
         "inspect": [
-            unlocks["Dark Forest 1"],
-            unlocks["Dark Forest 2"],
+            unlocks["Bottom Mountain 1"],
+            unlocks["Bottom Mountain 2"],
         ],
 
         "weather": [70, 90],
@@ -326,7 +327,76 @@ default_locations = [
                 "action_text": "Upgrade equipment.",
                 "action_type": "upgrading"
             },
+            {
+                "action_text": "Buy Food",
+                "action_type": "buy",
+                "player_affected_stats": {
+                    "hp": 20
+                },
 
+                "price": 20,
+                "item_type": "food",
+                "item": "Basic Food",
+                "name": [
+                    "Beagle", "Burger", "Banana", "Hot Pocket", "Doughnut", "Pizza", "Waffle", "Beef Stew", "Apple",
+                    "Cheese-Wheel", "Steamed Ham", "Sandwich", "Noodles", "Ramen", "Salad", "Cucumber", "Fried Rice",
+                    "Pancake", "Melon", "Rice Cracker", "Bread", "Sushi", "Fruit Salad", "Strawberry", "Pineapple",
+                    "Block of Butter", "Salami", "Lettuce", "Chips", "Fries", "Fish", "Onion", "Peanuts", "Sausage",
+                    "Garlic", "Hazelnuts", "Tinned Tuna", "Fried Plaice", "Turkey", "Mayonnaise"
+                ]
+            },
+
+        ],
+    },
+
+    # The Cave
+    {
+        "name": "The Cave",
+        "type": "Wilderness",
+        "enemy_chance": 300,
+        "enemies": {
+            "skeleton": 990,
+            "ogre": 1000,
+        },
+        "item_find_chance": 1000,
+        "findable_items": {
+            "Small Rock": {1: 800},
+            "Shiny Crystal": {1: 10}
+        },
+
+        "welcome_text": [
+            "You are in a cave in the mountain!",
+            "You think that you can hear something huge walking around far down some tunnels.",
+        ],
+        "inspect_num": 0,
+        "inspect": [
+
+        ],
+
+        "weather": [0, 60],
+        "true_weather": "cloudy",
+        "list_of_actions": [
+            {
+                "action_text": "Go back to the camp.",
+                "action_type": "go_to_location",
+                "name": "Bottom of the Mountain",
+            },
+            {
+                "action_text": "Open Inventory",
+                "action_type": "open_inventory"
+            },
+            {
+                "action_text": "Look around.",
+                "action_type": "inspect"
+            },
+            {
+                "action_text": "Look for items.",
+                "action_type": "look_around"
+            },
+            {
+                "action_text": "Search for enemies.",
+                "action_type": "combat"
+            },
         ],
     },
 

@@ -68,7 +68,7 @@ def wild_boar():
     enemy_lvl = max(1, round(random.uniform(0.3 * user.Player["lvl"], 1.5 * user.Player["lvl"])))
     enemy_hp = random.uniform(50 + (2 * enemy_lvl), 80 + (enemy_lvl * 3)) * (1 + user.Player["lvl"] / 10)
     enemy_str = random.uniform(6, 10) * (1 + user.Player["lvl"] / 8) * (1 + enemy_lvl * .2)
-    enemy_gold = random.uniform(10, 15) * (1 + enemy_lvl * 0.3)
+    enemy_gold = random.uniform(10, 15) * (1 + enemy_lvl * 0.1)
     enemy_def = random.randint(1, 3 * enemy_lvl)
     enemy_dex = random.uniform(int(50 * (1 + enemy_lvl / 80)), int(80 * (1 + enemy_lvl / 40)))
     drop = {
@@ -80,11 +80,11 @@ def wild_boar():
 
 def big_wild_boar():
     name = "Big Wild Boar"
-    enemy_lvl = max(1, round(random.uniform(user.Player["lvl"], 2 * (1 + user.Player["lvl"]))))
+    enemy_lvl = max(4, round(0.8 * random.uniform(user.Player["lvl"], 1.5 * (1 + user.Player["lvl"]))))
     enemy_hp = random.uniform(60 + (2 * enemy_lvl), 85 + (enemy_lvl * 3)) * (1 + user.Player["lvl"] / 9)
     enemy_str = random.uniform(6, 10) * (1 + user.Player["lvl"] / 6) * (1 + enemy_lvl * .2)
-    enemy_gold = random.uniform(10, 15) * (1 + enemy_lvl * 0.5)
-    enemy_def = random.uniform(1, 3 * enemy_lvl)
+    enemy_gold = random.uniform(10, 15) * (1 + enemy_lvl * 0.1)
+    enemy_def = random.uniform(1 * enemy_lvl, 3 * enemy_lvl)
     enemy_dex = random.uniform(int(50 * (1 + enemy_lvl / 80)), int(80 * (1 + enemy_lvl / 40)))
     drop = {
         "Tough Boar Hide": {3: 100, 2: 300, 1: 700},
@@ -93,8 +93,42 @@ def big_wild_boar():
     return name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop
 
 
+def skeleton():
+    name = "Skeleton"
+    enemy_lvl = max(7, round(random.uniform(0.7 * user.Player["lvl"], 1.3 * (1 + user.Player["lvl"]))))
+    enemy_hp = random.uniform(50 + (2 * enemy_lvl), 70 + (enemy_lvl * 3)) * (1 + user.Player["lvl"] / 9)
+    enemy_str = random.uniform(6, 10) * (1 + user.Player["lvl"] / 5) * (1 + enemy_lvl * .2)
+    enemy_gold = random.uniform(10, 15) * (1 + enemy_lvl * 0.1)
+    enemy_def = random.uniform(20*(1+enemy_lvl/10), 30 * (1+enemy_lvl/10))
+    enemy_dex = random.uniform(int(50 * (1 + enemy_lvl / 60)), int(80 * (1 + enemy_lvl / 40)))
+    drop = {
+        "Bone": {3: 100, 2: 200, 1: 600},
+        "Rusty Sword": {1: 20},
+        "Rusty Shield": {1: 20},
+    }
+    return name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop
+
+
+def ogre():
+    name = "Ogre"
+    enemy_lvl = max(20, round(random.uniform(0.7 * user.Player["lvl"], 1.5 * (1 + user.Player["lvl"]))))
+    enemy_hp = random.uniform(80 + (2 * enemy_lvl), 110 + (enemy_lvl * 3)) * (1 + user.Player["lvl"] / 9)
+    enemy_str = random.uniform(10, 15) * (1 + user.Player["lvl"] / 5) * (1 + enemy_lvl * .2)
+    enemy_gold = random.uniform(10, 15) * (1 + enemy_lvl * 0.1)
+    enemy_def = random.uniform(20, 3 * enemy_lvl)
+    enemy_dex = random.uniform(int(50 * (1 + enemy_lvl / 90)), int(60 * (1 + enemy_lvl / 60)))
+    drop = {
+        "Giant Club": {1: 700},
+        "Shiny Crystal": {1: 700}
+    }
+    return name, enemy_lvl, enemy_hp, enemy_str, enemy_gold, enemy_def, enemy_dex, drop
+
+
+
 all_enemies = {
     "wild_boar": wild_boar,
     "big_wild_boar": big_wild_boar,
+    "skeleton": skeleton,
+    "ogre": ogre,
 
 }

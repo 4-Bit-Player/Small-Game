@@ -1,7 +1,7 @@
 import time
-
 import u_KeyInput
-from places import quests, quest_unlocks, locations
+from player import user
+from places import quests, quest_unlocks, locations, unlock
 from decoration import deco, story
 
 
@@ -37,9 +37,12 @@ def load_saved_quests(finished, active):
 
     # Check if other start quests are added
     for quest in quests.active_quests:
-        if quest in quests.finished_quests:
+        name = quest["name"]
+        found = [d for d in quests.finished_quests if d.get("name") == name]
+        if found:
             continue
-        if quest in tmp_quests:
+        found = [d for d in tmp_quests if d.get("name") == name]
+        if found:
             continue
         tmp_quests.append(quest)
 
@@ -67,7 +70,7 @@ def progress(event: dict):
         for quest in quests.active_quests:
             if quest["type"] == "Hunt":
                 for enemy in quest["req"].keys():
-                    if enemy == event["enemy"]["enemy_name"]:
+                    if enemy == event["enemy"]["name"]:
                         quest["progress"][enemy] += 1
                         updated = True
     if updated:
@@ -88,8 +91,14 @@ def check_quests():
 
     if absolved_quest:
         for quest in absolved_quest:
-            quests.finished_quests.append(quest)
             quests.active_quests.remove(quest)
+
+            # find a better solution:
+            if quest["repeatable"]:
+                quests.active_quests.append(quests.get_quest(quest["name"]))
+            else:
+                quests.finished_quests.append(quest)
+
             unlock_quest(quest)
             if "unlock_header" in quest:
                 deco.print_header(quest['unlock_header'], 0, "~")
@@ -104,10 +113,18 @@ def check_quests():
 
 
 def unlock_quest(quest):
-    unlock = quest_unlocks.unlocks[quest["unlocks"]]
-    q_type = unlock["type"]
+    q_type = quest["u_type"]
+    if q_type == "stat_boost":
+        stat_boost(quest)
+        return
     if q_type == "inspect":
-        location = locations.search_location(unlock["place"])
-        location["inspect"].append(unlock["unlocks"])
+        location = locations.search_location(quest["place"])
+        location["inspect"].append(unlock.unlocks[quest["unlocks"]])
+
+
+
+def stat_boost(quest):
+    for stat, val in quest["stat_boost"]:
+        user.Player[stat] += val
 
 

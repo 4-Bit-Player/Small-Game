@@ -41,4 +41,15 @@ weapons = [
         "result": "Sturdy Wooden Axe",
         "re_amount": 1,
     },
+    {
+        "name": "Bone Shield",
+        "type": "equipment",
+        "req_lvl": 15,
+        "req_res": {
+            "Bones": 10,
+            "Wooden Shield": 1,
+        },
+        "result": "Bone Shield",
+        "re_amount": 1,
+    },
 ]

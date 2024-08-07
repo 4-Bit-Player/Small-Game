@@ -282,6 +282,8 @@ def unlock_stuff(stuff_to_unlock):
             if real_unlock["type"] == "actions":
                 place["list_of_actions"].append(real_unlock)
         return
+    if not stuff_to_unlock["unlocks"]:
+        return
 
     place = search_location(stuff_to_unlock["unlock_location"])
     real_unlock = search_for_unlock(stuff_to_unlock["unlocks"])

@@ -17,6 +17,9 @@ def combat(current_location):
     hp_lost = 0
     deco.clear_l(1, "")
     while fighting:
+        if user.test:
+            for key, val in enemy.items():
+                print(key, ": ", val)
         deco.clear_l()
         print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
         deco.clear_l()
@@ -126,7 +129,7 @@ def check_health_combat():
 
 
 def dex_check(enemy):
-    player_dex = random.randint(1, round(user.Player["dex"]))
+    player_dex = random.randint(1, round(user.player_dex()))
     enemy_dex = random.randint(1, round(enemy["dex"]))
     result = player_dex - enemy_dex
     if result >= 0:
@@ -142,7 +145,7 @@ def attack(enemy, failed=0):
         temp_log = f'You stumbled and got hit for {colors.red}{round(enemy["str"], 1)} damage{colors.reset}.'
         return enemy, temp_log, enemy_damage
 
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     enemy_action_speed = random.uniform(1, enemy["dex"])
 
     if player_action_speed >= enemy_action_speed:
@@ -212,37 +215,37 @@ def en_attack(enemy):
 
 
 def en_crit_attack(enemy):
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     en_action_speed = random.uniform(1, enemy["dex"])
     return en_action_speed > (player_action_speed * 8)
 
 
 def en_defended(enemy):
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     en_action_speed = random.uniform(1, enemy["dex"])
     return en_action_speed > (player_action_speed * 5)
 
 
 def en_missed(enemy):
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     en_action_speed = random.uniform(1, enemy["dex"])
     return (en_action_speed * 10) < player_action_speed
 
 
 def pl_crit_attack(enemy):
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     en_action_speed = random.uniform(1, enemy["dex"])
     return (en_action_speed * 5) < player_action_speed
 
 
 def pl_defended(enemy):
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     en_action_speed = random.uniform(1, enemy["dex"])
     return (en_action_speed * 2) < player_action_speed
 
 
 def pl_missed(enemy):
-    player_action_speed = random.uniform(1, user.Player["dex"])
+    player_action_speed = random.uniform(1, user.player_dex())
     en_action_speed = random.uniform(1, enemy["dex"])
     return en_action_speed > (player_action_speed * 15)
 

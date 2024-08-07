@@ -70,7 +70,7 @@ armor = [
                 "req_res": {
                     "Tough Boar Hide": 8,
                 },
-                "result": "Tough Leather ",
+                "result": "Tough Leather Chestplate",
                 "re_amount": 1,
             },
             {

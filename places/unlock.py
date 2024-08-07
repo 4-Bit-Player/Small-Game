@@ -43,9 +43,17 @@ unlocks = {
         "action_type": "go_to_location",
         "name": "Blacksmith",
     },
-    "Unlock Bottom of Mountain": {
-        "u_name": "Unlock Bottom of Mountain",
-        "broad_desc": "Follow the trail of the Deer",
+    "Go to The Cave": {
+        "u_name": "Go to The Cave",
+        "type": "actions",
+        "action_text": "Go to The Cave",
+        "action_type": "go_to_location",
+        "name": "The Cave",
+    },
+
+    "Unlock Bottom Of Mountain": {
+        "u_name": "Unlock Bottom Of Mountain",
+        "broad_desc": "Follow the trail of the deer",
         "text": [
             "It's difficult to follow the trail.",
             "Sometimes you loose the trail, but can find it again a bit further ahead.",
@@ -59,7 +67,7 @@ unlocks = {
     },
     "Unlock Dark Forest": {
         "u_name": "Unlock Dark Forest",
-        "broad_desc": "Look for hidden things",
+        "broad_desc": "Follow the path",
         "text": [
             "You spot a path that leads deeper into the forest.",
             "The trees seem to be standing closer to each other there..."
@@ -114,25 +122,34 @@ unlocks = {
             "casting a soft, ethereal glow on the forest floor.",
             "The air is thick with the earthy scent of moss, damp soil, and the sweet fragrance of wildflowers."
         ],
-        "unlocks": {},
+        "unlocks": "",
+        "unlock_location": "",
+    },
+    "Dark Forest 1": {
+        "u_name": "Dark Forest 1",
+        "broad_desc": "Look around",
+        "text": [
+            "The forest is quiet dark.",
+            "The air is moist.",
+            "You can hear some birds in the distance,",
+            "but the forest still exudes a slightly eerie aura.",
+        ],
+        "unlocks": "",
         "unlock_location": "",
     },
 
-
-
-
-
-    "Dark Forest 1": {
-        "u_name": "Dark Forest 1",
+    "Bottom Mountain 1": {
+        "u_name": "Bottom Mountain 1",
         "broad_desc": "Look at the surrounding area",
         "text": [
             "At the end of the forest you see a grand rocky mountain."
         ],
-        "unlocks": {},
+        "unlocks": "",
         "unlock_location": "",
     },
-    "Dark Forest 2": {
-        "u_name": "Dark Forest 2",
+
+    "Bottom Mountain 2": {
+        "u_name": "Bottom Mountain 2",
         "broad_desc": "Check out the camp at the side of the road",
         "text": [
             "As you walk around the camp you see quiet a few people.",
@@ -141,7 +158,25 @@ unlocks = {
         ],
         "unlocks": "Go to Blacksmith",
         "unlock_location": "Bottom of the Mountain",
-    }
+    },
+
+    "Unlock The Cave": {
+        "u_name": "Unlock The Cave",
+        "broad_desc": "Follow the path from the map",
+        "text": [
+            "You leave the camp and set off to find out what is hidden in this place.",
+            "The path is stony and difficult to traverse.",
+            "It leads you up to around the middle of the mountain.",
+            "The air is fresh and a bit chilly.",
+            "The landscape is pretty barren. There is almost only grass and moss growing here.",
+            "However, you can find small bushes from time to time.",
+            "There are a few Mountain Goats in the distance.",
+        ],
+        "unlocks": "Go to The Cave",
+        "unlock_location": "Bottom of the Mountain",
+    },
+
+
 
 
 

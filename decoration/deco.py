@@ -39,6 +39,7 @@ def player_hud(printing=True):
     score = str(round(user.Player["score"], 1))
     damage = str(round(user.player_atk(), 1))
     defense = str(round(user.player_def(), 1))
+    dex = str(round(user.player_dex(), 1))
     gold = str(round(user.Player["gold"], 1))
 
     characters = [
@@ -74,6 +75,11 @@ def player_hud(printing=True):
     defense = str.center(defense, defense_len)
     defense_name = str.center(defense_name, defense_len)
 
+    dex_name = "DEX"
+    dex_len = max(len(dex), len(dex_name))
+    dex = str.center(dex, dex_len)
+    dex_name = str.center(dex_name, dex_len)
+
     gold_name = "Gold"
     gold_len = max(len(gold), len(gold_name))
     gold = str.center(gold, gold_len)
@@ -90,6 +96,7 @@ def player_hud(printing=True):
               straight_line * hp_len + characters[0]["top_d"] +
               straight_line * dam_len + characters[0]["top_d"] +
               straight_line * defense_len + characters[0]["top_d"] +
+              straight_line * dex_len + characters[0]["top_d"] +
               straight_line * gold_len + characters[0]["top_d"] +
               straight_line * sc_len + characters[0]["corner_tr"])
 
@@ -99,6 +106,7 @@ def player_hud(printing=True):
                   colors.green + hp_name + colors.reset + characters[0]["middle_s"] +
                   colors.red + dam_name + colors.reset + characters[0]["middle_s"] +
                   colors.gray + defense_name + colors.reset + characters[0]["middle_s"] +
+                  colors.light_blue + dex_name + colors.reset + characters[0]["middle_s"] +
                   colors.gold + gold_name + colors.reset + characters[0]["middle_s"] +
                   colors.light_blue + sc_name + colors.reset + characters[0]["middle_s"])
 
@@ -108,6 +116,7 @@ def player_hud(printing=True):
                   straight_line * hp_len + characters[0]["middle_c"] +
                   straight_line * dam_len + characters[0]["middle_c"] +
                   straight_line * defense_len + characters[0]["middle_c"] +
+                  straight_line * dex_len + characters[0]["middle_c"] +
                   straight_line * gold_len + characters[0]["middle_c"] +
                   straight_line * sc_len + characters[0]["middle_r"])
 
@@ -117,6 +126,7 @@ def player_hud(printing=True):
                   colors.green + hp + colors.reset + characters[0]["middle_s"] +
                   colors.red + damage + colors.reset + characters[0]["middle_s"] +
                   colors.gray + defense + colors.reset + characters[0]["middle_s"] +
+                  colors.light_blue + dex + colors.reset + characters[0]["middle_s"] +
                   colors.gold + gold + colors.reset + characters[0]["middle_s"] +
                   colors.light_blue + score + colors.reset + characters[0]["middle_s"])
 
@@ -126,6 +136,7 @@ def player_hud(printing=True):
                     straight_line * hp_len + characters[0]["bottom_u"] +
                     straight_line * dam_len + characters[0]["bottom_u"] +
                     straight_line * defense_len + characters[0]["bottom_u"] +
+                    straight_line * dex_len + characters[0]["bottom_u"] +
                     straight_line * gold_len + characters[0]["bottom_u"] +
                     straight_line * sc_len + characters[0]["corner_br"])
     line_len = len(last_line)
