@@ -90,7 +90,6 @@ def user_input_new(options):
 def user_input(max_num):
     u_input = True
     u_action = input("Action:")
-    full_check = range(1, max_num+1)
     actual_action = 0
     while u_input:
         try:
@@ -104,7 +103,6 @@ def user_input(max_num):
                 u_action = str(input("Action:"))
 
         except ValueError:
-
             print(f"Please select a number between 1 and {max_num}")
             print("What will you do?")
             u_action = str(input("Action:"))
@@ -123,6 +121,20 @@ def show_pick_actions_dict(from_dict):
         except KeyError:
             pass
 
+
+def return_pick_actions_dict(from_dict):
+    option = 0
+    out = []
+    for action in from_dict:
+        option += 1
+        out.append(f'{action["action_text"]}')
+
+        try:
+            price_color = colors.green if action["price"] <= Player["gold"] else colors.red
+            out.append([f'   {colors.gold}It costs {price_color}{action["price"]} Gold{colors.reset}'])
+        except KeyError:
+            pass
+    return out
 
 def show_pick_actions_list(from_list):
     option = 0

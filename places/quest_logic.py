@@ -1,7 +1,6 @@
 import time
-import u_KeyInput
-from player import user
-from places import quests, quest_unlocks, locations, unlock
+from player import user, u_KeyInput
+from places import quests, locations, unlock
 from decoration import deco, story
 
 

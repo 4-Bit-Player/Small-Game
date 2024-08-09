@@ -82,7 +82,48 @@ def handle_arrow_key(sel_list):
     sel_list[0][1] = sel_col
 
 
-def screen_prt_h(lists, start=1):
+current_keyboard_layout = {}
+
+german_layout = {
+    b'!': 1,
+    b'"': 2,
+    b'\xf5': 3,
+    b'$': 4,
+    b'%': 5,
+    b'&': 6,
+    b'/': 7,
+    b'(': 8,
+    b')': 9,
+}
+english_layout = {
+    b'!': 1,
+    b'@': 2,
+    b'#': 3,
+    b'$': 4,
+    b'%': 5,
+    b'^': 6,
+    b'&': 7,
+    b'*': 8,
+    b'(': 9,
+}
+
+
+def keyboard_layout_init():
+    global current_keyboard_layout
+    os.system('cls')
+    tmp = input("What keyboard are you using?\n"
+                "Type 'e' if you are using the english layout,\n"
+                "or anything else if you are using the german layout.\n"
+                "(It's just for num hotkeys)\n"
+                "Keyboard Layout: ")
+    if tmp == "e":
+        current_keyboard_layout = english_layout
+    else:
+        current_keyboard_layout = german_layout
+
+
+
+def return_screen_prt_h(lists, start=1):
     num = start
     selected = 0
     lines = []
@@ -93,9 +134,7 @@ def screen_prt_h(lists, start=1):
 
         if isinstance(line, list):
             if line[0] == 1:
-                for l in line:
-                    if l == 1:
-                        continue
+                for l in line[1:]:
                     if num == selected:
                         l_line = colors.negative + str(num) + ". " + str(l) + " " + colors.reset
                     else:
@@ -114,21 +153,15 @@ def screen_prt_h(lists, start=1):
             num += 1
             lines.append(l_line)
 
-    for line in lines:
-        print(line)
-#         else:
-#             print(str(start) + ". " + str(line))
-#             start += 1
+    return "\n".join(lines)
 
 
 def create_index(options):
     limit = 0
     for line in options:
-        if type(line) is list:
+        if isinstance(line, list):
             if line[0] == 1:
-                for i in line:
-                    if i != 1:
-                        limit += 1
+                limit += len(line) - 1
             continue
         else:
             limit += 1
@@ -145,33 +178,60 @@ def create_index(options):
     return options
 
 
-def keyinput(options: list, header: list = None, start_at=1, hud=0, vertical=0):
+def display_shortcuts(full=False):
+    os.system('cls')
+    out = deco.print_header_r("Shortcuts", "~") + "\n"
+    if full:
+        out += ("i = open inventory\n"
+                "q = view active quests\n")
+    out += ("h = open the available shortcuts\n"
+            "esc = pick the first option (usually going back, unless in fights)\n"
+            "shift + num key = instantly select an option\n"
+            "ctrl + c (or ctrl + 2 for some reason) = crash the game. :)\n\n"
+            "Press enter to return")
+
+    wait_for_keypress()
+
+def wait_for_keypress():
+    msvcrt.getch()
+
+
+def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = create_index(options)
 
     temp_input: str = ""
     # os.system('cls')
-    invalid = 0
+    invalid = False
+
+
 
     while True:
         os.system('cls')
         if hud:
-            print()
-            deco.player_hud()
-            print("\n")
+            sys.stdout.write(deco.player_hud(False) + "\n\n")
         if header:
-            for line in header:
-                print(line)
-        screen_prt_h(options, start_at)
+            sys.stdout.write(deco.print_header_r(header) + "\n")
+        print(return_screen_prt_h(options, start_at))
         if invalid:
             #deco.clear_l()
             temp_input = ""
             print(f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}")
         if temp_input:
             sys.stdout.write("Action:"+str(temp_input))
-            sys.stdout.flush()
+        sys.stdout.flush()
         key = msvcrt.getch()
+        os.system('cls')
+
+        if key in current_keyboard_layout:
+            val = current_keyboard_layout[key]
+            if 0 < val <= options[0][5] + 1:
+                return val - 1
+            else:
+                invalid = True
+            continue
+
         if key == b'\x1b':  # Escape key
-            break
+            return 0
         elif key == b'\xe0':  # Arrow keys
             temp_input = ""
             handle_arrow_key(options)
@@ -180,22 +240,24 @@ def keyinput(options: list, header: list = None, start_at=1, hud=0, vertical=0):
                 selected = temp_input
             else:
                 selected = options[0][1]
-            if int(selected) in range(1, options[0][5]+1):
+            if 0 < int(selected) <= options[0][5]+1:
                 return int(selected) - 1
             else:
-                invalid = 1
-        elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:
+                invalid = True
+        elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
             key = key.decode()
             if not temp_input:
                 temp_input += key
             else:
                 temp_input += key
             pass
-        elif key == b'\x08':
+        elif key == b'\x08':  # backspace
             if temp_input:
                 temp_input = temp_input[:-1]
-        elif key == b'\x03':
+        elif key == b'\x03':  # ctrl + c
             raise KeyboardInterrupt
+        elif key == b'h':
+            display_shortcuts(False)
         else:
             print(key)
 

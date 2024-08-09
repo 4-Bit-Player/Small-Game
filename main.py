@@ -28,8 +28,8 @@
 import time
 import pickle
 from decoration import story, deco, colors
-from player import user, crafting
-from places import show_location_actions, location_actions, quest_logic, quests
+from player import user, crafting, u_KeyInput
+from places import show_location_actions, location_actions, quests
 
 
 def name_init():
@@ -128,6 +128,7 @@ def partial_restart():
 
 
 def restart():
+    u_KeyInput.display_shortcuts(True)
     quests.init_quests()
     location_actions.unlocks_init()
     location_actions.location_init()
@@ -138,7 +139,7 @@ def restart():
 playing = True
 crafting.item_init()
 save_check()
-
+u_KeyInput.keyboard_layout_init()
 while playing:
 
     highscore = location_actions.highscore_check()
@@ -180,22 +181,27 @@ while playing:
 
     if not location_actions.settings["delete_save_on_death"]:
         print("I hope you've had fun with my small project. :)")
-        str(input("You can make a screenshot to save the score. ^^"))
-        print("What would you like to do?\n",
-              "1. Quit\n",
-              "2. Complete restart\n",
-              "3. Partial restart",)
-        pick = user.user_input(3)
+        print("You can make a screenshot to save the score. ^^")
+        print(deco.line_r())
+        print("What would you like to do?\n"
+              "1. Quit\n"
+              "2. Complete restart\n"
+              "3. Partial restart\n"
+              "4. Load save")
+        pick = user.user_input(4)
         if not pick:
             break
+        elif pick == 1:
+            restart()
         elif pick == 2:
             partial_restart()
         else:
-            restart()
+            location_actions.load_all()
 
     else:
         print("I hope you've had fun with my small project. :)")
-        str(input("You can make a screenshot to save the score. ^^"))
+        print("You can make a screenshot to save the score. ^^")
+        print(deco.line_r())
         print("What would you like to do?\n",
               "1. Quit\n",
               "2. Restart")

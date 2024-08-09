@@ -1,5 +1,5 @@
 import random
-from player import user, crafting
+from player import user, crafting, u_KeyInput
 from decoration import deco, colors
 import time
 import enemies
@@ -16,60 +16,60 @@ def combat(current_location):
     total_hp_lost = 0
     hp_lost = 0
     deco.clear_l(1, "")
+    options: list = [[""]] + fighting_options[:]
     while fighting:
+        header: str = (deco.line_r() + "\n" +
+                       f'You spotted a {enemy["name"]} Level {enemy["lvl"]}\n' +
+                       deco.line_r())
         if user.test:
             for key, val in enemy.items():
-                print(key, ": ", val)
-        deco.clear_l()
-        print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
-        deco.clear_l()
+                header = f"{key}: {val}\n" + header
+
         if temp_log:
             log.append(temp_log)
-        for i in log:
-            print(i)
+            options[1].append(temp_log)
 
         if user.Player["hp"] <= 0:
-            fighting = False
-        else:
-            pick = user.show_pick_actions_list(fighting_options)
-            deco.clear_l(1, "")
-            if pick == 3:
-                check_health_combat()
-            elif pick == 2:
-                if dex_check(enemy):
-                    return
-                else:
-                    enemy, temp_log, hp_lost = attack(enemy, 1)
-            elif pick == 1:
-                till_death = True
+            return
 
-                deco.clear_l(1)
-                print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
-                deco.clear_l()
-                if log:
-                    for line in log:
-                        print(line)
-                    time.sleep(.5)
-
-                while till_death:
-                    enemy, temp_log, hp_lost = attack(enemy, 0)
-                    print(temp_log)
-                    total_hp_lost += hp_lost
-                    time.sleep(.5)
-
-                    if user.Player["hp"] <= 0:
-                        fighting = False
-                        break
-                    elif enemy["hp"] <= 0:
-                        break
-
+        pick = u_KeyInput.keyinput(options, header)
+        if pick == 3:
+            check_health_combat()
+        elif pick == 2:
+            if dex_check(enemy):
+                return
             else:
-                enemy, temp_log, hp_lost = attack(enemy, 0)
-                total_hp_lost += hp_lost
+                enemy, temp_log, hp_lost = attack(enemy, 1)
+        elif pick == 1:
+            till_death = True
 
-            if enemy["hp"] <= 0:
-                fight_won(enemy, total_hp_lost, temp_log)
-                fighting = False
+            deco.clear_l(1)
+            print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
+            deco.clear_l()
+            if log:
+                for line in log:
+                    print(line)
+                time.sleep(.5)
+
+            while till_death:
+                enemy, temp_log, hp_lost = attack(enemy, 0)
+                print(temp_log)
+                total_hp_lost += hp_lost
+                time.sleep(.5)
+
+                if user.Player["hp"] <= 0:
+                    fighting = False
+                    break
+                elif enemy["hp"] <= 0:
+                    break
+
+        else:
+            enemy, temp_log, hp_lost = attack(enemy, 0)
+            total_hp_lost += hp_lost
+
+        if enemy["hp"] <= 0:
+            fight_won(enemy, total_hp_lost, temp_log)
+            fighting = False
 
 
 def fight_won(enemy, hp_lost, temp_log):
@@ -96,8 +96,8 @@ def fight_won(enemy, hp_lost, temp_log):
     user.Player["score"] += enemy["xp"]
 
     deco.clear_l()
-    print()
-    str(input("Press enter to continue."))
+    print("\nPress enter to continue.")
+    u_KeyInput.wait_for_keypress()
     deco.clear_l(1, "")
 
 

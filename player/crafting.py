@@ -1,5 +1,4 @@
-import u_KeyInput
-from player import user
+from player import user, u_KeyInput
 from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
@@ -114,29 +113,24 @@ def upgrading():
     working = True
 
     while working:
-        deco.clear_l(1)
-        options = 1
         item_list = available_equipment_list()
         if item_list:
-
-            print(f"{options}. Don't upgrade anything.")
-            deco.clear_l(s="~")
-
+            options = [
+                f"Don't upgrade anything.",
+                [deco.line_r("~")],
+            ]
             for item in item_list:
-                options += 1
-
                 av_upgrades = f'{item["upgrades"][0]}/{item["upgrades"][1]}'
-                item_text = f'{options}. {item["item_name"]} {av_upgrades}'
+                item_text = f'{item["item_name"]} {av_upgrades}'
                 eq = "(equipped)" if item["equipped"] else ""
 
                 if item["upgrades"][0] >= item["upgrades"][1]:
-                    item_text = f'{options}. {colors.red}{item["item_name"]} {av_upgrades}{colors.reset}'
+                    item_text = f'{colors.red}{item_text}{colors.reset}'
 
-                print(item_text +
-                      f'{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""} {eq}')
+                options.append(item_text +
+                               f'{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""} {eq}')
 
-            deco.clear_l()
-            pick = user.user_input(len(item_list) + 1)
+            pick = u_KeyInput.keyinput(options, "Upgrading Equipment")
 
             if not pick:
                 deco.clear_l(1, "")
@@ -147,8 +141,9 @@ def upgrading():
         else:
             print("You have nothing to upgrade right now.")
             deco.clear_l()
-            str(input("Do something else..."))
+            print("Do something else...")
             deco.clear_l(1, "")
+            u_KeyInput.wait_for_keypress()
             working = False
 
 
@@ -156,33 +151,34 @@ def upgrade_equipment(equip_to_upgrade):
     up_equipment = 1
     deco.clear_l(1, "")
     while up_equipment:
-        deco.clear_l()
-        print(f'Upgrading {equip_to_upgrade["item_name"]} '
-              f'{equip_to_upgrade["upgrades"][0]}/{equip_to_upgrade["upgrades"][1]}')
-        deco.clear_l()
+        header = (deco.line_r() + "\n" +
+                  f'Upgrading {equip_to_upgrade["item_name"]} '
+                  f'{equip_to_upgrade["upgrades"][0]}/{equip_to_upgrade["upgrades"][1]}\n' +
+                  deco.line_r()
+                  )
 
         if equip_to_upgrade["upgrades"][0] >= equip_to_upgrade["upgrades"][1]:
+            print(header)
             print("You can't upgrade this item anymore.")
             deco.clear_l()
-            str(input("Continue"))
+            print("Continue")
+            u_KeyInput.wait_for_keypress()
             return
-
+        options = ["Don't upgrade anything."]
         available_material = []
-        option = 1
-        print("1. Don't upgrade anything.")
-
         for item in user.Player["inv"]:
             if item["item_type"] == "item":
                 if equip_to_upgrade["player_slot"] in item["compatible_slots"]:
-                    option += 1
-                    print(f'{option}. {item["item_name"]}')
-                    for i in show_item_effects(item):
-                        print(i)
+                    options.append(item["item_name"])
+                    options.append(show_item_effects(item))
                     available_material.append(item)
         if not available_material:
+            print(header)
             print("You don't have any material for upgrading this weapon.")
-
-        pick = user.user_input(len(available_material) + 1)
+            u_KeyInput.wait_for_keypress()
+            pick = 0
+        else:
+            pick = u_KeyInput.keyinput(options, header)
 
         if not pick:
             deco.clear_l(1, "")

@@ -1,8 +1,6 @@
-import u_KeyInput
-from player import user, crafting
+from player import user, crafting, u_KeyInput
 from decoration import deco, colors
 import importlib
-from recipies import armor, use_ables, weapons
 
 
 def open_inventory():
@@ -15,9 +13,10 @@ def open_inventory():
     index = []
     overflow = []
     while inv_open:
-        a_selection: list = [deco.player_hud(False), [deco.print_header_r("Inventory")]]
         if index:
-            a_selection.insert(0, index)
+            a_selection = [index]
+        else:
+            a_selection: list = []
 
         if len(user.Player["inv"]) == 0:
             a_selection.append([1, "Close inventory",
@@ -40,7 +39,7 @@ def open_inventory():
             a_selection.append(overflow)
             overflow = []
 
-        pick = u_KeyInput.keyinput(a_selection)
+        pick = u_KeyInput.keyinput(a_selection, header="Inventory", hud=True)
 
         if not pick:
             inv_open = False
@@ -116,7 +115,7 @@ def inv_inspect():
     inspecting = True
     index = []
     while inspecting:
-        show = [["", deco.print_header_r("Inventory (Inspecting)", 1)]]
+        show = [["", deco.print_header_r("Inventory (Inspecting)")]]
         if index:
             show.insert(0, index)
 

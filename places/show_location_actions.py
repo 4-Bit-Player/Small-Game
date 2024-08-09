@@ -1,43 +1,45 @@
+from player import u_FullKeyInput
 from decoration import *
-from places import location_actions, locations, unlock, shop, quest_logic
+from places import location_actions, shop, quest_logic
 from player import *
 import enemies
 import combat
 
 
 def show_location_actions(current_location):
-    deco.player_hud()
-    deco.print_header(current_location["name"])
-    for i in current_location["welcome_text"]:
-        deco.print_in_line(i)
+    options = [[deco.format_text_in_line(current_location["welcome_text"])]]
 
     if current_location["type"] not in ["shop", "forge"]:
         current_location = location_actions.weather(current_location)
-        print(f'It is a {current_location["true_weather"]} day.')
-        deco.clear_l()
+        options.append(
+            [
+                f'It is a {current_location["true_weather"]} day.',
+                deco.line_r()
+            ]
+        )
 
     else:
-        print("\nWhat do you want to do?")
-        deco.clear_l()
+        options.append([
+            "\nWhat do you want to do?",
+            deco.line_r()
+        ])
 
-    user.show_pick_actions_dict(current_location["list_of_actions"])
+    options += user.return_pick_actions_dict(current_location["list_of_actions"])
 
-    try:
-        if current_location["type"] == "City":
-            num = len(current_location["list_of_actions"]) + 1
-            print(f"{num}. Retire here")
-            print(f"{num+1}. Save/Load")
-            pick = int(user.user_input(num+1))
+    if current_location["type"] in ["Wilderness"]:
+        pass
 
-        elif current_location["type"] in ["Wilderness", "shop"]:
-            num = len(current_location["list_of_actions"])
-            pick = int(user.user_input(num))
+    elif current_location["type"] == "City":
+        options += [
+            f"Retire here",
+            f"Save/Load"
+        ]
 
-        else:
-            pick = int(user.user_input(len(current_location["list_of_actions"])))
+    elif current_location["type"] in ["shop"]:
+        pass
 
-    except TypeError:
-        pick = int(user.user_input(len(current_location["list_of_actions"])))
+    pick = u_FullKeyInput.keyinput(options, header=current_location["name"], hud=True)
+
 
     if pick <= len(current_location["list_of_actions"]) - 1:
 

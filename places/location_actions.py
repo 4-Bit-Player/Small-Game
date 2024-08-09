@@ -1,13 +1,13 @@
+#import json
 import pickle
 import random
 import time
-from places import unlock, quests, quest_logic
+from places import unlock, quest_logic
 from places import locations as loc
 from copy import deepcopy
 import combat
 from decoration import deco, colors, story
-from player import user, crafting
-
+from player import user, crafting, u_KeyInput
 
 unlocks = {}
 unlocked = {}
@@ -162,11 +162,9 @@ def check_money(price):
 
 def retire_check():
     deco.clear_l(1, "")
-    print("Are you sure that you want to retire?")
-    print("1. Yes")
-    print("2. No")
-    pick = user.user_input(2)
-    if pick == 0:
+    options = ["1. No", "2. Yes"]
+    pick = u_KeyInput.keyinput(options, "Are you sure that you want to retire?")
+    if pick == 1:
         user.Player["retired"] = True
     else:
         deco.clear_l(1, "")
@@ -196,6 +194,7 @@ def inspect(current_location):
 
     elif user.test:
         for thing in current_location["inspect"]:
+            print(thing)
             if thing["unlocks"]:
                 unlock_stuff(thing)
             if curr_name not in unlocked:
@@ -208,11 +207,9 @@ def inspect(current_location):
         return
 
     else:
-        deco.print_header("Where do you want to go?", 1)
-        for number, option in enumerate(current_location["inspect"]):
-            print(f'{number+1}. {option["broad_desc"]}')
+        options = [x["broad_desc"] for x in current_location["inspect"]]
 
-        pick = user.user_input(len(current_location["inspect"]))
+        pick = u_KeyInput.keyinput(options, "Where do you want to go?")
 
         to_unlock = current_location["inspect"].pop(pick)
         story.show_text(to_unlock["text"])
@@ -231,19 +228,15 @@ def inspect(current_location):
 
 def look_around(current_location):
     pick = random.randint(1, 1000)
+    deco.clear_l(1)
+    print(f'You are wandering through the {current_location["name"]} looking for usable Items...')
+    time.sleep(random.uniform(0.5, 2))
     if pick <= current_location["enemy_chance"]:
-        deco.clear_l(1)
-        print(f'You are wandering through the {current_location["name"]} looking for usable Items...')
-        time.sleep(1)
         print("Suddenly you hear something behind you.")
         time.sleep(1)
         combat.combat(current_location)
 
     elif pick <= current_location["item_find_chance"]:
-
-        deco.clear_l(1)
-
-        print(f'You are wandering through the {current_location["name"]} looking for usable Items...')
         drop_malus = 0
         findable_items = list(current_location["findable_items"].keys())
         random.shuffle(findable_items)
@@ -275,6 +268,7 @@ def look_around(current_location):
 
 
 def unlock_stuff(stuff_to_unlock):
+    # print("Stuff: ", stuff_to_unlock)
     if isinstance(stuff_to_unlock, list):
         for thing in stuff_to_unlock:
             place = search_location(thing["unlock_location"])
@@ -306,20 +300,19 @@ def load_unlocked(stuff_to_unlock: dict):
                 if u_lock_name not in unlocks:
                     continue
                 u_lock = search_for_unlock(u_lock_name)
+                print(u_lock)
+                print(t_location)
                 t_location[unlock_type].remove(u_lock)
                 unlock_stuff(u_lock)
 
 
 def save_load():
-    deco.print_header("What do you want to do?", 1)
     options = [
-        "1. Go back.",
-        "2. Save the game",
-        "3. Load saved game"
+        "Go back.",
+        "Save the game",
+        "Load saved game"
     ]
-    for line in options:
-        deco.print_in_line(line)
-    pick = user.user_input(3)
+    pick = u_KeyInput.keyinput(options, "What do you want to do?", )
     if not pick:
         deco.clear_l(1, "")
         return
@@ -331,18 +324,17 @@ def save_load():
 
 def save_all():
     options = [
-        "Are you sure?",
-        "Already saved data will be overwritten.",
-        "1. Yes",
-        "2. No"
-    ]
-    deco.print_header("Saving Game", 1)
-    for line in options:
-        deco.print_in_line(line)
+        ["Are you sure?",
+         "Already saved data will be overwritten."],
+        "No",
+        "Yes",
 
-    pick = user.user_input(2)
-    if pick:
+    ]
+
+    pick = u_KeyInput.keyinput(options, "Saving Game")
+    if not pick:
         deco.clear_l(1, "")
+        return
 
     else:
         highscore = highscore_check()
@@ -375,18 +367,14 @@ def save_all():
 
 def load_all():
     options = [
-        "Are you sure?",
-        "Your current progress will be overwritten.",
-        "1. Yes",
-        "2. No"
-    ]
-    deco.print_header("Loading Game", 1)
-    for line in options:
-        print(line)
+        ["Are you sure?",
+         "Your current progress will be overwritten."],
+        "No",
+        "Yes",
 
-    pick = user.user_input(2)
-    if pick:
-        deco.clear_l(1)
+    ]
+    pick = u_KeyInput.keyinput(options, "Loading Game")
+    if not pick:
         return
 
     try:
@@ -403,8 +391,8 @@ def load_all():
     else:
         try_load_save(data)
         return
-    out = ("Version not compatible. Should only the Character get loaded?\n",
-           "1. Yes\n",
+    out = ("Version not compatible. Should only the Character get loaded?\n"
+           "1. Yes\n"
            "2. No")
     print(out)
     pick = user.user_input(2)

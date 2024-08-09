@@ -22,8 +22,7 @@ def print_header(text, clear_first=0, s="="):
     print(header)
 
 
-def print_header_r(text, clear_first=0, s="="):
-    clear_l(clear_first, "")
+def print_header_r(text, s="="):
     header = " " + text + " "
     header = str.center(header, line_len, s)
     return header
@@ -140,10 +139,11 @@ def player_hud(printing=True):
                     straight_line * gold_len + characters[0]["bottom_u"] +
                     straight_line * sc_len + characters[0]["corner_br"])
     line_len = len(last_line)
+    out = header + "\n" + header2 + "\n" + header3 + "\n" + header4 + "\n" + last_line
     if printing:
-        print(header + "\n" + header2 + "\n" + header3 + "\n" + header4 + "\n" + last_line)
+        print(out)
     else:
-        return [header, header2, header3, header4, last_line]
+        return out
 
 
 def print_in_line(text):
@@ -170,6 +170,30 @@ def print_in_line(text):
 
         print(text[start:])
 
+
+def format_text_in_line(text_list: list[str]):
+    out = ""
+    for line in text_list:
+        if len(line) <= line_len:
+            out += line + "\n"
+
+        else:
+            start = 0
+            end = line_len
+            while end < len(line):
+                if line[end] != ' ':
+                    while end > start and line[end] != ' ':
+                        end -= 1
+                    if end == start:
+                        end = start + line_len
+                n_line: str = line[start:end]
+                n_line = n_line.lstrip()
+                out += n_line + "\n"
+                start = end + 1
+                end = start + line_len
+            out += line[start:] + "\n"
+
+    return out
 
 def print_in_line_wb(text):
     true_line_length = line_len - 2
