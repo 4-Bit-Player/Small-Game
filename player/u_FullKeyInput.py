@@ -1,5 +1,4 @@
 import msvcrt
-
 import places.quest_logic
 import player.inventory
 from player import u_KeyInput
@@ -12,7 +11,8 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = u_KeyInput.create_index(options)
 
     temp_input: str = ""
-    # os.system('cls')
+    os.system('cls')
+
     invalid = False
     if hud:
         tmp = [deco.player_hud(False) + "\n"]
@@ -32,19 +32,24 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         else:
             options.insert(0, tmp)
 
+    lines_to_remove = 15 + len(options)
 
     while True:
-        tmp = u_KeyInput.return_screen_prt_h(options, start_at)
+        out = u_KeyInput.return_screen_prt_h(options, start_at) + "\n\n"
 
-        os.system('cls')
-        print(tmp)
         if invalid:
             temp_input = ""
-            print(f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}")
+            invalid = False
+            out += f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}"
+
         if temp_input:
-            sys.stdout.write("Action:" + str(temp_input))
-            sys.stdout.flush()
+            out += "Action: " + str(temp_input)
+
+        #print(out, end="")
+        sys.stdout.write(out)
+        sys.stdout.flush()
         key = msvcrt.getch()
+        deco.clear_screen(lines_to_remove)
 
         if key in u_KeyInput.current_keyboard_layout:
             val = u_KeyInput.current_keyboard_layout[key]
@@ -94,6 +99,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         else:
             print(key)
+            os.system('cls')
 
 # index = [
 #     "index", 101,

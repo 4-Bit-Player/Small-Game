@@ -260,8 +260,8 @@ def list_inventory(start_number=1, item_type="All"):
             show_text.append(f'{item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else""}'
                              f'{equipped}{upgraded}')
 
-    for i, text in enumerate(show_text):
-        print(f'{i+start_number}. {text}')
+    #for i, text in enumerate(show_text):
+    #    print(f'{i+start_number}. {text}')
 
     return available_items
 

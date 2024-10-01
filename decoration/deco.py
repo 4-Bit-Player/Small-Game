@@ -1,12 +1,23 @@
 import os
 from player import user
 from decoration import colors
+import sys
 
 line_len = 40
 
+def clear_screen(lines_to_remove=50):
+    for i in range(5):
+        sys.stdout.write("\033[E") # Cursor down one line
+
+    for i in range(lines_to_remove+5):
+        sys.stdout.write("\033[F")  # Cursor up one line
+        sys.stdout.write("\033[K")  # Clear to the end of line
+    #sys.stdout.flush()
 
 def clear_l(clear_first=0, s='='):
-    os.system('cls' * clear_first)
+    if clear_first:
+        clear_screen()
+    #os.system('cls' * clear_first)
     print(s * line_len)
 
 

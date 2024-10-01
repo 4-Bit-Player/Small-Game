@@ -179,7 +179,6 @@ def create_index(options):
 
 
 def display_shortcuts(full=False):
-    os.system('cls')
     out = deco.print_header_r("Shortcuts", "~") + "\n"
     if full:
         out += ("i = open inventory\n"
@@ -189,8 +188,9 @@ def display_shortcuts(full=False):
             "shift + num key = instantly select an option\n"
             "ctrl + c (or ctrl + 2 for some reason) = crash the game. :)\n\n"
             "Press enter to return")
-
+    print(out)
     wait_for_keypress()
+    deco.clear_screen()
 
 def wait_for_keypress():
     msvcrt.getch()
@@ -200,27 +200,29 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = create_index(options)
 
     temp_input: str = ""
-    # os.system('cls')
+    os.system('cls')
     invalid = False
 
-
+    lines_to_clear = 15 + len(options)
 
     while True:
-        os.system('cls')
+        out = ""
         if hud:
-            sys.stdout.write(deco.player_hud(False) + "\n\n")
+            out += deco.player_hud(False) + "\n\n"
         if header:
-            sys.stdout.write(deco.print_header_r(header) + "\n")
-        print(return_screen_prt_h(options, start_at))
+            out += deco.print_header_r(header) + "\n"
+        out += return_screen_prt_h(options, start_at) + "\n\n"
         if invalid:
-            #deco.clear_l()
             temp_input = ""
-            print(f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}")
+            invalid = False
+            out += f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}"
+
         if temp_input:
-            sys.stdout.write("Action:"+str(temp_input))
+            out += "Action: " + str(temp_input)
+        sys.stdout.write(out)
         sys.stdout.flush()
         key = msvcrt.getch()
-        os.system('cls')
+        deco.clear_screen(lines_to_clear)
 
         if key in current_keyboard_layout:
             val = current_keyboard_layout[key]
@@ -260,6 +262,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             display_shortcuts(False)
         else:
             print(key)
+            os.system('cls')
 
 
 
