@@ -53,14 +53,17 @@ def check_active_quests():
     for quest in quests.active_quests:
         if not quest["hidden"]:
             show.append(quest)
-    deco.print_header("Quests", 1, "~")
-    output = ["Back"]
+
+    output = [
+        [deco.print_header_r("Quests", "~")],
+        "Back"
+    ]
     for quest in show:
         output.append(quest["name"])
         for req, amount in quest["req"].items():
             output.append([f"   {quest['type']} {req}: {quest['progress'][req]}/{amount}"])
     u_KeyInput.keyinput(output)
-    deco.clear_l(1, "")
+    deco.clear_screen()
 
 
 def progress(event: dict):
@@ -77,7 +80,7 @@ def progress(event: dict):
 
 
 def check_quests():
-    deco.clear_l(1, "")
+    deco.clear_screen()
     absolved_quest = []
     for quest in quests.active_quests:
         done = 0
@@ -107,8 +110,9 @@ def check_quests():
                 time.sleep(0.2)
                 story.show_text(quest["unlock_text"], False)
                 print()
+        print("Press enter to continue")
+        u_KeyInput.wait_for_keypress()
 
-        input("Press enter to continue")
 
 
 def unlock_quest(quest):

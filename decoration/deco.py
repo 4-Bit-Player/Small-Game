@@ -14,11 +14,15 @@ def clear_screen(lines_to_remove=50):
         sys.stdout.write("\033[K")  # Clear to the end of line
     #sys.stdout.flush()
 
+
+def full_clear():
+    os.system('cls')
+
+
 def clear_l(clear_first=0, s='='):
     if clear_first:
         clear_screen()
-    #os.system('cls' * clear_first)
-    print(s * line_len)
+    sys.stdout.write(s * line_len + "\n")
 
 
 def line_r(s='='):
@@ -27,13 +31,18 @@ def line_r(s='='):
 
 def print_header(text, clear_first=0, s="="):
     if clear_first:
-        clear_l(1, "")
+        clear_screen()
+    if len(text) + 2 >= line_len:
+        print(text)
+        return
     header = " " + text + " "
     header = str.center(header, line_len, s)
     print(header)
 
 
 def print_header_r(text, s="="):
+    if len(text) + 2 >= line_len:
+        return text
     header = " " + text + " "
     header = str.center(header, line_len, s)
     return header

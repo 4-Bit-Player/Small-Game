@@ -3,7 +3,7 @@ from decoration import deco, colors
 
 
 def buy(item):
-    deco.clear_l(1, "")
+    deco.clear_screen()
     if isinstance(item["name"], list):
         pick = int(user.random_pick_list(item["name"]))
 
@@ -49,7 +49,7 @@ def shop_sell():
         pick = user.user_input(len(options)+len(item_list))
 
         if not pick:
-            deco.clear_l(1, "")
+            deco.clear_screen()
             break
 
         if pick == 1:

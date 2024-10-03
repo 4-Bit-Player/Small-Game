@@ -91,7 +91,7 @@ def game_init():
     print("2. Yes")
     deco.clear_l()
     location_actions.settings["delete_save_on_death"] = user.user_input(2)
-    deco.clear_l(1, "")
+    deco.clear_screen()
     quests.init_quests()
     location_actions.unlocks_init()
     location_actions.location_init()
@@ -143,7 +143,7 @@ u_KeyInput.keyboard_layout_init()
 while playing:
 
     highscore = location_actions.highscore_check()
-    deco.clear_l(1, "")
+    deco.clear_screen()
 
     while user.Player["hp"] > 0:
 

@@ -74,7 +74,7 @@ def change_location():
                 if i["name"] == pick:
                     past_location = location
                     location = i
-                    deco.clear_l(1, "")
+                    deco.clear_screen()
 
     else:
         print("Where would you like to go?")
@@ -90,23 +90,23 @@ def change_location():
         print(current_list[pick])
         if current_list[pick] == "back":
             location_back()
-            deco.clear_l(1, "")
+            deco.clear_screen()
 
         elif current_list[pick] != "stay":
             for i in locations:
                 if i["name"] == current_list[pick]:
                     past_location = location
                     location = i
-                    deco.clear_l(1, "")
+                    deco.clear_screen()
         else:
-            deco.clear_l(1, "")
+            deco.clear_screen()
 
 
 def location_back():
     global location
     global past_location
     location, past_location = past_location, location
-    deco.clear_l(1, "")
+    deco.clear_screen()
 
 
 def go_to_location(location_name):
@@ -114,7 +114,7 @@ def go_to_location(location_name):
     global past_location
     past_location = location
     location = search_location(location_name["name"])
-    deco.clear_l(1, "")
+    deco.clear_screen()
 
 
 def shop(item):
@@ -129,10 +129,10 @@ def shop(item):
         else:
             item_name = item["name"]
         article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
-        deco.clear_l(1, "")
+        deco.clear_screen()
         print(f'You bought {article} {item_name}')
     else:
-        deco.clear_l(1, "")
+        deco.clear_screen()
         if isinstance(item["name"], list):
             pick = int(user.random_pick_list(item["name"]))
             item_name = item["name"][pick]
@@ -161,13 +161,11 @@ def check_money(price):
 
 
 def retire_check():
-    deco.clear_l(1, "")
-    options = ["1. No", "2. Yes"]
+    deco.clear_screen()
+    options = ["No", "Yes"]
     pick = u_KeyInput.keyinput(options, "Are you sure that you want to retire?")
     if pick == 1:
         user.Player["retired"] = True
-    else:
-        deco.clear_l(1, "")
 
 
 def search_location(location_name: str):
@@ -203,7 +201,7 @@ def inspect(current_location):
                 continue
             unlocked[curr_name]["inspect"].append(thing["u_name"])
         current_location["inspect"].clear()
-        deco.clear_l(1, "")
+        deco.clear_screen()
         return
 
     else:
@@ -221,8 +219,9 @@ def inspect(current_location):
         else:
             unlocked[curr_name]["inspect"].append(to_unlock["u_name"])
 
-    str(input("Press enter to continue..."))
-    deco.clear_l(1, "")
+    print("Press enter to continue.")
+    u_KeyInput.wait_for_keypress()
+    deco.clear_screen()
     return
 
 
@@ -263,8 +262,9 @@ def look_around(current_location):
         if drop_malus == 0:
             print("You didn't find anything useful...")
 
-        str(input("Press enter to continue"))
-        deco.clear_l(1, "")
+        print("Press enter to continue...")
+        u_KeyInput.wait_for_keypress()
+        deco.clear_screen()
 
 
 def unlock_stuff(stuff_to_unlock):
@@ -314,7 +314,6 @@ def save_load():
     ]
     pick = u_KeyInput.keyinput(options, "What do you want to do?", )
     if not pick:
-        deco.clear_l(1, "")
         return
     if pick == 1:
         save_all()
@@ -333,7 +332,6 @@ def save_all():
 
     pick = u_KeyInput.keyinput(options, "Saving Game")
     if not pick:
-        deco.clear_l(1, "")
         return
 
     else:
@@ -356,13 +354,14 @@ def save_all():
         with open("save.pkl", "wb") as save_file:
             pickle.dump(save, save_file)
             save_file.close()
-
-            deco.clear_l(1)
-            print(colors.green, "Game saved successfully!", colors.reset)
-            deco.clear_l()
-            str(input("Press enter to continue."))
-            deco.clear_l(1, "")
         user.character_loaded = True
+
+        deco.clear_l(1)
+        print(colors.green, "Game saved successfully!", colors.reset)
+        deco.clear_l()
+        print("Press enter to continue.")
+        u_KeyInput.wait_for_keypress()
+        deco.clear_screen()
 
 
 def load_all():
@@ -382,7 +381,8 @@ def load_all():
             data = pickle.load(file)
     except FileNotFoundError:
         print(colors.red, "No file found!", colors.reset)
-        str(input("Press enter to continue."))
+        print("Press enter to continue.")
+        u_KeyInput.wait_for_keypress()
         return
     if "Version" not in data:
         pass
@@ -460,11 +460,13 @@ def try_load_save(save, active_game=False):
         quest_logic.load_saved_quests(finished_q, active_q)
 
         load_unlocked(unlocked)
-        deco.clear_l(1)
+        deco.full_clear() # required, because of the tons of text
+        deco.clear_l()
         print(colors.green, "Save loaded successfully!", colors.reset)
         deco.clear_l()
-        str(input("Press enter to continue your journey."))
-        deco.clear_l(1, "")
+        print("Press enter to continue your journey.")
+        u_KeyInput.wait_for_keypress()
+        deco.clear_screen()
         return True
 
     else:
@@ -472,10 +474,11 @@ def try_load_save(save, active_game=False):
         print(colors.red, "Unable to load save!", colors.reset)
         deco.clear_l()
         if not active_game:
-            str(input("Press enter to start from the beginning."))
+            print("Press enter to start from the beginning.")
         else:
-            str(input("Press enter to continue."))
-        deco.clear_l(1, "")
+            print("Press enter to continue.")
+        u_KeyInput.wait_for_keypress()
+        deco.clear_screen()
         return False
 
 
@@ -498,10 +501,12 @@ def try_load_saved_player(save, active_game=False):
         else:
             user.deaths = 0
         user.character_loaded = True
-        deco.clear_l(1)
+        deco.full_clear() # Most likely isn't required
+        deco.clear_l()
         print(colors.green, "Player data loaded successfully!", colors.reset)
         deco.clear_l()
-        str(input("Press enter to continue your journey."))
+        print("Press enter to continue your journey.")
+        u_KeyInput.wait_for_keypress()
         return True
 
     else:
@@ -509,8 +514,9 @@ def try_load_saved_player(save, active_game=False):
         print(colors.red, "Unable to load player data!", colors.reset)
         deco.clear_l()
         if not active_game:
-            str(input("Press enter to start from the beginning."))
+            print("Press enter to start from the beginning.")
         else:
-            str(input("Press enter to continue."))
-        deco.clear_l(1, "")
+            print("Press enter to continue.")
+        u_KeyInput.wait_for_keypress()
+        deco.clear_screen()
         return False

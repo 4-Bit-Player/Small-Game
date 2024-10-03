@@ -200,7 +200,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = create_index(options)
 
     temp_input: str = ""
-    os.system('cls')
+    deco.clear_screen()
     invalid = False
 
     lines_to_clear = 15 + len(options)
@@ -226,7 +226,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         if key in current_keyboard_layout:
             val = current_keyboard_layout[key]
-            if 0 < val <= options[0][5] + 1:
+            if 0 < val <= options[0][5]:
                 return val - 1
             else:
                 invalid = True
@@ -242,7 +242,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
                 selected = temp_input
             else:
                 selected = options[0][1]
-            if 0 < int(selected) <= options[0][5]+1:
+            if 0 < int(selected) <= options[0][5]:
                 return int(selected) - 1
             else:
                 invalid = True

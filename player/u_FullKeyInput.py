@@ -11,7 +11,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = u_KeyInput.create_index(options)
 
     temp_input: str = ""
-    os.system('cls')
 
     invalid = False
     if hud:
@@ -35,6 +34,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     lines_to_remove = 15 + len(options)
 
     while True:
+        deco.clear_screen(1)
         out = u_KeyInput.return_screen_prt_h(options, start_at) + "\n\n"
 
         if invalid:
@@ -53,7 +53,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         if key in u_KeyInput.current_keyboard_layout:
             val = u_KeyInput.current_keyboard_layout[key]
-            if 0 < val <= options[0][5] + 1:
+            if 0 < val <= options[0][5]:
                 return val - 1
             else:
                 invalid = True
@@ -70,7 +70,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
                 selected = temp_input
             else:
                 selected = options[0][1]
-            if 0 < int(selected) <= options[0][5] + 1:
+            if 0 < int(selected) <= options[0][5]:
                 return int(selected) - 1
             else:
                 invalid = True

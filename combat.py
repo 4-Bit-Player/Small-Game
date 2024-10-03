@@ -15,7 +15,7 @@ def combat(current_location):
     temp_log = []
     total_hp_lost = 0
     hp_lost = 0
-    deco.clear_l(1, "")
+    deco.clear_screen()
     options: list = [[""]] + fighting_options[:]
     while fighting:
         header: str = (deco.line_r() + "\n" +
@@ -98,7 +98,7 @@ def fight_won(enemy, hp_lost, temp_log):
     deco.clear_l()
     print("\nPress enter to continue.")
     u_KeyInput.wait_for_keypress()
-    deco.clear_l(1, "")
+    deco.clear_screen()
 
 
 def enemy_drop(enemy):

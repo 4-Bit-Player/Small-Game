@@ -5,7 +5,7 @@ import importlib
 
 def open_inventory():
     inv_open = True
-    deco.clear_l(1, "")
+    deco.clear_screen()
     available_items = []
     show_items = "All"
     show_items_list = ["All", "Use-Ables", "Weapons", "Armor", "Materials"]
@@ -59,7 +59,7 @@ def open_inventory():
 
         if a_selection[0][0] == "index":
             index = a_selection[0]
-    deco.clear_l(1, "")
+    deco.clear_screen()
 
 
 def use_item(item):
@@ -71,7 +71,7 @@ def use_item(item):
                 user.check_hp_max()
             crafting.remove_item(item)
 
-            deco.clear_l(1, "")
+            deco.clear_screen()
 
             deco.player_hud()
 
@@ -132,7 +132,7 @@ def inv_inspect():
                 show.append(f'{item["item_name"]} {("x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
 
         pick = u_KeyInput.keyinput(show)
-        deco.clear_l(1, "")
+        deco.clear_screen()
         if not pick:
             inspecting = False
 
@@ -208,7 +208,6 @@ def inv_crafting():
         if overflow:
             show.append(overflow)
         pick = u_KeyInput.keyinput(show)
-        deco.clear_l(1, "")
         if not pick:
             return
 

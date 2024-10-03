@@ -133,7 +133,7 @@ def upgrading():
             pick = u_KeyInput.keyinput(options, "Upgrading Equipment")
 
             if not pick:
-                deco.clear_l(1, "")
+                deco.clear_screen()
                 return
 
             upgrade_equipment(item_list[pick-1])
@@ -142,14 +142,14 @@ def upgrading():
             print("You have nothing to upgrade right now.")
             deco.clear_l()
             print("Do something else...")
-            deco.clear_l(1, "")
+            deco.clear_screen()
             u_KeyInput.wait_for_keypress()
             working = False
 
 
 def upgrade_equipment(equip_to_upgrade):
     up_equipment = 1
-    deco.clear_l(1, "")
+    deco.clear_screen()
     while up_equipment:
         header = (deco.line_r() + "\n" +
                   f'Upgrading {equip_to_upgrade["item_name"]} '
@@ -181,7 +181,7 @@ def upgrade_equipment(equip_to_upgrade):
             pick = u_KeyInput.keyinput(options, header)
 
         if not pick:
-            deco.clear_l(1, "")
+            deco.clear_screen()
             return
 
         used_item = available_material[pick - 1]
@@ -282,7 +282,7 @@ def show_item_effects_r(item, already_did=0):
 
 def craft_list(c_list):
 
-    deco.clear_l(1, "")
+    deco.clear_screen()
     overflow = []
     selection = []
     while colors:
@@ -319,7 +319,7 @@ def craft_list(c_list):
         if overflow:
             selection.append(overflow)
         pick = u_KeyInput.keyinput(selection)
-        deco.clear_l(1, "")
+        deco.clear_screen()
 
         if not pick:
             return
