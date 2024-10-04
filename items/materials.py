@@ -1,5 +1,14 @@
 materials = [
     {
+        "item_name": "An apology from the dev :(",
+        "item_type": "material",
+        "item_desc": f"Something went wrong. I am sorry. :(\n"
+                     f"Please tell me where you got this from, so I can fix it.\n"
+                     f"(You can sell this to get a bit of money on top)",
+        "sell_price": 100,
+        "item_amount": 1,
+    },
+    {
         "item_name": "Green Herb",
         "item_type": "material",
         "item_desc": f"A green herb that can be used for crafting.",

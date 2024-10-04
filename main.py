@@ -15,6 +15,7 @@
     Add NPCs
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Added/Changed:
+    Added/changed Input system (it now also doesn't flash anymore)
     Quests
     more recipies (and also switching to selection)
     Working inventory system

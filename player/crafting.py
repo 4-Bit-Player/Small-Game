@@ -2,7 +2,6 @@ from player import user, u_KeyInput
 from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
-import importlib
 
 all_items = {}
 
@@ -56,11 +55,13 @@ def remove_item(_item, amount=1):
 
 
 def item_add(item_name, amount=1, search_in="All"):
-    _item = item_search(item_name, search_in)
     for item in user.Player["inv"]:
         if item["item_name"] == item_name:
             item["item_amount"] += amount
             return
+    _item = item_search(item_name, search_in)
+    if _item is None:
+        return
     n_item = deepcopy(_item)
     n_item["item_amount"] = amount
     user.Player["inv"].append(n_item)
@@ -69,35 +70,14 @@ def item_add(item_name, amount=1, search_in="All"):
 def item_search(item_name, search_in="All"):
     if item_name in all_items:
         return all_items[item_name]
-    if search_in in ["potion", "item", "material"]:
-        search_in = search_in + "s"
-
-    if search_in != "All":
-        package = importlib.import_module("items")
-        module_names = package.__all__
-        found_lists = []
-
-        for module_name in module_names:
-            module = importlib.import_module(f"{'items'}.{module_name}")
-            if hasattr(module, search_in):
-                found_lists.extend(getattr(module, search_in))
-
-        for item in found_lists:
-            if item["item_name"] == item_name:
-                return item
-
-    else:
-        for item_list in [items.items, potions.potions, materials.materials, armor.armor, equipment.equipment, food.food]:
-            for item in item_list:
-                if item["item_name"] == item_name:
-                    return item
-
     deco.clear_l(1)
-
-    print(f'Looking up the item "{item_name}" was not successful...')
-    print("Fuck")
-
-    str(input("Press enter to crash the program. :)"))
+    print(f'Looking up the item "{item_name}" was not successful... :(')
+    print("Please write me where you got this error, so I can fix it.")
+    print("Additionally you'll get a written apology. \nYou can sell that at a merchant for a bit of money.")
+    u_KeyInput.wait_for_keypress()
+    deco.clear_screen(6)
+    item_add("An apology from the dev :(")
+    return None
 
 
 def available_equipment_list():
@@ -248,6 +228,8 @@ def show_item_effects(item, already_did=0):
             overflow.append(f"{colors.light_blue}It {word_time} your defense by {k}{colors.reset}.")
         elif i == "def_base":
             overflow.append(f"{colors.light_blue}It {word_time} your base defense by {k}{colors.reset}.")
+        elif i == "def_multi":
+            overflow.append(f"{colors.light_blue}It {word_time} your defense multiplier by {k} %{colors.reset}.")
         elif i == "xp":
             overflow.append(f"{colors.green}It {word_time} your xp by {k} points{colors.reset}.")
         elif i == "lvl":

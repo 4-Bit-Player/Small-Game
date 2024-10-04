@@ -1,6 +1,6 @@
 import time
 from decoration import deco
-from player import user
+from player import user, u_KeyInput
 
 
 def intro_1():
@@ -14,7 +14,9 @@ def intro_1():
 
     if intro_a == 0:
         show_text(intro_text)
-        str(input("Start adventure!"))
+        print("Start adventure!")
+        u_KeyInput.wait_for_keypress()
+
 
 
 def outro_alive():

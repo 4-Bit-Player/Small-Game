@@ -179,13 +179,13 @@ def lvl_up():
 
 
 def player_atk():
-    damage = (Player["str_base"] + equip_check("str_base")) * (Player["str_multi"] + equip_check("str_multi")) + (
+    damage = (Player["str_base"] + equip_check("str_base")) * (Player["str_multi"] + equip_check("str_multi")/100) + (
         Player["str"] + equip_check("str"))
     return damage
 
 
 def player_def():
-    defense = (Player["def_base"] + equip_check("def_base")) * (Player["def_multi"] + equip_check("def_multi")) + (
+    defense = (Player["def_base"] + equip_check("def_base")) * (Player["def_multi"] + equip_check("def_multi")/100) + (
                 Player["def"] + equip_check("def"))
     return defense
 
@@ -196,7 +196,6 @@ def player_dex():
 
 def equip_check(stat):
     stat_increase = 0
-
     for equip in Equipped:
         if Equipped[equip] != "":
             for item_stat, amount in Equipped[equip]["player_affected_stats"].items():

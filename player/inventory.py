@@ -155,8 +155,8 @@ def item_inspect(item):
     if item["item_type"] in ["equipment", "armor"]:
         print(f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}')
         print("Can be equipped")
-    print()
-    str(input("Press enter to close."))
+    print("\nPress enter to close.")
+    u_KeyInput.wait_for_keypress()
 
 
 def inv_crafting():
