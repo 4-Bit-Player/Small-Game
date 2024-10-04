@@ -5,7 +5,7 @@ import sys
 
 line_len = 40
 
-def clear_screen(lines_to_remove=50):
+def clear_screen(lines_to_remove=20):
     for i in range(5):
         sys.stdout.write("\033[E") # Cursor down one line
 
@@ -166,29 +166,32 @@ def player_hud(printing=True):
         return out
 
 
-def print_in_line(text):
+def print_in_line(text:str):
     if len(text) <= line_len:
         print(text)
-    else:
-        start = 0
-        end = line_len
-        while end < len(text):
-            if text[end] != ' ':
-                while end > start and text[end] != ' ':
-                    end -= 1
-                if end == start:
-                    end = start + line_len
-            line = text[start:end]
-
-            if line[0] == " ":
-                line = line[1:]
-
-            print(line)
-
-            start = end + 1
+        return
+    start = 0
+    end = start + line_len
+    while end < len(text):
+        newline = text.find("\n", start)
+        if newline != -1:
+            if newline - start - 1 <= line_len:
+                print(text[start:newline])
+                start = newline + 1
+                end = start+line_len
+                continue
+        while end > start and text[end] != ' ':
+            end -= 1
+        if end == start:
             end = start + line_len
-
-        print(text[start:])
+        line = text[start:end]
+        while line[0] == " ":
+            line = line[1:]
+            end+=1
+        start = end + 1
+        end = start + line_len
+        print(line)
+    print(text[start:])
 
 
 def format_text_in_line(text_list: list[str]):
