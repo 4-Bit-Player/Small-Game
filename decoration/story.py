@@ -1,56 +1,62 @@
 import time
 from decoration import deco
 from player import user, u_KeyInput
+from printing.print_queue import n_print
 
 
 def intro_1():
-    deco.clear_l(1)
-    print("Please navigate using numbers.")
-    print("Skip Intro?")
-    print("1. No")
-    print("2. Yes")
-
-    intro_a = int(user.user_input(2))
+    options = [
+        [deco.line_r(), "You can navigate using numbers or using", "the arrow keys.", "", "Skip Intro?"],
+        "No",
+        "Yes",
+        [deco.line_r()]
+    ]
+    intro_a = int(u_KeyInput.keyinput(options))
 
     if intro_a == 0:
-        show_text(intro_text)
-        print("Start adventure!")
+        out = show_text(intro_text)
+        n_print(out + "Start adventure!")
         u_KeyInput.wait_for_keypress()
 
 
 
 def outro_alive():
     if user.Player["score"] == 0:
-        show_text(outro_a0)
+        return show_text(outro_a0)
 
     elif user.Player["score"] < 100:
-        show_text(outro_a100)
+        return show_text(outro_a100)
 
     elif user.Player["score"] < 300:
-        show_text(outro_a300)
+        return show_text(outro_a300)
 
     elif user.Player["score"] > 500:
-        show_text(outro_a501)
+        return show_text(outro_a501)
 
     else:
-        show_text(outro_a500)
+        return show_text(outro_a500)
 
 
 def outro_death():
-    print("You died. :(")
+    out = deco.print_header_r("You died. :(")
     if user.Player["score"] > 500:
-        show_text(outro_d500)
+        outro_d500.insert(0, out)
+        return show_text(outro_d500)
+    else:
+        return out
 
 
-def show_text(text, clear_first=True):
-    deco.clear_l(clear_first)
+def show_text(text, previous_text=""):
+    out = deco.line_r() + "\n"
     for i, line in enumerate(text):
-        deco.print_in_line(line)
+        out += deco.format_text_in_line([line]) + "\n"
+        n_print(out)
         if i < len(text):
             if not user.test:
                 time.sleep((len(line)/25))
-    deco.clear_l(False)
-
+    out += deco.line_r() + "\n"
+    n_print(out)
+    return previous_text + out
 
 outro_a0 = [
     "On the other hand...",

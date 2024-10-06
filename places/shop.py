@@ -1,13 +1,11 @@
-from player import user, crafting, inventory
+import random
+from player import user, crafting, inventory, u_KeyInput
 from decoration import deco, colors
 
 
 def buy(item):
-    deco.clear_screen()
     if isinstance(item["name"], list):
-        pick = int(user.random_pick_list(item["name"]))
-
-        item_name = item["name"][pick]
+        item_name = random.choice(item["name"])
 
     else:
         item_name = item["name"]
@@ -16,12 +14,15 @@ def buy(item):
 
     if check_money(item["price"]):
         crafting.item_add(item["item"])
-        print(f'You bought {article}{item_name}')
+        out = f'\n{colors.green}You bought {article}{item_name}{colors.reset}'
     else:
-        print(f'{colors.red}You don\'t have enough money to buy {article}{item_name} right now.{colors.reset}')
+        if isinstance(item["name"], list):
+            item_name = item["name"][0]
+            article = "an " if item_name[0].lower() in ["a", "e", "i", "o", "u"] else "a "
+            article = article if item_name[-1] not in ["s", "c", "i"] else ""
+        out = f'\n{colors.red}You don\'t have enough money to buy {article}{item_name} right now.{colors.reset}'
 
-    deco.clear_l()
-    return
+    return out
 
 
 def check_money(price):
@@ -34,19 +35,20 @@ def check_money(price):
 
 def shop_sell():
     selling = 1
-    options = ["Back", "Toggle sell one/all"]
     sell_all = False
 
     deco.clear_l(1)
-
+    overflow = ""
     while selling:
-        for number, option in enumerate(options):
-            print(f'{number + 1}. {option}')
-
-        deco.print_header("Sell one" if not sell_all else "Sell all")
-
-        item_list = inventory.list_inventory(3)
-        pick = user.user_input(len(options)+len(item_list))
+        out = [1, "Back", "Toggle sell one/all"]
+        av_items = inventory.show_inventory()
+        av_items.insert(0,1)
+        options = [[deco.line_r()], out, [deco.print_header_r("Sell one" if not sell_all else "Sell all")], av_items]
+        item_list = inventory.list_inventory()
+        if overflow:
+            options.append([overflow])
+            overflow = ""
+        pick = u_KeyInput.keyinput(options, hud=True)
 
         if not pick:
             deco.clear_screen()
@@ -58,22 +60,18 @@ def shop_sell():
 
         else:
             if sell_all:
-                deco.clear_l(1)
-                sell_item(item_list[pick-2], item_list[pick-2]["item_amount"])
-                deco.clear_l()
+                overflow = sell_item(item_list[pick-2], item_list[pick-2]["item_amount"])
 
             else:
-                deco.clear_l(1)
-                sell_item(item_list[pick - 2])
-                deco.clear_l()
+                overflow = sell_item(item_list[pick - 2])
 
 
 def sell_item(item, amount=1):
     try:
         user.Player["gold"] += item["sell_price"] * amount
         crafting.remove_item(item, amount)
-        print(f'{colors.green}Sold {amount}x {item["item_name"]} for {colors.gold}{item["sell_price"] * amount} '
-              f'Gold{colors.reset}')
+        return (f'\n{colors.green}Sold {amount}x {item["item_name"]} for {colors.gold}{item["sell_price"] * amount} '
+              f'Gold{colors.reset}\n')
 
     except KeyError:
-        print("You can't sell this Item.")
+        return "\nYou can't sell this Item.\n"

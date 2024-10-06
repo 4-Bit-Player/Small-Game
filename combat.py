@@ -4,6 +4,7 @@ from decoration import deco, colors
 import time
 import enemies
 from places import quest_logic
+from printing.print_queue import n_print
 
 
 def combat(current_location):
@@ -16,8 +17,14 @@ def combat(current_location):
     total_hp_lost = 0
     hp_lost = 0
     deco.clear_screen()
-    options: list = [[""]] + fighting_options[:]
+    options: list = [[""]] + fighting_options[:] + [[]]
+    overflow = ""
+
     while fighting:
+
+        if user.Player["hp"] <= 0:
+            return
+
         header: str = (deco.line_r() + "\n" +
                        f'You spotted a {enemy["name"]} Level {enemy["lvl"]}\n' +
                        deco.line_r())
@@ -27,14 +34,19 @@ def combat(current_location):
 
         if temp_log:
             log.append(temp_log)
-            options[1].append(temp_log)
+            options[1].append(deco.format_text_in_line([temp_log]))
+            temp_log = ""
 
-        if user.Player["hp"] <= 0:
-            return
+        if overflow:
+            options[-1] = [overflow]
+            overflow = ""
+
+        else:
+            options[-1] = [""]
 
         pick = u_KeyInput.keyinput(options, header)
         if pick == 3:
-            check_health_combat()
+            overflow = check_health_combat()
         elif pick == 2:
             if dex_check(enemy):
                 return
@@ -42,19 +54,21 @@ def combat(current_location):
                 enemy, temp_log, hp_lost = attack(enemy, 1)
         elif pick == 1:
             till_death = True
+            out = (
+                    deco.line_r() + "\n"
+                    f'You spotted a {enemy["name"]} Level {enemy["lvl"]}\n' +
+                    deco.line_r()+ "\n"
+            )
 
-            deco.clear_l(1)
-            print(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}')
-            deco.clear_l()
             if log:
                 for line in log:
-                    print(line)
-                time.sleep(.5)
+                    out += deco.format_text_in_line([line])
 
             while till_death:
                 enemy, temp_log, hp_lost = attack(enemy, 0)
-                print(temp_log)
+                out += deco.format_text_in_line([temp_log]) + "\n"
                 total_hp_lost += hp_lost
+                n_print(out)
                 time.sleep(.5)
 
                 if user.Player["hp"] <= 0:
@@ -81,52 +95,52 @@ def fight_won(enemy, hp_lost, temp_log):
     quest_logic.progress(event)
 
 
-    deco.clear_l(1)
-    print(temp_log)
-    print(f'You\'ve slain the {enemy["name"]}.')
-    print(f'The {enemy["name"]} (lvl {enemy["lvl"]}) damaged you for {colors.red}{round(hp_lost, 1)} hp{colors.reset} '
-          f'and you have {colors.green}{user.Player["hp"]:.1f} {colors.reset}hp left.')
-    print(f'You gained {colors.gold}{enemy["gold"]:.1f} Gold{colors.reset} and '
-          f'{colors.pink}{enemy["xp"]} XP{colors.reset}')
+    out = (
+        deco.line_r() + "\n" +
+        temp_log+"\n"+
+        f'You\'ve slain the {enemy["name"]}.\n'
+        f'The {enemy["name"]} (lvl {enemy["lvl"]}) damaged you for {colors.red}{round(hp_lost, 1)} hp{colors.reset} '
+        f'and you have {colors.green}{user.Player["hp"]:.1f} {colors.reset}hp left.\n'
+        f'You gained {colors.gold}{enemy["gold"]:.1f} Gold{colors.reset} and '
+        f'{colors.pink}{enemy["xp"]} XP{colors.reset}\n' +
+        deco.line_r()
+    )
 
-    enemy_drop(enemy)
+    out += enemy_drop(enemy) + "\nPress enter to continue."
 
-    user.player_add_xp(enemy["xp"])
+    out += user.player_add_xp(enemy["xp"])
     user.Player["gold"] += enemy["gold"]
     user.Player["score"] += enemy["xp"]
-
-    deco.clear_l()
-    print("\nPress enter to continue.")
+    n_print(out)
     u_KeyInput.wait_for_keypress()
     deco.clear_screen()
 
 
 def enemy_drop(enemy):
+    out = ""
     for item in enemy["drop"]:
         pick = random.randint(1, 1000)
         for amount, chance in enemy["drop"][item].items():
             if pick <= chance:
                 crafting.item_add(item, amount)
-                print(f'The {enemy["name"]} dropped {amount}x {item}')
+                out += f'The {enemy["name"]} dropped {amount}x {item}\n'
                 break
+    if out:
+        out = "\n" + out
+    return out
 
 
 def check_health_combat():
+    out = deco.line_r() + "\n"
     if user.Player["hp"] > 0.7 * user.Player["hp_max"]:
-        deco.clear_l(1)
-        print(colors.green, "You feel fine.", colors.reset)
-        deco.clear_l()
+        out += f"{colors.green}You feel fine.{colors.reset}\n"
 
     elif user.Player["hp"] > 0.4 * user.Player["hp_max"]:
-        deco.clear_l(1)
-        print(colors.gold, "You don't feel that well...", colors.reset)
-        deco.clear_l()
+        out += f"{colors.gold}You don't feel that well...{colors.reset}\n"
 
     else:
-        deco.clear_l(1)
-        print(colors.red, "You are felling unwell!", colors.reset)
-        deco.clear_l()
-
+        out += f"{colors.red}You are felling unwell!{colors.reset}\n"
+    return out + deco.line_r()
 
 def dex_check(enemy):
     player_dex = random.randint(1, round(user.player_dex()))
@@ -196,13 +210,13 @@ def en_attack(enemy):
     elif pl_defended(enemy):
         enemy_damage = max(0, enemy["str"] - user.player_def() * 2)
         user.Player["hp"] -= enemy_damage
-        temp_log = (f'You managed to partially block the attack from the {enemy["name"]}. {colors.red}'
+        temp_log = (f'You managed to partially block the attack from the {enemy["name"]}. \n{colors.red}'
                     f'You took {round(enemy_damage, 1)} damage{colors.reset}.')
 
     elif en_missed(enemy):
         enemy_damage = max(0, enemy["str"] / 2 - user.player_def())
         user.Player["hp"] -= enemy_damage
-        temp_log = (f'You managed to partially dodge the attack. You took {colors.red}'
+        temp_log = (f'You managed to partially dodge the attack. \nYou took {colors.red}'
                     f'{round(enemy_damage, 1)} damage{colors.reset}.')
 
     else:

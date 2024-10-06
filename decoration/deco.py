@@ -3,7 +3,7 @@ from player import user
 from decoration import colors
 import sys
 
-line_len = 40
+line_len = 46
 
 def clear_screen(lines_to_remove=20):
     for i in range(5):
@@ -216,7 +216,7 @@ def format_text_in_line(text_list: list[str]):
                 end = start + line_len
             out += line[start:] + "\n"
 
-    return out
+    return out[:-1]
 
 def print_in_line_wb(text):
     true_line_length = line_len - 2

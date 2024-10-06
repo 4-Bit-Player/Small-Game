@@ -1,7 +1,7 @@
 import msvcrt
 from decoration import colors, deco
+from printing.print_queue import n_print
 import os
-import sys
 
 
 # def handle_arrow_key_vert(sel_list):
@@ -110,13 +110,14 @@ english_layout = {
 
 def keyboard_layout_init():
     global current_keyboard_layout
-    os.system('cls')
-    tmp = input("What keyboard are you using?\n"
+    deco.clear_screen()
+    n_print("What keyboard are you using?\n"
                 "Type 'e' if you are using the english layout,\n"
                 "or anything else if you are using the german layout.\n"
                 "(It's just for num hotkeys)\n"
                 "Keyboard Layout: ")
-    if tmp == "e":
+
+    if input().lower() == "e":
         current_keyboard_layout = english_layout
     else:
         current_keyboard_layout = german_layout
@@ -182,13 +183,14 @@ def display_shortcuts(full=False):
     out = deco.print_header_r("Shortcuts", "~") + "\n"
     if full:
         out += ("i = open inventory\n"
-                "q = view active quests\n")
+                "q = view active quests\n"
+                "o = change options\n")
     out += ("h = open the available shortcuts\n"
             "esc = pick the first option (usually going back, unless in fights)\n"
             "shift + num key = instantly select an option\n"
             "ctrl + c (or ctrl + 2 for some reason) = crash the game. :)\n\n"
             "Press enter to return")
-    print(out)
+    n_print(out)
     wait_for_keypress()
     deco.clear_screen()
 
@@ -219,8 +221,9 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         if temp_input:
             out += "Action: " + str(temp_input)
-        sys.stdout.write(out)
-        sys.stdout.flush()
+        n_print(out)
+        #sys.stdout.write(out)
+        #sys.stdout.flush()
         key = msvcrt.getch()
         deco.clear_screen(lines_to_clear)
 

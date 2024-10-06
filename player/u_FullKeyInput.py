@@ -1,10 +1,28 @@
 import msvcrt
 import places.quest_logic
 import player.inventory
-from player import u_KeyInput
+from player import u_KeyInput, user
 from decoration import colors, deco
 import os
-import sys
+from printing.print_queue import n_print
+
+
+def change_options():
+    options = [
+        ["Should the UI be centered?"],
+        "Return",
+        "Yes",
+        "No"
+    ]
+    pick = u_KeyInput.keyinput(options, header="Options")
+    if pick == 0:
+        return
+    pick -= 1
+    user.settings["centered_screen"] = not bool(pick)
+
+
+
+
 
 
 def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
@@ -46,8 +64,9 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             out += "Action: " + str(temp_input)
 
         #print(out, end="")
-        sys.stdout.write(out)
-        sys.stdout.flush()
+        n_print(out)
+        #sys.stdout.write(out)
+        #sys.stdout.flush()
         key = msvcrt.getch()
         deco.clear_screen(lines_to_remove)
 
@@ -96,6 +115,9 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         elif key == b'h':
             u_KeyInput.display_shortcuts(True)
+
+        elif key == b'o':
+            change_options()
 
         else:
             print(key)
