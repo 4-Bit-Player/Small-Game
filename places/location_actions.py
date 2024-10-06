@@ -8,6 +8,7 @@ from copy import deepcopy
 import combat
 from decoration import deco, colors, story
 from player import user, crafting, u_KeyInput
+from printing.print_queue import n_print
 
 unlocks = {}
 unlocked = {}
@@ -16,9 +17,6 @@ location = {}
 past_location = {}
 weather_timer = 0
 weather_day = "sunny"
-settings = {
-    "delete_save_on_death": 0,
-}
 
 
 def unlocks_init():
@@ -77,17 +75,18 @@ def change_location():
                     deco.clear_screen()
 
     else:
-        print("Where would you like to go?")
+        out = [["Where would you like to go?"]]
         option = 0
         current_list = []
 
         for index, k in list(location["list_of_actions"][0]["available_locations"].items()):
             option += 1
-            print(f'{option}. {index}')
+            out.append(f'{option}. {index}')
             current_list.append(k)
-        pick = user.user_input(option)
+        n_print(out)
+        pick = u_KeyInput.keyinput(option, hud=True)
 
-        print(current_list[pick])
+        #print(current_list[pick])
         if current_list[pick] == "back":
             location_back()
             deco.clear_screen()
@@ -122,30 +121,25 @@ def shop(item):
         crafting.item_add(item["item"])
 
         if isinstance(item["name"], list):
-            pick = int(user.random_pick_list(item["name"]))
-
-            item_name = item["name"][pick]
+             item_name= random.choice(item["name"])
 
         else:
             item_name = item["name"]
         article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
-        deco.clear_screen()
-        print(f'You bought {article} {item_name}')
+        return deco.line_r() + "\n" + f'You bought {article} {item_name}\n' + deco.line_r() + "\n"
+
+
+    if isinstance(item["name"], list):
+        item_name = item["name"][0]
+
     else:
-        deco.clear_screen()
-        if isinstance(item["name"], list):
-            pick = int(user.random_pick_list(item["name"]))
-            item_name = item["name"][pick]
+        item_name = item["name"]
+    article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
 
-        else:
-            item_name = item["name"]
-        article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
-
-        deco.clear_l()
-        print(f'{colors.red}You don\'t have enough money to buy {article} {item_name} right now.{colors.reset}')
-        deco.clear_l()
-    return
-
+    return (deco.line_r() + "\n" +
+            f'{colors.red}You don\'t have enough money to buy {article} {item_name} right now.{colors.reset}' +
+            deco.line_r() + "\n"
+            )
 
 def check_hp_max():
     if user.Player["hp"] > user.Player["hp_max"]:
@@ -161,7 +155,6 @@ def check_money(price):
 
 
 def retire_check():
-    deco.clear_screen()
     options = ["No", "Yes"]
     pick = u_KeyInput.keyinput(options, "Are you sure that you want to retire?")
     if pick == 1:
@@ -186,9 +179,9 @@ def restart():
 
 def inspect(current_location):
     curr_name = current_location["name"]
+    out = ""
     if not current_location["inspect"]:
-        deco.clear_l(1)
-        print("You've seen everything here.")
+        out += (deco.line_r() + "\nYou've seen everything here.\n")
 
     elif user.test:
         for thing in current_location["inspect"]:
@@ -210,7 +203,7 @@ def inspect(current_location):
         pick = u_KeyInput.keyinput(options, "Where do you want to go?")
 
         to_unlock = current_location["inspect"].pop(pick)
-        story.show_text(to_unlock["text"])
+        out += story.show_text(to_unlock["text"])
         if to_unlock["unlocks"]:
             unlock_stuff(to_unlock)
         if curr_name not in unlocked:
@@ -219,7 +212,8 @@ def inspect(current_location):
         else:
             unlocked[curr_name]["inspect"].append(to_unlock["u_name"])
 
-    print("Press enter to continue.")
+    out += "Press enter to continue.\n"
+    n_print(out)
     u_KeyInput.wait_for_keypress()
     deco.clear_screen()
     return
@@ -227,15 +221,17 @@ def inspect(current_location):
 
 def look_around(current_location):
     pick = random.randint(1, 1000)
-    deco.clear_l(1)
-    print(f'You are wandering through the {current_location["name"]} looking for usable Items...')
+    out = deco.line_r() + f'\nYou are wandering through the {current_location["name"]} looking for usable Items...\n'
+    n_print(out)
     time.sleep(random.uniform(0.5, 2))
     if pick <= current_location["enemy_chance"]:
-        print("Suddenly you hear something behind you.")
+        out += "Suddenly you hear something behind you.\n"
+        n_print(out)
         time.sleep(1)
         combat.combat(current_location)
+        return
 
-    elif pick <= current_location["item_find_chance"]:
+    if pick <= current_location["item_find_chance"]:
         drop_malus = 0
         findable_items = list(current_location["findable_items"].keys())
         random.shuffle(findable_items)
@@ -254,17 +250,18 @@ def look_around(current_location):
                         item_ending = "s"
 
                     time.sleep(1.3)
-                    print(f'You found {colors.green}{amount}x {item}{item_ending}{colors.reset}.')
+                    out += f'You found {colors.green}{amount}x {item}{item_ending}{colors.reset}.\n'
+                    n_print(out)
 
                     break
 
         time.sleep(1)
         if drop_malus == 0:
-            print("You didn't find anything useful...")
+            out += "You didn't find anything useful...\n"
 
-        print("Press enter to continue...")
+        out += "Press enter to continue...\n"
+        n_print(out)
         u_KeyInput.wait_for_keypress()
-        deco.clear_screen()
 
 
 def unlock_stuff(stuff_to_unlock):
@@ -341,7 +338,7 @@ def save_all():
             "Player": user.Player,
             "Player_equip": user.Equipped,
             "highscore": highscore,
-            "settings": settings,
+            "settings": user.settings,
             "Version": user.Version,
             "unlocked": unlocked,
             "location": location["name"],
@@ -355,11 +352,12 @@ def save_all():
             pickle.dump(save, save_file)
             save_file.close()
         user.character_loaded = True
-
-        deco.clear_l(1)
-        print(colors.green, "Game saved successfully!", colors.reset)
-        deco.clear_l()
-        print("Press enter to continue.")
+        n_print(
+            deco.line_r() + "\n" +
+            colors.green + "Game saved successfully!" + colors.reset+ "\n" +
+            deco.line_r() + "\n" +
+            "Press enter to continue.\n"
+        )
         u_KeyInput.wait_for_keypress()
         deco.clear_screen()
 
@@ -380,8 +378,7 @@ def load_all():
         with open("save.pkl", "rb") as file:
             data = pickle.load(file)
     except FileNotFoundError:
-        print(colors.red, "No file found!", colors.reset)
-        print("Press enter to continue.")
+        n_print(colors.red + "No file found!" + colors.reset + "\n" + "Press enter to continue.\n")
         u_KeyInput.wait_for_keypress()
         return
     if "Version" not in data:
@@ -391,11 +388,10 @@ def load_all():
     else:
         try_load_save(data)
         return
-    out = ("Version not compatible. Should only the Character get loaded?\n"
-           "1. Yes\n"
-           "2. No")
-    print(out)
-    pick = user.user_input(2)
+    out = [["Version not compatible. Should only the Character get loaded?"],
+           "Yes",
+           "No"]
+    pick = u_KeyInput.keyinput(out)
     if pick:
         return
     try_load_saved_player(data)
@@ -405,8 +401,7 @@ def highscore_check():
     try:
         with open("save.pkl", "rb") as save_file:
             saved_data = pickle.load(save_file)
-            save_file.close()
-            score = saved_data["highscore"]
+        score = saved_data["highscore"]
 
     except (FileNotFoundError, KeyError):
         score = 0
@@ -434,8 +429,8 @@ def save_just_highscore():
 def try_load_save(save, active_game=False):
     global location
     global past_location
-    global settings
     global unlocked
+    user.restart()
     unlocks_init()
     location_init()
     lookup = ["Player", "Player_equip", "location", "past_location", "settings",
@@ -447,13 +442,13 @@ def try_load_save(save, active_game=False):
             break
 
     if not broken:
-        user.Player = save["Player"]
-        user.Equipped = save["Player_equip"]
+        user.Player.update(save["Player"])
+        user.Equipped.update(save["Player_equip"])
         user.deaths = save["deaths"]
         user.character_loaded = True
         location = search_location(save["location"])
         past_location = search_location(save["past_location"])
-        settings = save["settings"]
+        user.settings.update(save["settings"])
         unlocked = save["unlocked"]
         finished_q = save["finished_quests"]
         active_q = save["active_quests"]
@@ -461,31 +456,34 @@ def try_load_save(save, active_game=False):
 
         load_unlocked(unlocked)
         deco.full_clear() # required, because of the tons of text
-        deco.clear_l()
-        print(colors.green, "Save loaded successfully!", colors.reset)
-        deco.clear_l()
-        print("Press enter to continue your journey.")
+        out = (
+            deco.line_r() + "\n" +
+            f"{colors.green}Save loaded successfully!{colors.reset}\n" +
+            deco.line_r() + "\nPress enter to continue your journey."
+        )
+        n_print(out)
         u_KeyInput.wait_for_keypress()
-        deco.clear_screen()
         return True
 
     else:
-        deco.clear_l(1)
-        print(colors.red, "Unable to load save!", colors.reset)
-        deco.clear_l()
+        out = (
+            deco.line_r() + "\n" +
+            f"{colors.red}Unable to load save!{colors.reset}\n" +
+            deco.line_r() + "\n"
+        )
         if not active_game:
-            print("Press enter to start from the beginning.")
+            out += "Press enter to start from the beginning.\n"
         else:
-            print("Press enter to continue.")
+            out += "Press enter to continue.\n"
+        n_print(out)
         u_KeyInput.wait_for_keypress()
-        deco.clear_screen()
         return False
 
 
 def try_load_saved_player(save, active_game=False):
-    global settings
     unlocks_init()
     location_init()
+    user.restart()
     broken = False
     lookup = ["Player", "Player_equip", "settings"]
     for thing in lookup:
@@ -493,30 +491,31 @@ def try_load_saved_player(save, active_game=False):
             broken = True
             break
     if not broken:
-        user.Player = save["Player"]
-        user.Equipped = save["Player_equip"]
-        settings = save["settings"]
-        if "deaths" in save:
-            user.deaths = save["deaths"]
-        else:
-            user.deaths = 0
+        user.Player.update(save["Player"])
+        user.Equipped.update(save["Player_equip"])
+        user.settings.update(save["settings"])
         user.character_loaded = True
         deco.full_clear() # Most likely isn't required
-        deco.clear_l()
-        print(colors.green, "Player data loaded successfully!", colors.reset)
-        deco.clear_l()
-        print("Press enter to continue your journey.")
+        out = (
+                deco.line_r() + "\n" +
+                f"{colors.green}Player data loaded successfully!{colors.reset}\n" +
+                deco.line_r() + "\nPress enter to continue your journey."
+        )
+        n_print(out)
         u_KeyInput.wait_for_keypress()
         return True
 
     else:
-        deco.clear_l(1)
-        print(colors.red, "Unable to load player data!", colors.reset)
-        deco.clear_l()
+        out = (
+                deco.line_r() + "\n" +
+                f"{colors.red}Unable to load player data!{colors.reset}\n" +
+                deco.line_r() + "\n"
+        )
         if not active_game:
-            print("Press enter to start from the beginning.")
+            out += "Press enter to start from the beginning.\n"
         else:
-            print("Press enter to continue.")
+            out += "Press enter to continue.\n"
+        n_print(out)
         u_KeyInput.wait_for_keypress()
         deco.clear_screen()
         return False

@@ -1,6 +1,4 @@
-import random
 from copy import deepcopy
-import items.armor
 from decoration import colors
 
 
@@ -23,6 +21,7 @@ Player_default = {
     "def_multi": 1,
     "dex": 100,
     "retired": False,
+    "deaths": 0,
     "inv": [
 
     ]
@@ -31,8 +30,14 @@ Player_default = {
 Player = deepcopy(Player_default)
 character_loaded = False
 deaths = 0
+highscore = 0
 
-Equipped_default = {
+settings = {
+    "delete_save_on_death": 0,
+    "centered_screen": False,
+}
+
+Equipped_default:dict = {
     "Head": "",
     "Chest": "",
     "Legs": "",
@@ -110,52 +115,25 @@ def user_input(max_num):
     return actual_action - 1
 
 
-def show_pick_actions_dict(from_dict):
-    option = 0
-    for action in from_dict:
-        option += 1
-        print(f'{option}. {action["action_text"]}')
-        try:
-            price_color = colors.green if action["price"] <= Player["gold"] else colors.red
-            print(f'   {colors.gold}It costs {price_color}{action["price"]} Gold{colors.reset}')
-        except KeyError:
-            pass
-
-
 def return_pick_actions_dict(from_dict):
     option = 0
     out = []
     for action in from_dict:
         option += 1
         out.append(f'{action["action_text"]}')
-
-        try:
+        if "price" in action:
             price_color = colors.green if action["price"] <= Player["gold"] else colors.red
             out.append([f'   {colors.gold}It costs {price_color}{action["price"]} Gold{colors.reset}'])
-        except KeyError:
-            pass
     return out
-
-def show_pick_actions_list(from_list):
-    option = 0
-    for action in from_list:
-        option += 1
-        print(f'{option}. {action}')
-    pick = int(user_input(len(from_list)))
-    return pick
-
-
-def random_pick_list(item_list):
-    return random.randint(1, len(item_list)) - 1
 
 
 def player_add_xp(xp_amount):
     global Player
     Player["xp"] += xp_amount
-    lvl_up_check()
+    return lvl_up_check()
 
 
-def lvl_up_check():
+def lvl_up_check(overfow=""):
     global Player
     req_xp = round(90 * pow(1.1, Player["lvl"]))
     if Player["xp"] - req_xp >= 0:
@@ -163,8 +141,9 @@ def lvl_up_check():
 
         lvl_up()
 
-        print(f'You leveled up and are now {colors.turquoise}Level {Player["lvl"]}{colors.reset}!')
-        lvl_up_check()
+        overfow += f'You leveled up and are now {colors.turquoise}Level {Player["lvl"]}{colors.reset}!\n'
+        return lvl_up_check(overfow)
+    return overfow
 
 
 def lvl_up():

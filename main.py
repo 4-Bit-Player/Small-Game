@@ -31,10 +31,13 @@ import pickle
 from decoration import story, deco, colors
 from player import user, crafting, u_KeyInput
 from places import show_location_actions, location_actions, quests
+from printing import init_print
+from printing.print_queue import n_print
 
 
 def name_init():
-    user.Player["name"] = user.Player_default["name"] = input("Please enter your name:")
+    n_print("Please enter your name:")
+    user.Player["name"] = user.Player_default["name"] = input()
 
 
 def save_check():
@@ -42,11 +45,8 @@ def save_check():
         with open("save.pkl", "rb") as save_file:
             save = pickle.load(save_file)
 
-        location_actions.highscore = save["highscore"]
 
-        test = save["Player"]
-
-        if not test:
+        if not "Player" in save:
             game_init()
             return
 
@@ -55,14 +55,15 @@ def save_check():
         elif save["Version"] not in user.Compatible_versions:
             pass
         else:
-            deco.clear_l()
-            print("Save detected.\n"
-                  "Would you like to load saved data?\n"
-                  "1. Yes\n"
-                  "2. No")
-            deco.clear_l()
-
-            user_pick = user.user_input(2)
+            options = [
+                [deco.line_r(),
+                 "Save detected.",
+                 "Would you like to load the save data?",],
+                "Yes",
+                "No",
+                [deco.line_r()]
+                 ]
+            user_pick = u_KeyInput.keyinput(options)
 
             if not user_pick:
                 if not location_actions.try_load_save(save):
@@ -70,11 +71,11 @@ def save_check():
                 return
             game_init()
             return
-        print("Non Compatible save detected.\n"
-              "Would you like to try and load the character?\n"
-              "1. Yes\n"
-              "2. No")
-        user_pick = user.user_input(2)
+        options = [["Non Compatible save detected.",
+              "Would you like to try and load the character?\n"],
+              "Yes",
+              "No"]
+        user_pick = u_KeyInput.keyinput(options)
         if not user_pick:
             if not location_actions.try_load_saved_player(save):
                 game_init()
@@ -86,13 +87,11 @@ def save_check():
 
 
 def game_init():
-    deco.clear_l(1)
-    print("Do you want to play this game as a rogue like?")
-    print("1. No")
-    print("2. Yes")
-    deco.clear_l()
-    location_actions.settings["delete_save_on_death"] = user.user_input(2)
-    deco.clear_screen()
+    out = [[deco.line_r()], ["Do you want to play this game as a rogue like?", ""], [1, "No", "Yes"], [deco.line_r()]]
+    user.settings["delete_save_on_death"] = bool(u_KeyInput.keyinput(out))
+    out = [[deco.line_r()], ["Should everything be centered?", "(you can change it later as well)", ""], [1, "No", "Yes"], [deco.line_r()]]
+    user.settings["centered_screen"] = bool(u_KeyInput.keyinput(out))
+
     quests.init_quests()
     location_actions.unlocks_init()
     location_actions.location_init()
@@ -106,6 +105,9 @@ def save_update_score():
         with open("save.pkl", "rb") as save_file:
             save = pickle.load(save_file)
             save_file.close()
+        highscore = 0
+        if "highscore" in save:
+            highscore += save["highscore"]
 
         save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
         if user.character_loaded:
@@ -136,78 +138,87 @@ def restart():
     location_actions.restart()
     user.restart()
 
+def main():
+    playing = True
+    crafting.item_init()
+    save_check()
+    u_KeyInput.keyboard_layout_init()
+    while playing:
 
-playing = True
-crafting.item_init()
-save_check()
-u_KeyInput.keyboard_layout_init()
-while playing:
+        highscore = location_actions.highscore_check()
+        deco.clear_screen()
+        overflow = ""
+        while user.Player["hp"] > 0:
 
-    highscore = location_actions.highscore_check()
-    deco.clear_screen()
+            overflow = show_location_actions.show_location_actions(location_actions.location, overflow)
 
-    while user.Player["hp"] > 0:
+            if user.Player["retired"]:
+                break
 
-        show_location_actions.show_location_actions(location_actions.location)
+        if user.Player["hp"] <= 0:
+            user.Player["deaths"] += 1
+            user.deaths += 1
 
-        if user.Player["retired"]:
-            break
+        if user.settings["delete_save_on_death"]:
+            location_actions.save_just_highscore()
 
-    if user.Player["hp"] <= 0:
-        user.deaths += 1
-
-    if location_actions.settings["delete_save_on_death"]:
-        location_actions.save_just_highscore()
-
-    else:
-        save_update_score()
-
-    if user.Player["hp"] > 0:
-        story.outro_alive()
-        time.sleep(1)
-    else:
-        story.outro_death()
-        time.sleep(1)
-
-    deco.clear_l()
-
-    if user.Player["score"] > highscore:
-        print(f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!')
-    else:
-        print(f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
-              f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.')
-
-    if user.deaths > 1:
-        print(f'You died {colors.red}{user.deaths} times{colors.reset} to get this far.\n')
-
-    if not location_actions.settings["delete_save_on_death"]:
-        print("I hope you've had fun with my small project. :)")
-        print("You can make a screenshot to save the score. ^^")
-        print(deco.line_r())
-        print("What would you like to do?\n"
-              "1. Quit\n"
-              "2. Complete restart\n"
-              "3. Partial restart\n"
-              "4. Load save")
-        pick = user.user_input(4)
-        if not pick:
-            break
-        elif pick == 1:
-            restart()
-        elif pick == 2:
-            partial_restart()
         else:
-            location_actions.load_all()
+            save_update_score()
 
-    else:
-        print("I hope you've had fun with my small project. :)")
-        print("You can make a screenshot to save the score. ^^")
-        print(deco.line_r())
-        print("What would you like to do?\n",
-              "1. Quit\n",
-              "2. Restart")
-        pick = user.user_input(2)
-        if not pick:
-            break
+        if user.Player["hp"] > 0:
+            out = story.outro_alive()
+            n_print(out)
+            time.sleep(1)
         else:
-            game_init()
+            out = story.outro_death()
+            n_print(out)
+            time.sleep(1)
+        out += deco.line_r() + "\n"
+
+        if user.Player["score"] > highscore:
+            out += f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
+        else:
+            out += (f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
+                  f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.\n')
+
+        if user.deaths > 1:
+            out += f'You died {colors.red}{user.deaths} times{colors.reset} to get this far.\n\n'
+
+        if not user.settings["delete_save_on_death"]:
+            out += ("I hope you've had fun with my small project. :)\n"
+            "You can make a screenshot to save the score. ^^\n")
+            out += deco.line_r() + "\n" + "What would you like to do?"
+            options = [[out], [
+                1,
+                "Quit",
+                "Complete restart",
+                "Partial restart",
+                "Load save"]]
+            pick = u_KeyInput.keyinput(options)
+            if not pick:
+                break
+            elif pick == 1:
+                restart()
+            elif pick == 2:
+                partial_restart()
+            else:
+                location_actions.load_all()
+
+        else:
+            out += ("I hope you've had fun with my small project. :)\n"
+                    "You can make a screenshot to save the score. ^^\n")
+            out += deco.line_r() + "\n" + "What would you like to do?"
+            options = [[out], [
+                1,
+                "Quit",
+                "Restart"
+            ]]
+            pick = u_KeyInput.keyinput(options)
+            if not pick:
+                break
+            else:
+                game_init()
+
+if __name__ == '__main__':
+    init_print.init_print()
+    main()

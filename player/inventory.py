@@ -1,6 +1,8 @@
 from player import user, crafting, u_KeyInput
 from decoration import deco, colors
 import importlib
+from printing.print_queue import n_print
+from recipies import armor, weapons, use_ables
 
 
 def open_inventory():
@@ -71,13 +73,9 @@ def use_item(item):
                 user.check_hp_max()
             crafting.remove_item(item)
 
-            deco.clear_screen()
-
-            deco.player_hud()
-
             article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
             overflow.append(f'You ate {article} {item["item_name"]}')
-            overflow.append(crafting.show_item_effects_r(item, already_did=1))
+            overflow.append(crafting.show_item_effects(item, already_did=1))
 
         else:
             return "You are at full HP already."
@@ -132,11 +130,8 @@ def inv_inspect():
                 show.append(f'{item["item_name"]} {("x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
 
         pick = u_KeyInput.keyinput(show)
-        deco.clear_screen()
         if not pick:
             inspecting = False
-
-            deco.player_hud()
 
         else:
             item_inspect(user.Player["inv"][pick - 1])
@@ -146,16 +141,15 @@ def inv_inspect():
 
 
 def item_inspect(item):
-    deco.print_header(item["item_name"], 1)
+    out = deco.print_header_r(item["item_name"], 1) + "\n" + deco.format_text_in_line([item["item_desc"]]) + "\n"
 
-    deco.print_in_line(item["item_desc"])
     if item["item_type"] in ["potion", "equipment", "food", "armor"]:
         for i in crafting.show_item_effects(item):
-            print(i)
+            out += i + "\n"
     if item["item_type"] in ["equipment", "armor"]:
-        print(f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}')
-        print("Can be equipped")
-    print("\nPress enter to close.")
+        out += f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}\n"Can be equipped"'
+    out += ("\nPress enter to close.\n")
+    n_print(out)
     u_KeyInput.wait_for_keypress()
 
 
@@ -207,6 +201,7 @@ def inv_crafting():
                 show.append([""])
         if overflow:
             show.append(overflow)
+            overflow = ""
         pick = u_KeyInput.keyinput(show)
         if not pick:
             return

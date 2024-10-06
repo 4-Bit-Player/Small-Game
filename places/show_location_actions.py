@@ -4,9 +4,9 @@ from places import location_actions, shop, quest_logic
 from player import *
 import enemies
 import combat
+from printing.print_queue import n_print
 
-
-def show_location_actions(current_location):
+def show_location_actions(current_location, overflow):
     options = [[deco.format_text_in_line(current_location["welcome_text"])]]
 
     if current_location["type"] not in ["shop", "forge"]:
@@ -38,6 +38,10 @@ def show_location_actions(current_location):
     elif current_location["type"] in ["shop"]:
         pass
 
+    if overflow:
+        options.append([overflow])
+        overflow = ""
+
     pick = u_FullKeyInput.keyinput(options, header=current_location["name"], hud=True)
 
 
@@ -49,12 +53,12 @@ def show_location_actions(current_location):
             if pot_function in ["encounter", "inspect", "combat", "look_around"]:
                 actions[pot_function](current_location)
             elif pot_function in ["shop", "go_to_location", "buy"]:
-                actions[pot_function](current_location["list_of_actions"][pick])
+                overflow = actions[pot_function](current_location["list_of_actions"][pick])
             else:
                 actions[pot_function]()
 
         else:
-            print("Something is wrong with the actions: ", pot_function)
+            n_print("Something is wrong with the actions: ", pot_function)
 
     else:
         if pick == len(current_location["list_of_actions"]):
@@ -62,6 +66,7 @@ def show_location_actions(current_location):
 
         else:
             location_actions.save_load()
+    return overflow
 
 
 actions = {"encounter": enemies.encounter,
