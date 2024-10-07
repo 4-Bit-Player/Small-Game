@@ -21,7 +21,6 @@ def init_quests():
 def get_quest(quest_name):
     return deepcopy(quests[quest_name])
 
-
 quests = {
     "Unlock Dark Forest": {
         "name": "Unlock Dark Forest",

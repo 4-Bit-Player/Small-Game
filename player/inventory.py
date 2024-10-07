@@ -1,8 +1,6 @@
 from player import user, crafting, u_KeyInput
 from decoration import deco, colors
-import importlib
 from printing.print_queue import n_print
-from recipies import armor, weapons, use_ables
 
 
 def open_inventory():
@@ -160,16 +158,8 @@ def inv_crafting():
     show_items_list = ["All", "Use-Ables", "Weapons", "Armor"]
     items_list_index = 0
 
-    package = importlib.import_module("recipies")
-    module_names = package.__all__
 
-    crafting_list = []
-    for module_name in module_names:
-        module = importlib.import_module(f"{'recipies'}.{module_name}")
-        if hasattr(module, module_name):
-            crafting_list.extend(getattr(module, module_name))
-
-    for c_recipies in crafting_list:
+    for c_recipies in crafting.all_crafting_recipes.values():
         if c_recipies["req_lvl"] <= user.Player["lvl"]:
             unlocked_recipies.append(c_recipies)
     overflow = []

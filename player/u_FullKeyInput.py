@@ -7,10 +7,10 @@ import os
 from printing.print_queue import n_print
 
 
-def change_options():
+def change_ui():
     options = [
         ["Should the UI be centered?"],
-        "Return",
+        "Back",
         "Yes",
         "No"
     ]
@@ -20,6 +20,21 @@ def change_options():
     pick -= 1
     user.settings["centered_screen"] = not bool(pick)
 
+def change_options():
+    options = [
+        ["What would you like to change?\n"],
+        "Nothing (Return)",
+        "Ui (centered/left sided)",
+        "Keyboard layout"
+    ]
+    while True:
+        pick = u_KeyInput.keyinput(options, header="Options")
+        if pick == 0:
+            return
+        if pick == 1:
+            change_ui()
+        if pick == 2:
+            u_KeyInput.keyboard_layout_init()
 
 
 
@@ -32,7 +47,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
     invalid = False
     if hud:
-        tmp = [deco.player_hud(False) + "\n"]
+        tmp = [deco.player_hud() + "\n"]
         if options[0][0] == "index":
             options.insert(1, tmp)
             if header:

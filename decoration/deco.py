@@ -48,7 +48,7 @@ def print_header_r(text, s="="):
     return header
 
 
-def player_hud(printing=True):
+def player_hud():
     global line_len
     hp = str(round(user.Player["hp"], 1))
     hp_max = str(round(user.Player["hp_max"], 1))
@@ -160,10 +160,7 @@ def player_hud(printing=True):
                     straight_line * sc_len + characters[0]["corner_br"])
     line_len = len(last_line)
     out = header + "\n" + header2 + "\n" + header3 + "\n" + header4 + "\n" + last_line
-    if printing:
-        print(out)
-    else:
-        return out
+    return out
 
 
 def print_in_line(text:str):

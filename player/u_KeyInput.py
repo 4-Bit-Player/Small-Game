@@ -110,7 +110,6 @@ english_layout = {
 
 def keyboard_layout_init():
     global current_keyboard_layout
-    deco.clear_screen()
     n_print("What keyboard are you using?\n"
                 "Type 'e' if you are using the english layout,\n"
                 "or anything else if you are using the german layout.\n"
@@ -123,11 +122,10 @@ def keyboard_layout_init():
         current_keyboard_layout = german_layout
 
 
-
 def return_screen_prt_h(lists, start=1):
     num = start
     selected = 0
-    lines = []
+    lines:list[str] = []
     for line in lists:
         if line[0] == "index":
             selected = lists[0][1]
@@ -153,7 +151,8 @@ def return_screen_prt_h(lists, start=1):
                 l_line = (str(num) + ". " + str(line))
             num += 1
             lines.append(l_line)
-
+    if len(lines) == 0:
+        return ""
     return "\n".join(lines)
 
 
@@ -202,7 +201,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = create_index(options)
 
     temp_input: str = ""
-    deco.clear_screen()
     invalid = False
 
     lines_to_clear = 15 + len(options)
@@ -210,7 +208,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     while True:
         out = ""
         if hud:
-            out += deco.player_hud(False) + "\n\n"
+            out += deco.player_hud() + "\n\n"
         if header:
             out += deco.print_header_r(header) + "\n"
         out += return_screen_prt_h(options, start_at) + "\n\n"
@@ -225,7 +223,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         #sys.stdout.write(out)
         #sys.stdout.flush()
         key = msvcrt.getch()
-        deco.clear_screen(lines_to_clear)
 
         if key in current_keyboard_layout:
             val = current_keyboard_layout[key]

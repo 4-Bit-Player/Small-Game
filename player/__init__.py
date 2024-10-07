@@ -1,5 +1,7 @@
 __all__ = [
     "inventory",
     "user",
-    "crafting"
+    "crafting",
+    "u_KeyInput",
+    "u_FullKeyInput"
 ]

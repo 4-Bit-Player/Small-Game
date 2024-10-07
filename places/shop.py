@@ -37,7 +37,6 @@ def shop_sell():
     selling = 1
     sell_all = False
 
-    deco.clear_l(1)
     overflow = ""
     while selling:
         out = [1, "Back", "Toggle sell one/all"]
@@ -56,7 +55,6 @@ def shop_sell():
 
         if pick == 1:
             sell_all = not sell_all
-            deco.clear_l(1)
 
         else:
             if sell_all:

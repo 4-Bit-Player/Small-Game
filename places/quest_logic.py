@@ -2,6 +2,7 @@ import time
 from player import user, u_KeyInput
 from places import quests, locations, unlock
 from decoration import deco, story
+from printing.print_queue import n_print
 
 
 def generate_quests_for_save():
@@ -91,7 +92,8 @@ def check_quests():
         if done == len(quest["progress"]):
             absolved_quest.append(quest)
 
-    if absolved_quest:
+    if len(absolved_quest) != 0:
+        out = ""
         for quest in absolved_quest:
             quests.active_quests.remove(quest)
 
@@ -103,14 +105,15 @@ def check_quests():
 
             unlock_quest(quest)
             if "unlock_header" in quest:
-                deco.print_header(quest['unlock_header'], 0, "~")
+                out += deco.print_header_r(quest['unlock_header'], "~") + "\n"
             else:
-                deco.print_header(f"Quest {quest['name']} completed.", 0, "~")
+                out += deco.print_header_r(f"Quest {quest['name']} completed.", "~") + "\n"
+            n_print(out)
             if quest["unlock_text"]:
                 time.sleep(0.2)
-                story.show_text(quest["unlock_text"], False)
-                print()
-        print("Press enter to continue")
+                out += story.show_text(quest["unlock_text"], out) + "\n"
+        out += "Press enter to continue\n"
+        n_print(out)
         u_KeyInput.wait_for_keypress()
 
 

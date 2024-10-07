@@ -37,6 +37,7 @@ from printing.print_queue import n_print
 
 def name_init():
     n_print("Please enter your name:")
+    time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
     user.Player["name"] = user.Player_default["name"] = input()
 
 
@@ -140,7 +141,6 @@ def restart():
 
 def main():
     playing = True
-    crafting.item_init()
     save_check()
     u_KeyInput.keyboard_layout_init()
     while playing:
@@ -220,5 +220,6 @@ def main():
                 game_init()
 
 if __name__ == '__main__':
+    crafting.item_init()
     init_print.init_print()
     main()

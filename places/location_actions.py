@@ -359,7 +359,9 @@ def save_all():
             "Press enter to continue.\n"
         )
         u_KeyInput.wait_for_keypress()
-        deco.clear_screen()
+
+        #with open("save.json", "w") as file:
+        #    json.dump(save, file, indent=4)
 
 
 def load_all():

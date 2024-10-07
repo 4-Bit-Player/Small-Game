@@ -3,15 +3,22 @@ from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
 from printing.print_queue import n_print
+import recipies.weapons as r_weapons
+import recipies.armor as r_armor
+import recipies.use_ables as r_use_ables
 
 all_items = {}
-
+all_crafting_recipes = {}
 
 def item_init():
     global all_items
+    global all_crafting_recipes
     for item_list in [items.items, potions.potions, materials.materials, armor.armor, equipment.equipment, food.food]:
         for item in item_list:
             all_items[item["item_name"]] = item
+    for item_list in [r_armor.armor, r_use_ables.use_ables, r_weapons.weapons,]:
+        for item in item_list:
+            all_crafting_recipes[item["name"]] = item
 
 
 def craft(recipe):
@@ -71,8 +78,7 @@ def item_add(item_name, amount=1, search_in="All"):
 def item_search(item_name, search_in="All"):
     if item_name in all_items:
         return all_items[item_name]
-    deco.clear_l(1)
-    n_print(f'Looking up the item "{item_name}" was not successful... :(\n'
+    n_print(deco.line_r() + f'\nLooking up the item "{item_name}" was not successful... :(\n'
     "Please write me where you got this error, so I can fix it.\n"
     "Additionally you'll get a written apology. \nYou can sell that at a merchant for a bit of money.")
     u_KeyInput.wait_for_keypress()
@@ -272,7 +278,6 @@ def craft_list(c_list):
     overflow = []
     selection = []
     while colors:
-        deco.clear_l()
         selection += [
             [deco.print_header_r(c_list["name"])],
             "Back",

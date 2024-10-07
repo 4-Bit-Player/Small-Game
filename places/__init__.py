@@ -4,5 +4,7 @@ __all__ = [
     "show_location_actions",
     "shop",
     "unlock",
-    "npcs"
+    "quests",
+    "quest_unlocks",
+    "quest_logic"
 ]
