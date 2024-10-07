@@ -20,6 +20,7 @@
     more recipies (and also switching to selection)
     Working inventory system
     Saves work + completely revamped
+    Printing completely changed, allowing centering
     Improved Crafting inventory
     upgrading of equipment
     possible to sell stuff

@@ -49,6 +49,14 @@ def load_saved_quests(finished, active):
     quests.active_quests = tmp_quests
 
 
+def display_quest_description(quest):
+    out = deco.print_header_r(quest["name"], "~") + "\n"
+    n_print(out)
+    out = story.show_text(quest["description"], out)
+    n_print(out + "\nPress any key to continue...")
+    u_KeyInput.wait_for_keypress()
+
+
 def check_active_quests():
     show = []
     for quest in quests.active_quests:
@@ -63,8 +71,13 @@ def check_active_quests():
         output.append(quest["name"])
         for req, amount in quest["req"].items():
             output.append([f"   {quest['type']} {req}: {quest['progress'][req]}/{amount}"])
-    u_KeyInput.keyinput(output)
-    deco.clear_screen()
+    output.append([deco.line_r("~") + "\n"])
+    while True:
+        pick = u_KeyInput.keyinput(output)
+        if pick == 0:
+            return
+        display_quest_description(show[pick-1])
+
 
 
 def progress(event: dict):

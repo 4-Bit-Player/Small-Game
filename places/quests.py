@@ -33,6 +33,7 @@ quests = {
         "refresh_on_load": True,
         "hidden": True,
         "repeatable": False,
+        "description": [""],
         "unlock_header": "A Hidden Path",
         "unlock_text": ["You spot a hidden path.", "Maybe you can look around and find out where it leads to."]
     },
@@ -47,6 +48,7 @@ quests = {
         "refresh_on_load": True,
         "hidden": True,
         "repeatable": False,
+        "description": [""],
         "unlock_header": "The Deer",
         "unlock_text": ["While skinning the Boar you spot a rather large Deer looking in your direction.",
                         "It's fur looks like it has a faint white glow.",
@@ -64,6 +66,7 @@ quests = {
         "refresh_on_load": True,
         "hidden": True,
         "repeatable": False,
+        "description": [""],
         "unlock_header": "An old Map",
         "unlock_text": ["As you walk slowly through the dark, green undergrowth, you notice a small, withered, sack.",
                         "Inside you find a map of the camp on the bottom of the Mountain.",
@@ -82,6 +85,7 @@ quests = {
         "refresh_on_load": False,
         "hidden": False,
         "repeatable": True,
+        "description": ["Hunt 10 Boars", "You can find them in the Forest"],
         "unlock_text": ["You feel a bit faster...", f"{colors.light_blue}dex +2{colors.reset}"]
     },
     "Hunt 10 Big Boars": {
@@ -95,6 +99,7 @@ quests = {
         "refresh_on_load": False,
         "hidden": False,
         "repeatable": True,
+        "description": ["Hunt 10 Big Boars", "You can find them in the Dark Forest"],
         "unlock_text": ["You feel a bit faster...", f"{colors.light_blue}dex +3{colors.reset}"]
     },
     "Hunt 10 Skeletons": {

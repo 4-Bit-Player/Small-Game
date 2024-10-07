@@ -47,16 +47,16 @@ def outro_death():
 
 
 def show_text(text, previous_text=""):
-    out = deco.line_r() + "\n"
+    out = previous_text + deco.line_r() + "\n"
     for i, line in enumerate(text):
         out += deco.format_text_in_line([line]) + "\n"
         n_print(out)
-        if i < len(text):
+        if i < len(text) - 1:
             if not user.test:
                 time.sleep((len(line)/25))
     out += deco.line_r() + "\n"
     n_print(out)
-    return previous_text + out
+    return out
 
 outro_a0 = [
     "On the other hand...",
