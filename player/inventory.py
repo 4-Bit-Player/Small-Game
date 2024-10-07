@@ -75,7 +75,7 @@ def use_item(item):
 
             article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
             overflow.append(f'You ate {article} {item["item_name"]}')
-            overflow.append(crafting.show_item_effects(item, already_did=1))
+            overflow += (crafting.show_item_effects(item, already_did=1))
 
         else:
             return "You are at full HP already."
