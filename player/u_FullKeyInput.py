@@ -3,8 +3,9 @@ import places.quest_logic
 import player.inventory
 from player import u_KeyInput, user
 from decoration import colors, deco
-import os
-from printing.print_queue import n_print, toggle_fps
+import os, sys
+from printing import print_queue
+from printing.print_queue import n_print
 
 
 def change_ui():
@@ -26,8 +27,13 @@ def change_options():
         "Nothing (Return)",
         "Ui (centered/left sided)",
         "Keyboard layout",
-        "Toggle fps"
+        "Close the Game"
     ]
+    if sys.path[0].endswith("\Python\Small Game"):
+        options += [
+            "Toggle constant refresh",
+            "Toggle fps",
+        ]
     while True:
         pick = u_KeyInput.keyinput(options, header="Options")
         if pick == 0:
@@ -37,7 +43,12 @@ def change_options():
         elif pick == 2:
             u_KeyInput.keyboard_layout_init()
         elif pick == 3:
-            toggle_fps()
+            deco.full_clear()
+            exit()
+        elif pick == len(options)-4:
+            print_queue.toggle_constant_refresh()
+        elif pick == len(options)-3:
+            print_queue.toggle_fps()
 
 
 

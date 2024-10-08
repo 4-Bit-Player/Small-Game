@@ -1,8 +1,11 @@
+import sys
 from copy import deepcopy
 from decoration import colors
 
 
 test = False
+if not sys.path[0].endswith("\Python\Small Game"):
+    test = False
 Version = "0.6.8"
 Compatible_versions = ["0.6.8"]
 Player_default = {

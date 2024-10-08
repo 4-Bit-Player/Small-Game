@@ -5,7 +5,8 @@ import time
 from decoration import deco
 
 class PrintClass:
-    def __init__(self, q: queue.Queue):
+    def __init__(self, q: queue.Queue, test=False):
+        self.constant_refresh = False
         self.queue: queue.Queue = q
         self.max_line_chars, self.max_columns = shutil.get_terminal_size()
         self.current_output = ""
@@ -14,7 +15,7 @@ class PrintClass:
         self.output: str = ""
         self.output_lines = 50
         self.centered = False
-        self.show_fps = False
+        self.show_fps = test
         self.fps_counter = FpsCounter(self.target_fps)
 
 
@@ -31,6 +32,8 @@ class PrintClass:
                 #deco.clear_screen(self.output.count("\n")+1000, 100)
                 self.refresh_output()
 
+            if self.constant_refresh:
+                self.refresh_output()
             self.fps_counter.add_frame_time(new_frame_time, old_frame_time)
             if self.show_fps:
                 self.fps_counter.display_fps_info(self.current_output, self.output_lines)
@@ -73,10 +76,13 @@ class PrintClass:
 
 
     def get_new_output(self):
-        n_out:[str, bool] = self.queue.get()
+        n_out:list[tuple[str], bool] = self.queue.get()
         if type(n_out[0]) != tuple:
-            if n_out[0] == "toggle fps":
+            call = n_out[0]
+            if call == "toggle fps":
                 self.show_fps = not self.show_fps
+            elif call == "toggle constant refresh":
+                self.constant_refresh = not self.constant_refresh
             return
         #self.header = n_out[1]["header"] if "header" in n_out[1] else ""
         #self.hud = n_out[1]["hud"] if "hud" in n_out[1] else False
@@ -134,8 +140,8 @@ class FpsCounter:
         deco.clear_screen(line_amount + 5, 0)
         #os.system('cls')
         print(output +
-              f"\n\nOutput calculation time: {self.calculation_time: .6f} (theoretic fps: {self.theoretic_fps})"
-              f"\nSleep time: {self.sleep_time: .6f} (actual fps: {self.actual_fps})"
+              f"\n\nOutput calculation time: {self.calculation_time:.6f} (theoretic fps: {self.theoretic_fps})"
+              f"\nSleep time: {self.sleep_time:.6f} (actual fps: {self.actual_fps})"
               f"\nAverage fps: {round(sum(self.average_fps_list)/len(self.average_fps_list),6)}"
               f"\nFps calculation time needed: {round(self.self_calculation_time, 6)}")
         sys.stdout.flush()
