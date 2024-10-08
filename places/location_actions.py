@@ -1,4 +1,3 @@
-#import json
 import pickle
 import random
 import time
@@ -344,8 +343,7 @@ def save_all():
             "location": location["name"],
             "past_location": past_location["name"],
             "finished_quests": finished_quests,
-            "active_quests": active_quests,
-            "deaths": user.deaths
+            "active_quests": active_quests
 
         }
         with open("save.pkl", "wb") as save_file:
@@ -360,8 +358,6 @@ def save_all():
         )
         u_KeyInput.wait_for_keypress()
 
-        #with open("save.json", "w") as file:
-        #    json.dump(save, file, indent=4)
 
 
 def load_all():
@@ -432,11 +428,8 @@ def try_load_save(save, active_game=False):
     global location
     global past_location
     global unlocked
-    user.restart()
-    unlocks_init()
-    location_init()
     lookup = ["Player", "Player_equip", "location", "past_location", "settings",
-              "unlocked", "finished_quests", "active_quests", "deaths"]
+              "unlocked", "finished_quests", "active_quests"]
     broken = False
     for thing in lookup:
         if thing not in save:
@@ -444,9 +437,14 @@ def try_load_save(save, active_game=False):
             break
 
     if not broken:
+        user.restart()
+        unlocks_init()
+        location_init()
         user.Player.update(save["Player"])
         user.Equipped.update(save["Player_equip"])
-        user.deaths = save["deaths"]
+        if "deaths" in save:
+            if save["deaths"] > user.Player["deaths"]:
+                user.Player["deaths"] = save["deaths"]
         user.character_loaded = True
         location = search_location(save["location"])
         past_location = search_location(save["past_location"])

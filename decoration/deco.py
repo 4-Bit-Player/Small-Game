@@ -5,11 +5,11 @@ import sys
 
 line_len = 46
 
-def clear_screen(lines_to_remove=20):
-    for i in range(5):
+def clear_screen(lines_to_remove=20, lines_to_remove_ahead=5):
+    for i in range(lines_to_remove_ahead):
         sys.stdout.write("\033[E") # Cursor down one line
 
-    for i in range(lines_to_remove+5):
+    for i in range(lines_to_remove + lines_to_remove_ahead):
         sys.stdout.write("\033[F")  # Cursor up one line
         sys.stdout.write("\033[K")  # Clear to the end of line
     #sys.stdout.flush()
@@ -17,7 +17,7 @@ def clear_screen(lines_to_remove=20):
 
 def full_clear():
     os.system('cls')
-
+    pass
 
 def clear_l(clear_first=0, s='='):
     if clear_first:

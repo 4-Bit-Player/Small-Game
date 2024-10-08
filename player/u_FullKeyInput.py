@@ -4,7 +4,7 @@ import player.inventory
 from player import u_KeyInput, user
 from decoration import colors, deco
 import os
-from printing.print_queue import n_print
+from printing.print_queue import n_print, toggle_fps
 
 
 def change_ui():
@@ -25,7 +25,8 @@ def change_options():
         ["What would you like to change?\n"],
         "Nothing (Return)",
         "Ui (centered/left sided)",
-        "Keyboard layout"
+        "Keyboard layout",
+        "Toggle fps"
     ]
     while True:
         pick = u_KeyInput.keyinput(options, header="Options")
@@ -33,8 +34,10 @@ def change_options():
             return
         if pick == 1:
             change_ui()
-        if pick == 2:
+        elif pick == 2:
             u_KeyInput.keyboard_layout_init()
+        elif pick == 3:
+            toggle_fps()
 
 
 

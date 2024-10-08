@@ -37,8 +37,8 @@ from printing.print_queue import n_print
 
 
 def name_init():
-    n_print("Please enter your name:")
-    time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
+    n_print("\nPlease enter your name:")
+    #time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
     user.Player["name"] = user.Player_default["name"] = input()
 
 
@@ -158,7 +158,6 @@ def main():
 
         if user.Player["hp"] <= 0:
             user.Player["deaths"] += 1
-            user.deaths += 1
 
         if user.settings["delete_save_on_death"]:
             location_actions.save_just_highscore()
@@ -182,8 +181,8 @@ def main():
             out += (f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
                   f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.\n')
 
-        if user.deaths > 1:
-            out += f'You died {colors.red}{user.deaths} times{colors.reset} to get this far.\n\n'
+        if user.Player["deaths"] > 1:
+            out += f'You died {colors.red}{user.Player["deaths"]} times{colors.reset} to get this far.\n\n'
 
         if not user.settings["delete_save_on_death"]:
             out += ("I hope you've had fun with my small project. :)\n"

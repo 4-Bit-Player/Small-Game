@@ -29,7 +29,6 @@ Player_default = {
 
 Player = deepcopy(Player_default)
 character_loaded = False
-deaths = 0
 highscore = 0
 
 settings = {
@@ -54,14 +53,13 @@ def restart():
     global Player
     global Equipped
     global character_loaded
-    global deaths
     if test:
         Player = deepcopy(Test_Player)
     else:
         Player = deepcopy(Player_default)
     Equipped = deepcopy(Equipped_default)
     character_loaded = False
-    deaths = 0
+
 
 
 def combining_words(actions, iteration):
@@ -215,7 +213,7 @@ def check_hp_max():
 
 if test:
     # noinspection PyRedeclaration
-    Player = {
+    Test_Player = {
         "name": "",
         "hp": 1000,
         "hp_max": 1000,
