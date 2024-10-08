@@ -1,7 +1,73 @@
 import msvcrt
 from decoration import colors, deco
 from printing.print_queue import n_print
-import os
+from printing import print_queue
+from player import user, cheats
+import os, sys
+
+
+options_open = True
+
+
+def toggle_ui_centered():
+    user.settings["centered_screen"] = not user.settings["centered_screen"]
+
+def change_options():
+    global options_open
+    if options_open:
+        return
+    options_open = True
+    options = [["index",1,0,0,0,0]]
+    while True:
+        options = [options[0],
+            ["What would you like to change?\n"],
+            "Nothing (Return)",
+            "Toggle Ui (centered/left sided)",
+            f"Keyboard layout (current layout: {current_keyboard_layout['layout_name']})",
+            f"Change your name (current name: {user.Player['name']})",
+            "Close the Game",
+        ]
+        if sys.path[0].endswith("\Python\Small Game"):
+            options += [
+                f"Cheat Menu",
+                f"Toggle test setting (currently: {user.test})",
+                f"Toggle constant refresh (currently: {print_queue.constant_refresh})",
+                f"Toggle fps (currently: {print_queue.show_fps})",
+            ]
+
+        pick = keyinput(options, header="Options")
+        if pick == 0:
+            options_open = False
+            return
+        if pick == 1:
+            toggle_ui_centered()
+        elif pick == 2:
+            keyboard_layout_init()
+        elif pick == 3:
+            name_init()
+        elif pick == 4:
+            if user_confirmation("close the game"):
+                deco.full_clear()
+                exit()
+        elif pick == len(options)-6:
+            cheats.cheat_menu()
+        elif pick == len(options)-5:
+            user.toggle_test()
+        elif pick == len(options)-4:
+            print_queue.toggle_constant_refresh()
+        elif pick == len(options)-3:
+            print_queue.toggle_fps()
+
+
+def user_confirmation(stuff_to_confirm:str):
+    pick = keyinput([[f"Are you sure that you want to {stuff_to_confirm}?"], "No", "Yes"])
+    if pick == 0:
+        return False
+    return True
+
+
+
+
 
 
 # def handle_arrow_key_vert(sel_list):
@@ -94,6 +160,7 @@ german_layout = {
     b'/': 7,
     b'(': 8,
     b')': 9,
+    "layout_name":"german"
 }
 english_layout = {
     b'!': 1,
@@ -105,8 +172,14 @@ english_layout = {
     b'&': 7,
     b'*': 8,
     b'(': 9,
+    "layout_name":"english"
 }
 
+
+def name_init():
+    n_print("\nPlease enter your name:")
+    #time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
+    user.Player["name"] = user.Player_default["name"] = input()
 
 def keyboard_layout_init():
     global current_keyboard_layout
@@ -181,10 +254,12 @@ def create_index(options):
 def display_shortcuts(full=False):
     out = deco.print_header_r("Shortcuts", "~") + "\n"
     if full:
-        out += ("i = open inventory\n"
-                "q = view active quests\n"
-                "o = change options\n")
+        out += (
+            "i = open inventory\n"
+            "q = view active quests\n"
+            )
     out += ("h = open the available shortcuts\n"
+            "o = change options\n"
             "esc = pick the first option (usually going back, unless in fights)\n"
             "shift + num key = instantly select an option\n"
             "ctrl + c (or ctrl + 2 for some reason) = crash the game. :)\n\n"
@@ -260,6 +335,8 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             raise KeyboardInterrupt
         elif key == b'h':
             display_shortcuts(False)
+        elif key == b'o':
+            change_options()
         else:
             print(key)
             os.system('cls')

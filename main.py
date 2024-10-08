@@ -36,12 +36,6 @@ from printing import init_print
 from printing.print_queue import n_print
 
 
-def name_init():
-    n_print("\nPlease enter your name:")
-    #time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
-    user.Player["name"] = user.Player_default["name"] = input()
-
-
 def save_check():
     try:
         with open("save.pkl", "rb") as save_file:
@@ -97,7 +91,7 @@ def game_init():
     quests.init_quests()
     location_actions.unlocks_init()
     location_actions.location_init()
-    name_init()
+    u_KeyInput.name_init()
     story.intro_1()
     user.restart()
 
@@ -132,18 +126,9 @@ def partial_restart():
     user.restart()
 
 
-def restart():
-    u_KeyInput.display_shortcuts(True)
-    quests.init_quests()
-    location_actions.unlocks_init()
-    location_actions.location_init()
-    location_actions.restart()
-    user.restart()
-
 def main():
     playing = True
     save_check()
-    u_KeyInput.keyboard_layout_init()
     while playing:
 
         highscore = location_actions.highscore_check()
@@ -198,7 +183,7 @@ def main():
             if not pick:
                 break
             elif pick == 1:
-                restart()
+                location_actions.restart()
             elif pick == 2:
                 partial_restart()
             else:
@@ -222,4 +207,6 @@ def main():
 if __name__ == '__main__':
     crafting.item_init()
     init_print.init_print()
+    u_KeyInput.keyboard_layout_init()
+    u_KeyInput.options_open = False
     main()

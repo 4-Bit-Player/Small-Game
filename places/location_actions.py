@@ -1,7 +1,7 @@
 import pickle
 import random
 import time
-from places import unlock, quest_logic
+from places import unlock, quest_logic, quests
 from places import locations as loc
 from copy import deepcopy
 import combat
@@ -166,7 +166,7 @@ def search_location(location_name: str):
             return i
 
 
-def restart():
+def reset_locations():
     global location
     global past_location
     global weather_timer
@@ -315,6 +315,15 @@ def save_load():
         save_all()
     else:
         load_all()
+
+
+def restart():
+    u_KeyInput.display_shortcuts(True)
+    quests.init_quests()
+    unlocks_init()
+    location_init()
+    reset_locations()
+    user.restart()
 
 
 def save_all():

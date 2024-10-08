@@ -214,6 +214,11 @@ def check_hp_max():
         Player["hp"] = Player["hp_max"]
 
 
+def toggle_test():
+    global test
+    test = not test
+
+
 if test:
     # noinspection PyRedeclaration
     Test_Player = {

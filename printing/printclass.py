@@ -79,10 +79,10 @@ class PrintClass:
         n_out:list[tuple[str], bool] = self.queue.get()
         if type(n_out[0]) != tuple:
             call = n_out[0]
-            if call == "toggle fps":
-                self.show_fps = not self.show_fps
-            elif call == "toggle constant refresh":
-                self.constant_refresh = not self.constant_refresh
+            if call == "show fps":
+                self.show_fps = n_out[1]
+            elif call == "constant refresh":
+                self.constant_refresh = n_out[1]
             return
         #self.header = n_out[1]["header"] if "header" in n_out[1] else ""
         #self.hud = n_out[1]["hud"] if "hud" in n_out[1] else False

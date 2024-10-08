@@ -54,8 +54,10 @@ def show_text(text, previous_text=""):
         if i < len(text) - 1:
             if not user.test:
                 time.sleep((len(line)/25))
+    time.sleep(0.2)
     out += deco.line_r() + "\n"
     n_print(out)
+    time.sleep(0.2)
     return out
 
 outro_a0 = [

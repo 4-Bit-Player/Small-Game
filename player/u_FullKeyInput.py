@@ -1,57 +1,10 @@
 import msvcrt
 import places.quest_logic
 import player.inventory
-from player import u_KeyInput, user
+from player import u_KeyInput
 from decoration import colors, deco
-import os, sys
-from printing import print_queue
+import os
 from printing.print_queue import n_print
-
-
-def change_ui():
-    options = [
-        ["Should the UI be centered?"],
-        "Back",
-        "Yes",
-        "No"
-    ]
-    pick = u_KeyInput.keyinput(options, header="Options")
-    if pick == 0:
-        return
-    pick -= 1
-    user.settings["centered_screen"] = not bool(pick)
-
-def change_options():
-    options = [
-        ["What would you like to change?\n"],
-        "Nothing (Return)",
-        "Ui (centered/left sided)",
-        "Keyboard layout",
-        "Close the Game"
-    ]
-    if sys.path[0].endswith("\Python\Small Game"):
-        options += [
-            "Toggle constant refresh",
-            "Toggle fps",
-        ]
-    while True:
-        pick = u_KeyInput.keyinput(options, header="Options")
-        if pick == 0:
-            return
-        if pick == 1:
-            change_ui()
-        elif pick == 2:
-            u_KeyInput.keyboard_layout_init()
-        elif pick == 3:
-            deco.full_clear()
-            exit()
-        elif pick == len(options)-4:
-            print_queue.toggle_constant_refresh()
-        elif pick == len(options)-3:
-            print_queue.toggle_fps()
-
-
-
 
 
 def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
@@ -146,7 +99,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             u_KeyInput.display_shortcuts(True)
 
         elif key == b'o':
-            change_options()
+            u_KeyInput.change_options()
 
         else:
             print(key)
