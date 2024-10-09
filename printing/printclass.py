@@ -40,10 +40,13 @@ class PrintClass:
 
 
             new_frame_time = time.perf_counter()
-            time.sleep(max(0.0, self.target_fps_time - (new_frame_time - old_frame_time)))
+            self.sleep(max(0.0, self.target_fps_time - (new_frame_time - old_frame_time)))
             old_frame_time = time.perf_counter()
 
-
+    def change_fps(self, new_fps_limit):
+        self.fps_counter.update_fps_goal(new_fps_limit)
+        self.target_fps: int = new_fps_limit
+        self.target_fps_time: float = 1.0 / new_fps_limit
 
     def refresh_output(self):
         new_output = ""
@@ -83,6 +86,8 @@ class PrintClass:
                 self.show_fps = n_out[1]
             elif call == "constant refresh":
                 self.constant_refresh = n_out[1]
+            elif call == "change fps":
+                self.change_fps(n_out[1])
             return
         #self.header = n_out[1]["header"] if "header" in n_out[1] else ""
         #self.hud = n_out[1]["hud"] if "hud" in n_out[1] else False
@@ -95,14 +100,20 @@ class PrintClass:
             return False
         return True
 
+    @staticmethod
+    def sleep(seconds):
+        t_start = time.perf_counter()
+        t_stop = t_start + seconds
+        while time.perf_counter() < t_stop:
+            time.sleep(0.00001)
+            pass
+
 
 
 
 
 class FpsCounter:
     def __init__(self, fps_goal):
-        self.last_actual_calculation_time = 0.0
-        self.calculation_time = time.perf_counter()
         self.sleep_time = 0.0
         self.theoretic_fps = "---"
         self.actual_fps = "---"
@@ -113,6 +124,11 @@ class FpsCounter:
         self.calculation_time = time.perf_counter()
         self.self_calculation_time = 0.0
 
+    def update_fps_goal(self, new_fps_goal):
+        self.average_accuracy = int(new_fps_goal * 2)
+        self.average_fps_list = [1 for _ in range(self.average_accuracy)]
+        self.average_fps_index = 0
+
     def add_frame_time(self, old_end_time, new_start_time):
         self.self_calculation_time = old_end_time - self.self_calculation_start
         self.self_calculation_start = time.perf_counter()
@@ -120,8 +136,6 @@ class FpsCounter:
         self.sleep_time = new_start_time - old_end_time
 
         if self.calculation_time != 0:
-
-            self.last_actual_calculation_time = self.calculation_time
             self.theoretic_fps = str(round(1/self.calculation_time, 6))
         else:
             self.theoretic_fps = "---"

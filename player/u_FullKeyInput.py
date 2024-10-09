@@ -97,7 +97,8 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         elif key == b'h':
             u_KeyInput.display_shortcuts(True)
-
+        elif key == b'\x00':
+            u_KeyInput.handle_f_keys()
         elif key == b'o':
             u_KeyInput.change_options()
 

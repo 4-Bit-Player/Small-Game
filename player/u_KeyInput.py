@@ -1,4 +1,5 @@
 import msvcrt
+import time
 from decoration import colors, deco
 from printing.print_queue import n_print
 from printing import print_queue
@@ -31,8 +32,8 @@ def change_options():
             options += [
                 f"Cheat Menu",
                 f"Toggle test setting (currently: {user.test})",
-                f"Toggle constant refresh (currently: {print_queue.constant_refresh})",
-                f"Toggle fps (currently: {print_queue.show_fps})",
+                f"Toggle constant refresh (currently: {print_queue._constant_refresh})",
+                f"Toggle fps (currently: {print_queue._show_fps})",
             ]
 
         pick = keyinput(options, header="Options")
@@ -47,8 +48,7 @@ def change_options():
             name_init()
         elif pick == 4:
             if user_confirmation("close the game"):
-                deco.full_clear()
-                exit()
+                exit_game()
         elif pick == len(options)-6:
             cheats.cheat_menu()
         elif pick == len(options)-5:
@@ -261,8 +261,8 @@ def display_shortcuts(full=False):
     out += ("h = open the available shortcuts\n"
             "o = change options\n"
             "esc = pick the first option (usually going back, unless in fights)\n"
-            "shift + num key = instantly select an option\n"
-            "ctrl + c (or ctrl + 2 for some reason) = crash the game. :)\n\n"
+            "shift + number key (not num pad)= instantly select an option\n"
+            "ctrl + c = crash the game. :)\n\n"
             "Press enter to return")
     n_print(out)
     wait_for_keypress()
@@ -337,20 +337,55 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             display_shortcuts(False)
         elif key == b'o':
             change_options()
+        elif key == b'\x00':
+            handle_f_keys()
         else:
             print(key)
             os.system('cls')
 
 
 
+def handle_f_keys():
+    char = msvcrt.getch()
+    if char == b';': # F1
+        pass
+    elif char == b'<': # F2
+        pass
+    elif char == b'=': # F3
+        pass
+    elif char == b'>': # F4
+        pass
+    elif char == b'?': # F5
+        print_queue.toggle_constant_refresh()
+    elif char == b'@': # F6
+        print_queue.toggle_fps()
+    elif char == b'A': # F7
+        change_fps()
+    elif char == b'B': # F8
+        pass
+    elif char == b'C': # F9
+        pass
+    elif char == b'D': # F10
+        pass
+    else:
+        print("f? ",  char)
 
-# index = [
-#     "index", 101,
-#     "persistent", 0]
 
-# l_stuff = [1, "Apple"]
-# r_stuff = [0, f"{colors.red}▬{colors.reset}"*10]
-# w_stuff = [1, "Enemy1", "Enemy2", "Enemy3", ]
-# listed_stuff = [index, r_stuff, l_stuff,  r_stuff, w_stuff, r_stuff, w_stuff, ]
+def exit_game():
+    deco.full_clear()
+    exit()
 
-
+def change_fps():
+    fps_shown = False
+    if print_queue._show_fps:
+        print_queue.toggle_fps()
+        fps_shown = True
+    try:
+        n_print("\nWhat should be the new fps limit?\n")
+        new_limit = float(input("Limit: "))
+        print_queue.change_fps_limit(new_limit)
+    except ValueError:
+        n_print("\nInvalid input")
+        time.sleep(0.5)
+    if fps_shown:
+        print_queue.toggle_fps()

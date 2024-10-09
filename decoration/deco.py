@@ -16,7 +16,7 @@ def clear_screen(lines_to_remove=20, lines_to_remove_ahead=5):
 
 
 def full_clear():
-    os.system('cls')
+    sys.stdout.write("\033c") # resets the console
     pass
 
 def clear_l(clear_first=0, s='='):

@@ -107,7 +107,7 @@ def save_update_score():
 
         save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
         if user.character_loaded:
-            save["deaths"] = user.deaths
+            save["Player"]["deaths"] = user.Player["deaths"]
 
         with open("save.pkl", "wb") as u_save_file:
             pickle.dump(save, u_save_file)

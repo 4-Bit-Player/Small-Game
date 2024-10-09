@@ -20,7 +20,7 @@ def init_print():
         return
     started = True
 
-    print_thread = threading.Thread(target=_exec_print_thread, args=[print_queue.print_queue], daemon=True)
+    print_thread = threading.Thread(target=_exec_print_thread, args=[print_queue._print_queue], daemon=True)
     print_thread.start()
 
 
