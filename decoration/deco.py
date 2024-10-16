@@ -1,4 +1,3 @@
-import os
 from player import user
 from decoration import colors
 import sys
