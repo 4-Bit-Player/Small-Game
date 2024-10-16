@@ -22,3 +22,26 @@ def toggle_constant_refresh():
 
 def change_fps_limit(new_fps):
     _print_queue.put(["change fps", new_fps])
+
+
+class TemporaryDisablePrintUpdates:
+    def __enter__(self):
+        self.fps_state = _show_fps
+        self.constat_refresh_state = _constant_refresh
+
+        if _show_fps:
+            toggle_fps()
+        if _constant_refresh:
+            toggle_constant_refresh()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        if self.fps_state and not _show_fps:
+            toggle_fps()
+
+        if self.constat_refresh_state and not _constant_refresh:
+            toggle_constant_refresh()
+
+        if exc_tb is None and exc_val is None and exc_tb is None:
+            return True
+        return False

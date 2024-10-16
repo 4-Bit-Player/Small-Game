@@ -1,7 +1,9 @@
+import time
 from numbers import Number
 from player import user, u_KeyInput
 from decoration import deco
-from printing.print_queue import n_print
+from player.crafting import item_add
+from printing.print_queue import n_print, TemporaryDisablePrintUpdates
 from places import location_actions
 
 def cheat_menu():
@@ -11,7 +13,8 @@ def cheat_menu():
         "Return",
         "Change stats",
         "Reset Player",
-        "Reset Everything"
+        "Reset Everything",
+        "Give Item",
     ]
     while True:
         pick = u_KeyInput.keyinput(options)
@@ -19,12 +22,14 @@ def cheat_menu():
             return
         if pick == 1:
             change_stats()
-        if pick == 2:
+        elif pick == 2:
             if u_KeyInput.user_confirmation("reset the character"):
                 user.restart()
-        if pick == 3:
+        elif pick == 3:
             if u_KeyInput.user_confirmation("reset EVERYTHING"):
                 location_actions.restart()
+        elif pick == 4:
+            give_item()
 
 
 
@@ -48,11 +53,32 @@ def change_stats():
 
 def change_that_stat(stat):
     n_print(f"Please enter a new value for the stat ({stat})\n(leave empty to return)\n\nCurrent Value: {user.Player[stat]}\nNew Value:")
-    pick = input()
-    if pick == "":
-        return
-    try:
-        val = float(pick)
-        user.Player[stat] = val
-    except ValueError:
-        return
+    with TemporaryDisablePrintUpdates() as _:
+        pick = input()
+        if pick == "":
+            return
+        try:
+            val = float(pick)
+            user.Player[stat] = val
+        except ValueError:
+            return
+
+
+def give_item():
+    out = "Enter the item name you want to get: "
+    n_print(out)
+    with TemporaryDisablePrintUpdates() as _:
+        item_name = input()
+        if not item_name:
+            return
+        n_print(f"How many do you want to get of {item_name}?\nAmount: ")
+        item_amount = input()
+        if not item_amount:
+            return
+        try:
+            item_amount = int(item_amount)
+        except ValueError:
+            return
+        if item_add(item_name, item_amount, False):
+            n_print(f"{item_name} x {item_amount} added successfully")
+            time.sleep(1)

@@ -40,7 +40,7 @@ class PrintClass:
 
 
             new_frame_time = time.perf_counter()
-            self.sleep(max(0.0, self.target_fps_time - (new_frame_time - old_frame_time)))
+            self.sleep(self.target_fps_time - (new_frame_time - old_frame_time))
             old_frame_time = time.perf_counter()
 
     def change_fps(self, new_fps_limit):
@@ -96,16 +96,17 @@ class PrintClass:
 
 
     def check_queue(self):
-        if self.queue.qsize() == 0:
-            return False
-        return True
+        return self.queue.qsize() != 0
+
 
     @staticmethod
     def sleep(seconds):
+        if seconds <= 0:
+            return
         t_start = time.perf_counter()
         t_stop = t_start + seconds
         while time.perf_counter() < t_stop:
-            time.sleep(0.00001)
+            time.sleep(0.0000001)
             pass
 
 
@@ -114,26 +115,36 @@ class PrintClass:
 
 class FpsCounter:
     def __init__(self, fps_goal):
+        self.fps_goal = fps_goal
         self.sleep_time = 0.0
         self.theoretic_fps = "---"
         self.actual_fps = "---"
         self.average_accuracy = fps_goal*2
         self.average_fps_list = [1 for _ in range(self.average_accuracy)]
         self.average_fps_index = 0
+        self.average_output_calc_time_list = [1 for _ in range(self.average_accuracy)]
+        self.average_output_calc_time_index = 0
         self.self_calculation_start = time.perf_counter()
         self.calculation_time = time.perf_counter()
         self.self_calculation_time = 0.0
+        self.should_sleep_time = 0.0
 
     def update_fps_goal(self, new_fps_goal):
-        self.average_accuracy = int(new_fps_goal * 2)
+        self.fps_goal = new_fps_goal
+        self.average_accuracy = min(1000, int(new_fps_goal * 2))
         self.average_fps_list = [1 for _ in range(self.average_accuracy)]
+        self.average_output_calc_time_list = [1 for _ in range(self.average_accuracy)]
         self.average_fps_index = 0
+        self.average_output_calc_time_index = 0
 
     def add_frame_time(self, old_end_time, new_start_time):
+        self.should_sleep_time = (1/self.fps_goal) - self.self_calculation_time - self.calculation_time
         self.self_calculation_time = old_end_time - self.self_calculation_start
         self.self_calculation_start = time.perf_counter()
         self.calculation_time = time.perf_counter() - new_start_time
         self.sleep_time = new_start_time - old_end_time
+        self.average_output_calc_time_list[self.average_output_calc_time_index] = self.calculation_time
+        self.average_output_calc_time_index = (self.average_output_calc_time_index + 1) % self.average_accuracy
 
         if self.calculation_time != 0:
             self.theoretic_fps = str(round(1/self.calculation_time, 6))
@@ -151,14 +162,16 @@ class FpsCounter:
 
 
     def display_fps_info(self, output:str, line_amount:int):
-        deco.clear_screen(line_amount + 5, 0)
+        deco.clear_screen(line_amount + 6, 0)
         #os.system('cls')
         print(output +
               f"\n\nOutput calculation time: {self.calculation_time:.6f} (theoretic fps: {self.theoretic_fps})"
-              f"\nSleep time: {self.sleep_time:.6f} (actual fps: {self.actual_fps})"
-              f"\nAverage fps: {round(sum(self.average_fps_list)/len(self.average_fps_list),6)}"
-              f"\nFps calculation time needed: {round(self.self_calculation_time, 6)}")
-        sys.stdout.flush()
+              f"\nAverage output calculation time: {sum(self.average_output_calc_time_list)/self.average_accuracy:.6f}"
+              f"\nSleep time:            {self.sleep_time:.6f} (actual fps: {self.actual_fps})"
+              f"\nShould have slept for: {self.should_sleep_time:.6f}"
+              f"\nAverage fps: {sum(self.average_fps_list)/len(self.average_fps_list):.6f}"
+              f"\nFps calculation time needed: {self.self_calculation_time:.6f}")
+        #sys.stdout.flush()
 
 
 

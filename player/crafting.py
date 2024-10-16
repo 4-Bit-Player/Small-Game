@@ -29,7 +29,7 @@ def craft(recipe):
                 if item == u_item["item_name"]:
                     remove_item(u_item, quantity)
 
-        item_add(recipe["result"], recipe["re_amount"], recipe["type"])
+        item_add(recipe["result"], recipe["re_amount"])
 
         return [f'{colors.green}You crafted {recipe["re_amount"]}x {recipe["name"]}.{colors.reset}']
     else:
@@ -58,32 +58,38 @@ def remove_item(_item, amount=1):
     if _item["item_type"] == "equipment":
         if _item["equipped"]:
             user.equip_item(_item)
+    user.Player["inv"].remove(_item)
 
-    user.Player["inv"] = [item for item in user.Player["inv"] if item != _item]
 
-
-def item_add(item_name, amount=1, search_in="All"):
+def item_add(item_name, amount=1, apology=True) -> bool:
     for item in user.Player["inv"]:
         if item["item_name"] == item_name:
             item["item_amount"] += amount
-            return
-    _item = item_search(item_name, search_in)
-    if _item is None:
-        return
-    n_item = deepcopy(_item)
+            return True
+    n_item = item_search(item_name, apology)
+    if n_item is None:
+        return False
     n_item["item_amount"] = amount
     user.Player["inv"].append(n_item)
+    return True
 
 
-def item_search(item_name, search_in="All"):
+def item_search(item_name, apology=True) -> dict | None:
     if item_name in all_items:
-        return all_items[item_name]
+        return deepcopy(all_items[item_name])
+    if not apology:
+        n_print(f"Failed to find {item_name}...\n"
+                f"(Press enter to continue)")
+        u_KeyInput.wait_for_keypress()
+        deco.clear_screen(6)
+        return None
     n_print(deco.line_r() + f'\nLooking up the item "{item_name}" was not successful... :(\n'
     "Please write me where you got this error, so I can fix it.\n"
-    "Additionally you'll get a written apology. \nYou can sell that at a merchant for a bit of money.")
+    "Additionally you'll get a written apology. \nYou can sell that at a merchant for a bit of money.\n"
+    "(Press enter to continue)")
     u_KeyInput.wait_for_keypress()
     deco.clear_screen(6)
-    item_add("An apology from the dev :(")
+    item_add("An apology from the dev :(", 1, False)
     return None
 
 

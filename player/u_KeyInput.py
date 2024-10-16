@@ -278,8 +278,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     temp_input: str = ""
     invalid = False
 
-    lines_to_clear = 15 + len(options)
-
     while True:
         out = ""
         if hud:
@@ -295,8 +293,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         if temp_input:
             out += "Action: " + str(temp_input)
         n_print(out)
-        #sys.stdout.write(out)
-        #sys.stdout.flush()
         key = msvcrt.getch()
 
         if key in current_keyboard_layout:
@@ -376,16 +372,16 @@ def exit_game():
     exit()
 
 def change_fps():
-    fps_shown = False
-    if print_queue._show_fps:
-        print_queue.toggle_fps()
-        fps_shown = True
-    try:
-        n_print("\nWhat should be the new fps limit?\n")
-        new_limit = float(input("Limit: "))
-        print_queue.change_fps_limit(new_limit)
-    except ValueError:
-        n_print("\nInvalid input")
-        time.sleep(0.5)
-    if fps_shown:
-        print_queue.toggle_fps()
+    with print_queue.TemporaryDisablePrintUpdates() as _:
+        invalid = True
+        try:
+            n_print("\nWhat should be the new fps limit?\n")
+            new_limit = float(input("Limit: "))
+            if 1_000_001 > new_limit > 0:
+                invalid = False
+                print_queue.change_fps_limit(new_limit)
+        except ValueError:
+            pass
+        if invalid:
+            n_print("\nInvalid input")
+            time.sleep(0.5)

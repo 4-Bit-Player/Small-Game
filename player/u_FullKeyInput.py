@@ -45,10 +45,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         if temp_input:
             out += "Action: " + str(temp_input)
 
-        #print(out, end="")
         n_print(out)
-        #sys.stdout.write(out)
-        #sys.stdout.flush()
         key = msvcrt.getch()
         deco.clear_screen(lines_to_remove)
 
