@@ -159,7 +159,7 @@ def inv_crafting():
     items_list_index = 0
 
 
-    for c_recipies in crafting.all_crafting_recipes.values():
+    for c_recipies in crafting._all_crafting_recipes.values():
         if c_recipies["req_lvl"] <= user.Player["lvl"]:
             unlocked_recipies.append(c_recipies)
     overflow = []

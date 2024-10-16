@@ -7,18 +7,18 @@ import recipies.weapons as r_weapons
 import recipies.armor as r_armor
 import recipies.use_ables as r_use_ables
 
-all_items = {}
-all_crafting_recipes = {}
+_all_items = {}
+_all_crafting_recipes = {}
 
 def item_init():
-    global all_items
-    global all_crafting_recipes
+    global _all_items
+    global _all_crafting_recipes
     for item_list in [items.items, potions.potions, materials.materials, armor.armor, equipment.equipment, food.food]:
         for item in item_list:
-            all_items[item["item_name"]] = item
+            _all_items[item["item_name"]] = item
     for item_list in [r_armor.armor, r_use_ables.use_ables, r_weapons.weapons,]:
         for item in item_list:
-            all_crafting_recipes[item["name"]] = item
+            _all_crafting_recipes[item["name"]] = item
 
 
 def craft(recipe):
@@ -75,8 +75,8 @@ def item_add(item_name, amount=1, apology=True) -> bool:
 
 
 def item_search(item_name, apology=True) -> dict | None:
-    if item_name in all_items:
-        return deepcopy(all_items[item_name])
+    if item_name in _all_items:
+        return deepcopy(_all_items[item_name])
     if not apology:
         n_print(f"Failed to find {item_name}...\n"
                 f"(Press enter to continue)")

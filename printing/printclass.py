@@ -19,7 +19,7 @@ class PrintClass:
         self.fps_counter = FpsCounter(self.target_fps)
 
 
-    def start(self):
+    def run(self):
         old_frame_time = time.perf_counter()
         new_frame_time = time.perf_counter() + 1
         while True:

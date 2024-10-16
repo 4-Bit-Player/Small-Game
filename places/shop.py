@@ -51,7 +51,7 @@ def shop_sell():
 
         if not pick:
             deco.clear_screen()
-            break
+            return
 
         if pick == 1:
             sell_all = not sell_all
@@ -65,11 +65,11 @@ def shop_sell():
 
 
 def sell_item(item, amount=1):
-    try:
-        user.Player["gold"] += item["sell_price"] * amount
-        crafting.remove_item(item, amount)
-        return (f'\n{colors.green}Sold {amount}x {item["item_name"]} for {colors.gold}{item["sell_price"] * amount} '
-              f'Gold{colors.reset}\n')
-
-    except KeyError:
+    if not "sell_price" in item:
         return "\nYou can't sell this Item.\n"
+
+    user.Player["gold"] += item["sell_price"] * amount
+    crafting.remove_item(item, amount)
+    return (f'\n{colors.green}Sold {amount}x {item["item_name"]} for {colors.gold}{item["sell_price"] * amount} '
+          f'Gold{colors.reset}\n')
+

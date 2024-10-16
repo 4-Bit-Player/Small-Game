@@ -1,8 +1,8 @@
-import queue
+from queue import Queue
 from player import user
 
 
-_print_queue = queue.Queue()
+_print_queue = Queue()
 _show_fps = False
 _constant_refresh = False
 
@@ -27,7 +27,7 @@ def change_fps_limit(new_fps):
 class TemporaryDisablePrintUpdates:
     def __enter__(self):
         self.fps_state = _show_fps
-        self.constat_refresh_state = _constant_refresh
+        self.constant_refresh_state = _constant_refresh
 
         if _show_fps:
             toggle_fps()
@@ -39,7 +39,7 @@ class TemporaryDisablePrintUpdates:
         if self.fps_state and not _show_fps:
             toggle_fps()
 
-        if self.constat_refresh_state and not _constant_refresh:
+        if self.constant_refresh_state and not _constant_refresh:
             toggle_constant_refresh()
 
         if exc_tb is None and exc_val is None and exc_tb is None:
