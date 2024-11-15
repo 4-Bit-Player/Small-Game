@@ -7,35 +7,21 @@ import os
 from printing.print_queue import n_print
 
 
-def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
+def keyinput(options: list, header: str = "", start_at=1, hud: bool = False):
     options = u_KeyInput.create_index(options)
 
     temp_input: str = ""
 
     invalid = False
-    if hud:
-        tmp = [deco.player_hud() + "\n"]
-        if options[0][0] == "index":
-            options.insert(1, tmp)
-            if header:
-                options.insert(2,[deco.print_header_r(header)])
-        else:
-            options.insert(0, tmp)
-            if header:
-                options.insert(1,[deco.print_header_r(header)])
-
-    elif header:
-        tmp = [deco.print_header_r(header)]
-        if options[0][0] == "index":
-            options.insert(1, tmp)
-        else:
-            options.insert(0, tmp)
-
-    lines_to_remove = 15 + len(options)
 
     while True:
-        deco.clear_screen(1)
-        out = u_KeyInput.return_screen_prt_h(options, start_at) + "\n\n"
+        out = ""
+        if hud:
+            out += deco.player_hud() + "\n"
+        if len(header) > 0:
+            out += deco.print_header_r(header) + "\n"
+
+        out += u_KeyInput.return_screen_prt_h(options, start_at) + "\n\n"
 
         if invalid:
             temp_input = ""
@@ -47,7 +33,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
         n_print(out)
         key = msvcrt.getch()
-        deco.clear_screen(lines_to_remove)
 
         if key in u_KeyInput.current_keyboard_layout:
             val = u_KeyInput.current_keyboard_layout[key]
