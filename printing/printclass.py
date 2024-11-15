@@ -1,8 +1,8 @@
 import shutil
 import queue
-import sys
 import time
 from decoration import deco
+
 
 class PrintClass:
     def __init__(self, q: queue.Queue, test=False):
@@ -103,6 +103,9 @@ class PrintClass:
     def sleep(seconds):
         if seconds <= 0:
             return
+        # using the default instead of my small tinkering, because it didn't work correctly on other systems
+        time.sleep(seconds)
+        return
         t_start = time.perf_counter()
         t_stop = t_start + seconds
         while time.perf_counter() < t_stop:
