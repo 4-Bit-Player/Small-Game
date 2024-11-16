@@ -6,7 +6,7 @@ from printing.print_queue import n_print
 
 def intro_1():
     options = [
-        [deco.line_r(), "You can navigate using numbers or using", "the arrow keys.", "", "Skip Intro?"],
+        [deco.line_r(), "You can navigate using numbers.\nYou can also use the arrow keys and enter \nto select the highlighted option.\n\nSkip Intro?"],
         "No",
         "Yes",
         [deco.line_r()]

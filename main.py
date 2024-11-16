@@ -94,6 +94,7 @@ def game_init():
     u_KeyInput.name_init()
     story.intro_1()
     user.restart()
+    u_KeyInput.display_shortcuts(True)
 
 
 def save_update_score():
