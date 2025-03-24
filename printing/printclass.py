@@ -62,11 +62,13 @@ class PrintClass:
         else:
             new_output = self.output
 
-
-        deco.clear_screen(self.output_lines + 10)
+        if self.output_lines <= self.max_columns:
+            deco.clear_screen(self.output_lines + 10)
+        else:
+            deco.full_clear()
         self.output_lines = new_output.count("\n") + 1
         self.current_output = new_output[:-1]
-        print(self.current_output, end="")
+        print(self.current_output, end="", flush=True)
 
 
     def check_terminal_update(self) -> bool:
