@@ -1,6 +1,3 @@
-import os
-
-os.system("")
 
 
 turquoise = '\033[38;5;48m'

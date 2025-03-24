@@ -3,7 +3,6 @@ import places.quest_logic
 import player.inventory
 from player import u_KeyInput
 from decoration import colors, deco
-import os
 from printing.print_queue import n_print
 
 
@@ -86,7 +85,7 @@ def keyinput(options: list, header: str = "", start_at=1, hud: bool = False):
 
         else:
             print(key)
-            os.system('cls')
+            #os.system('cls')
 
 # index = [
 #     "index", 101,

@@ -1,6 +1,7 @@
+from save_system.save_logic import save_load
 from player import u_FullKeyInput
 from decoration import *
-from places import location_actions, shop, quest_logic
+from places import location_actions, shop, quest_logic, location_data
 from player import *
 import enemies
 import combat
@@ -10,7 +11,7 @@ def show_location_actions(current_location, overflow):
     options = [[deco.format_text_in_line(current_location["welcome_text"])]]
 
     if current_location["type"] not in ["shop", "forge"]:
-        current_location = location_actions.weather(current_location)
+        current_location = location_data.weather(current_location)
         options.append(
             [
                 f'It is a {current_location["true_weather"]} day.',
@@ -65,7 +66,7 @@ def show_location_actions(current_location, overflow):
             location_actions.retire_check()
 
         else:
-            location_actions.save_load()
+            save_load()
     return overflow
 
 
@@ -74,7 +75,7 @@ actions = {"encounter": enemies.encounter,
            "combat": combat.combat,
            "look_around": location_actions.look_around,
            "shop": location_actions.shop,
-           "go_to_location": location_actions.go_to_location,
+           "go_to_location": location_data.go_to_location,
            "buy": shop.buy,
            "shop_sell": shop.shop_sell,
            "re_encounter": 0,

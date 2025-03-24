@@ -4,7 +4,7 @@ from player import user, u_KeyInput
 from decoration import deco
 from player.crafting import item_add
 from printing.print_queue import n_print, TemporaryDisablePrintUpdates
-from places import location_actions
+#from places.location_actions import restart
 
 def cheat_menu():
     options = [
@@ -27,7 +27,8 @@ def cheat_menu():
                 user.restart()
         elif pick == 3:
             if u_KeyInput.user_confirmation("reset EVERYTHING"):
-                location_actions.restart()
+                pass
+                #location_actions.restart()
         elif pick == 4:
             give_item()
 

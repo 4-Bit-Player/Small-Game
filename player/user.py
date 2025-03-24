@@ -8,6 +8,7 @@ if not sys.path[0].endswith("\Python\Small Game"):
     test = False
 Version = "0.6.8"
 Compatible_versions = ["0.6.8"]
+save_slot = -1
 Player_default = {
     "name": "",
     "hp": 100,

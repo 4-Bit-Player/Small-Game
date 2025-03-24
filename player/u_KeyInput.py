@@ -4,7 +4,7 @@ from decoration import colors, deco
 from printing.print_queue import n_print
 from printing import print_queue
 from player import user, cheats
-import os, sys
+import sys
 
 
 options_open = True
@@ -186,7 +186,7 @@ def keyboard_layout_init():
     n_print("What keyboard are you using?\n"
                 "Type 'e' if you are using the english layout,\n"
                 "or anything else if you are using the german layout.\n"
-                "(It's just for num hotkeys)\n"
+                "(It's just for number hotkeys)\n"
                 "Keyboard Layout: ")
 
     if input().lower() == "e":
@@ -266,7 +266,7 @@ def display_shortcuts(full=False):
             "Press enter to return")
     n_print(out)
     wait_for_keypress()
-    deco.clear_screen()
+
 
 def wait_for_keypress():
     msvcrt.getch()
@@ -337,7 +337,6 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             handle_f_keys()
         else:
             print(key)
-            os.system('cls')
 
 
 

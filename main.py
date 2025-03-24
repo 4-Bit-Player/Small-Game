@@ -28,99 +28,29 @@
  """
 
 import time
-import pickle
 from decoration import story, deco, colors
+from places.location_data import get_location, unlocks_init, location_init
 from player import user, crafting, u_KeyInput
 from places import show_location_actions, location_actions, quests
 from printing import init_print
 from printing.print_queue import n_print
-
-
-def save_check():
-    try:
-        with open("save.pkl", "rb") as save_file:
-            save = pickle.load(save_file)
-
-
-        if not "Player" in save:
-            game_init()
-            return
-
-        if "Version" not in save:
-            pass
-        elif save["Version"] not in user.Compatible_versions:
-            pass
-        else:
-            options = [
-                [deco.line_r(),
-                 "Save detected.",
-                 "Would you like to load the save data?",],
-                "Yes",
-                "No",
-                [deco.line_r()]
-                 ]
-            user_pick = u_KeyInput.keyinput(options)
-
-            if not user_pick:
-                if not location_actions.try_load_save(save):
-                    game_init()
-                return
-            game_init()
-            return
-        options = [["Non Compatible save detected.",
-              "Would you like to try and load the character?\n"],
-              "Yes",
-              "No"]
-        user_pick = u_KeyInput.keyinput(options)
-        if not user_pick:
-            if not location_actions.try_load_saved_player(save):
-                game_init()
-            return
-        game_init()
-
-    except (FileNotFoundError, KeyError):
-        game_init()
+from save_system.save_logic import save_check, save_update_score, highscore_check, save_just_highscore, load_all
 
 
 def game_init():
+    story.navigation_intro()
     out = [[deco.line_r()], ["Do you want to play this game as a rogue like?", ""], [1, "No", "Yes"], [deco.line_r()]]
     user.settings["delete_save_on_death"] = bool(u_KeyInput.keyinput(out))
     out = [[deco.line_r()], ["Should everything be centered?", "(you can change it later as well)", ""], [1, "No", "Yes"], [deco.line_r()]]
     user.settings["centered_screen"] = bool(u_KeyInput.keyinput(out))
 
     quests.init_quests()
-    location_actions.unlocks_init()
-    location_actions.location_init()
+    unlocks_init()
+    location_init()
     u_KeyInput.name_init()
     story.intro_1()
     user.restart()
     u_KeyInput.display_shortcuts(True)
-
-
-def save_update_score():
-    try:
-        with open("save.pkl", "rb") as save_file:
-            save = pickle.load(save_file)
-            save_file.close()
-        highscore = 0
-        if "highscore" in save:
-            highscore += save["highscore"]
-
-        save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
-        if user.character_loaded:
-            save["Player"]["deaths"] = user.Player["deaths"]
-
-        with open("save.pkl", "wb") as u_save_file:
-            pickle.dump(save, u_save_file)
-            u_save_file.close()
-
-    except (FileNotFoundError, KeyError):
-        save = {
-            "highscore": user.Player["score"]
-        }
-        with open("save.pkl", "wb") as save_file:
-            pickle.dump(save, save_file)
-            save_file.close()
 
 
 def partial_restart():
@@ -129,15 +59,17 @@ def partial_restart():
 
 def main():
     playing = True
-    save_check()
+    if not save_check():
+        game_init()
+
     while playing:
 
-        highscore = location_actions.highscore_check()
+        highscore = highscore_check()
         deco.clear_screen()
         overflow = ""
         while user.Player["hp"] > 0:
 
-            overflow = show_location_actions.show_location_actions(location_actions.location, overflow)
+            overflow = show_location_actions.show_location_actions(get_location(), overflow)
 
             if user.Player["retired"]:
                 break
@@ -146,7 +78,7 @@ def main():
             user.Player["deaths"] += 1
 
         if user.settings["delete_save_on_death"]:
-            location_actions.save_just_highscore()
+            save_just_highscore()
 
         else:
             save_update_score()
@@ -188,7 +120,7 @@ def main():
             elif pick == 2:
                 partial_restart()
             else:
-                location_actions.load_all()
+                load_all()
 
         else:
             out += ("I hope you've had fun with my small project. :)\n"

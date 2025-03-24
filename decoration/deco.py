@@ -5,6 +5,8 @@ import sys
 line_len = 46
 
 def clear_screen(lines_to_remove=20, lines_to_remove_ahead=5):
+    sys.stdout.write("\033[E"*lines_to_remove_ahead + "\033[F\033[K"*(lines_to_remove_ahead+lines_to_remove))
+    return 
     for i in range(lines_to_remove_ahead):
         sys.stdout.write("\033[E") # Cursor down one line
 

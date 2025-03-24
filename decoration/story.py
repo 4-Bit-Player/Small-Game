@@ -4,9 +4,20 @@ from player import user, u_KeyInput
 from printing.print_queue import n_print
 
 
+def navigation_intro():
+    options = [
+        [deco.line_r(),
+         "You can navigate using numbers and enter.\nYou can also use the arrow keys and enter \nto select the highlighted option.\nOr use Shift+num to select an option immediately.\n"],
+        "OK!",
+        "Nice :)",
+        [deco.line_r()]
+    ]
+    u_KeyInput.keyinput(options)
+
+
 def intro_1():
     options = [
-        [deco.line_r(), "You can navigate using numbers.\nYou can also use the arrow keys and enter \nto select the highlighted option.\n\nSkip Intro?"],
+        [deco.line_r(), "Skip Intro?"],
         "No",
         "Yes",
         [deco.line_r()]
