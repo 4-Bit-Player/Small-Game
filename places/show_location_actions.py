@@ -43,7 +43,7 @@ def show_location_actions(current_location, overflow):
         options.append([overflow])
         overflow = ""
 
-    pick = u_FullKeyInput.keyinput(options, header=current_location["name"], hud=True)
+    pick = u_FullKeyInput.keyinputfull(options, header=current_location["name"], hud=True)
 
 
     if pick <= len(current_location["list_of_actions"]) - 1:

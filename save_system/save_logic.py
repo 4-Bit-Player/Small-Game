@@ -324,7 +324,7 @@ def save_check() -> bool:
         return False
 
     if "Version" in save and save["Version"] in user.Compatible_versions:
-        if save_system.save_logic.try_load_save(save, picked_save):
+        if try_load_save(save, picked_save):
             return True
         return False
 
@@ -334,7 +334,7 @@ def save_check() -> bool:
           "No"]
     user_pick = u_KeyInput.keyinput(options)
     if not user_pick:
-        if save_system.save_logic.try_load_saved_player(save):
+        if try_load_saved_player(save):
             return True
     return False
 

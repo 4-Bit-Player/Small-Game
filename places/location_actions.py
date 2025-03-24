@@ -133,7 +133,7 @@ def look_around(current_location):
     pick = random.randint(1, 1000)
     out = deco.line_r() + f'\nYou are wandering through the {current_location["name"]} looking for usable Items...\n'
     n_print(out)
-    time.sleep(random.uniform(0.5, 2))
+    time.sleep(random.uniform(0.5, 1.2))
     if pick <= current_location["enemy_chance"]:
         out += "Suddenly you hear something behind you.\n"
         n_print(out)
@@ -159,13 +159,12 @@ def look_around(current_location):
                     if amount >= 2:
                         item_ending = "s"
 
-                    time.sleep(1.3)
                     out += f'You found {colors.green}{amount}x {item}{item_ending}{colors.reset}.\n'
                     n_print(out)
+                    time.sleep(1.3)
 
                     break
 
-        time.sleep(1)
         if drop_malus == 0:
             out += "You didn't find anything useful...\n"
 

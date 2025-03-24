@@ -6,7 +6,7 @@ from decoration import colors, deco
 from printing.print_queue import n_print
 
 
-def keyinput(options: list, header: str = "", start_at=1, hud: bool = False):
+def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False):
     options = u_KeyInput.create_index(options)
 
     temp_input: str = ""
