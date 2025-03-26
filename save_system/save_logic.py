@@ -60,7 +60,8 @@ def save_all():
         "location": get_location()["name"],
         "past_location": get_past_location()["name"],
         "finished_quests": finished_quests,
-        "active_quests": active_quests
+        "active_quests": active_quests,
+        "game_code": user.game_code,
     }
 
     if user.character_loaded and user.settings["delete_save_on_death"]:
@@ -143,7 +144,7 @@ def load_all():
         pick = keyinput(out)
         if pick:
             return
-        try_load_saved_player(data)
+        try_load_saved_player(data, nums[pick-1])
         return
     n_print("The save seems to be corrupted. D:\nPress enter to continue...")
     wait_for_keypress()
@@ -175,7 +176,7 @@ def save_just_highscore():
 
 def try_load_save(save, save_num, active_game=False):
     lookup = ["Player", "Player_equip", "location", "past_location", "settings",
-              "unlocked", "finished_quests", "active_quests", "Version"]
+              "unlocked", "finished_quests", "active_quests", "Version", "game_code"]
     broken = False
     for thing in lookup:
         if thing not in save:
@@ -197,8 +198,9 @@ def try_load_save(save, save_num, active_game=False):
                 user.Player["deaths"] = save["deaths"]
         user.character_loaded = True
         user.save_slot = save_num
-        #location_data._location = search_location(save["location"])
-        #location_data._past_location = search_location(save["past_location"])
+        user.game_code = save["game_code"]
+        location_data._location = search_location(save["location"])
+        location_data._past_location = search_location(save["past_location"])
         user.settings.update(save["settings"])
         location_data._unlocked = save["unlocked"]
         finished_q = save["finished_quests"]
@@ -231,12 +233,12 @@ def try_load_save(save, save_num, active_game=False):
     return False
 
 
-def try_load_saved_player(save, active_game=False):
+def try_load_saved_player(save, save_num):
     unlocks_init()
     location_init()
     user.restart()
     broken = False
-    lookup = ["Player", "Player_equip", "settings"]
+    lookup = ["Player", "Player_equip", "settings", "game_code"]
     for thing in lookup:
         if thing not in save:
             broken = True
@@ -245,7 +247,9 @@ def try_load_saved_player(save, active_game=False):
         user.Player.update(save["Player"])
         user.Equipped.update(save["Player_equip"])
         user.settings.update(save["settings"])
+        user.game_code = save["game_code"]
         user.character_loaded = True
+        user.save_slot = save_num
         deco.full_clear() # Most likely isn't required
         out = (
                 deco.line_r() + "\n" +
@@ -260,15 +264,11 @@ def try_load_saved_player(save, active_game=False):
         out = (
                 deco.line_r() + "\n" +
                 f"{colors.red}Unable to load player data!{colors.reset}\n" +
-                deco.line_r() + "\n"
+                deco.line_r() + "\n" +
+                "Press enter to start from the beginning.\n"
         )
-        if not active_game:
-            out += "Press enter to start from the beginning.\n"
-        else:
-            out += "Press enter to continue.\n"
         n_print(out)
         wait_for_keypress()
-        deco.clear_screen()
         return False
 
 
@@ -334,7 +334,7 @@ def save_check() -> bool:
           "No"]
     user_pick = u_KeyInput.keyinput(options)
     if not user_pick:
-        if try_load_saved_player(save):
+        if try_load_saved_player(save, picked_save):
             return True
     return False
 
@@ -350,6 +350,20 @@ def save_update_score():
         highscore = save["highscore"]
 
     save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
+
+    for num in get_save_nums():
+        if num == user.save_slot:
+            continue
+        n_save = load_save(num)
+        if not "game_code" in n_save:
+            continue
+        if n_save["game_code"] != user.game_code:
+            continue
+        if not "Player" in n_save:
+            continue
+        n_save["Player"]["deaths"] = user.Player["deaths"]
+        save_game(num, n_save)
+
 
     if user.character_loaded:
         user_save = load_save(user.save_slot)

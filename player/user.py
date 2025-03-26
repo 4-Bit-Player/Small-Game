@@ -1,4 +1,4 @@
-import sys
+import sys, random
 from copy import deepcopy
 from decoration import colors
 
@@ -6,9 +6,10 @@ from decoration import colors
 test = False
 if not sys.path[0].endswith("\Python\Small Game"):
     test = False
-Version = "0.6.8"
-Compatible_versions = ["0.6.8"]
+Version = "0.6.9"
+Compatible_versions = ["0.6.9"]
 save_slot = -1
+game_code = random.uniform(0,1)
 Player_default = {
     "name": "",
     "hp": 100,
@@ -54,16 +55,18 @@ Equipped = deepcopy(Equipped_default)
 
 
 def restart():
-    global Player
-    global Equipped
-    global character_loaded
+    global Player, Equipped, game_code, character_loaded
     if test:
         Player = deepcopy(Test_Player)
     else:
         Player = deepcopy(Player_default)
     Equipped = deepcopy(Equipped_default)
     character_loaded = False
+    generate_new_game_code()
 
+def generate_new_game_code():
+    global game_code
+    game_code = random.uniform(0,1)
 
 
 def combining_words(actions, iteration):
