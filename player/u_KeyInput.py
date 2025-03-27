@@ -28,7 +28,7 @@ def change_options():
             f"Change your name (current name: {user.Player['name']})",
             "Close the Game",
         ]
-        if sys.path[0].endswith("\Python\Small Game"):
+        if sys.path[0].endswith(r"\Python\Small Game"):
             options += [
                 f"Cheat Menu",
                 f"Toggle test setting (currently: {user.test})",

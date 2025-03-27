@@ -4,7 +4,7 @@ from decoration import colors
 
 
 test = False
-if not sys.path[0].endswith("\Python\Small Game"):
+if not sys.path[0].endswith(r"\Python\Small Game"):
     test = False
 Version = "0.6.9"
 Compatible_versions = ["0.6.9"]
