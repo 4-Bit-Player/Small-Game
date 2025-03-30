@@ -1,4 +1,3 @@
-import msvcrt
 import time
 from decoration import colors, deco
 from printing.print_queue import n_print
@@ -6,6 +5,58 @@ from printing import print_queue
 from player import user, cheats
 import sys
 
+if sys.platform == "win32":
+    from msvcrt import getch
+else:
+    import readchar
+    _char_buffer = b''
+    _arrow_keys = [ b'\x1b[B',b'\x1b[A', b'\x1b[C', b'\x1b[D']
+    _f_keys = {b'\x1b0P', b'\x1b0Q', b'\x1b0R', b'\x1b0S', b'\x1b[15~', b'\x1b[17~', b'\x1b[18~', b'\x1b[19~', b'\x1b[20~', b'\x1b[21~'}
+    _char_lookup = {
+        b'\n': b'\r',
+        b'\x1b[B': b'P',   # arrow down
+        b'\x1b[A': b'H',  # Up arrow key
+        b'\x1b[C': b'M',  # Right arrow key
+        b'\x1b[D': b'K',  # Left arrow key
+        b'\xc2\xa7': b'\xf5', # shift+3 german layout
+        b'\x1b\x1b': b'\x1b', # escape key
+        b'\x7f': b'\x08', # backspace
+        b'\x1b0P': b';', # F1
+        b'\x1b0Q': b'<', # F2
+        b'\x1b0R': b'=', # F3
+        b'\x1b0S': b'>', # F4
+        b'\x1b[15~': b'?', # F5
+        b'\x1b[17~': b'@', # F6
+        b'\x1b[18~': b'A', # F7
+        b'\x1b[19~': b'B', # F8
+        b'\x1b[20~': b'C', # F9
+        b'\x1b[21~': b'D', # F10
+
+    }
+    def getch():
+        global _char_buffer
+        if _char_buffer != b'':
+            if _char_buffer in _char_lookup:
+                char = _char_lookup[_char_buffer]
+                _char_buffer = b''
+                return char
+            _char_buffer = b''
+        char = readchar.readkey().encode()
+        if char in _arrow_keys: # arrow keys
+            _char_buffer = char
+            return b'\xe0'
+        if char in _f_keys:
+            _char_buffer = char
+            return b'\00'
+
+
+        if char in _char_lookup:
+            return _char_lookup[char]
+        return char
+
+
+def _get_char():
+    return getch()
 
 options_open = True
 
@@ -114,7 +165,7 @@ def handle_arrow_key(sel_list):
     sel_col = sel_list[0][1]
 
     # Handle arrow key events
-    key = msvcrt.getch()
+    key = _get_char()
     if key == b'H':  # Up arrow key
         sel_col = sel_col - 1 if sel_col - 1 >= 1 else sel_list[0][5]
 
@@ -269,7 +320,7 @@ def display_shortcuts(full=False):
 
 
 def wait_for_keypress():
-    msvcrt.getch()
+    _get_char()
 
 
 def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
@@ -293,7 +344,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         if temp_input:
             out += "Action: " + str(temp_input)
         n_print(out)
-        key = msvcrt.getch()
+        key = _get_char()
 
         if key in current_keyboard_layout:
             val = current_keyboard_layout[key]
@@ -341,7 +392,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
 
 def handle_f_keys():
-    char = msvcrt.getch()
+    char = _get_char()
     if char == b';': # F1
         pass
     elif char == b'<': # F2

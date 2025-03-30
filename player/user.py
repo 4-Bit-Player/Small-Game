@@ -69,56 +69,6 @@ def generate_new_game_code():
     game_code = random.uniform(0,1)
 
 
-def combining_words(actions, iteration):
-    checking = True
-    while checking:
-        if actions[iteration] in ["the", "at", "to", "for", "in"]:
-            iteration += 1
-        else:
-            return iteration
-
-
-def user_input_new(options):
-    print(options)
-    u_input = True
-    while u_input:
-        iteration = 0
-        u_action = str(input("Action:")).lower()
-        actions = u_action.split()
-        if actions[iteration] in ["go", "walk", "run", "jog"]:
-            print("Yay!")
-
-        if actions[iteration] in ["check", "look", "inspect"]:
-            iteration += 1
-            iteration = combining_words(actions, iteration)
-            if actions[iteration] in ["around", "surrounding", "area"]:
-                for option in options["list_of_actions"]:
-                    if option["action_text"] == "Look around.":
-                        print("nice! :)")
-
-
-def user_input(max_num):
-    u_input = True
-    u_action = input("Action:")
-    actual_action = 0
-    while u_input:
-        try:
-            actual_action = int(u_action)
-            if 1 <= actual_action <= max_num:
-                u_input = False
-
-            else:
-                print(f"Please select a number between 1 and {max_num}")
-                print("What will you do?")
-                u_action = str(input("Action:"))
-
-        except ValueError:
-            print(f"Please select a number between 1 and {max_num}")
-            print("What will you do?")
-            u_action = str(input("Action:"))
-
-    return actual_action - 1
-
 
 def return_pick_actions_dict(from_dict):
     option = 0
