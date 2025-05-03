@@ -51,8 +51,9 @@ def outro_alive():
 def outro_death():
     out = deco.print_header_r("You died. :(")
     if user.Player["score"] > 500:
-        outro_d500.insert(0, out)
-        return show_text(outro_d500)
+        out_lst = list(outro_d500)
+        out_lst.insert(0, out)
+        return show_text(out_lst)
     else:
         return out
 
@@ -71,42 +72,42 @@ def show_text(text, previous_text=""):
     time.sleep(0.2)
     return out
 
-outro_a0 = [
+outro_a0 = (
     "On the other hand...",
     "Maybe fighting is not for everyone.",
     "You've decided to live the rest of your live somewhere save.",
     "Hoping that you won't face the same fate as your friend."
-]
-outro_a100 = [
+)
+outro_a100 = (
     "The boars were way too strong...",
     'Or maybe you were just unlucky...',
     "But you didn't really want to die as well, so you stopped fighting after one try or two",
     "Hoping that you won't face the same fate as your friend..."
-]
-outro_a300 = [
+)
+outro_a300 = (
     "After a while you decided to stop fighting.",
     '"Is it really appropriate to kill that many boars", you questioned.'
-]
-outro_a501 = [
+)
+outro_a501 = (
     "You've sworn yourself to kill as many boars as possible",
     "And in your opinion, you absolutely did!",
     "You've cleared a wide range around the village and the traveler are safe."
-]
-outro_a500 = [
+)
+outro_a500 = (
     "You've decided to retire after revenging your friend."
-]
+)
 
-outro_d500 = [
+outro_d500 = (
     "You've sworn yourself to kill as many boars as possible to revenge your friend.",
     "And you did!",
     "You've cleared a wide area around the village so the travelers are safe.",
     "You are seen as a hero by the villagers!",
-]
+)
 
-intro_text = [
+intro_text = (
     "Hello and welcome to my little game.",
     "You are a villager living in a small village.",
     "There are many wild boars lurking outside that are making the passage difficult for everyone to travel.",
     "Because an old friend of you got murdered by one you've sworn yourself to revenge him.",
     "By killing as many boars as possible.",
-]
+)
