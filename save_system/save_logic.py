@@ -341,13 +341,13 @@ def save_check() -> bool:
 
 def save_update_score():
     save = load_save(-1)
+    highscore = 0
     if save == "":
         save_game(-1,{"highscore": user.Player["score"]})
-        return
-
-    highscore = 0
-    if "highscore" in save:
-        highscore = save["highscore"]
+        save = {"highscore": user.Player["score"]}
+    else:
+        if "highscore" in save:
+            highscore = save["highscore"]
 
     save["highscore"] = user.Player["score"] if user.Player["score"] > highscore else highscore
 
@@ -367,7 +367,7 @@ def save_update_score():
 
     if user.character_loaded:
         user_save = load_save(user.save_slot)
-        if "Player" in save:
+        if "Player" in user_save:
             user_save["Player"]["deaths"] = user.Player["deaths"]
             save_game(user.save_slot, user_save)
 
