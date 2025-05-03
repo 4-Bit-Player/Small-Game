@@ -2,10 +2,11 @@ from places.unlock import unlocks
 locations = []
 
 
-def search_location(location_name: str):
-    for i in locations:
-        if i["name"] == location_name:
-            return i
+def search_location(location_name: str) -> dict[str:any]:
+    for location in locations:
+        if location["name"] == location_name:
+            return location
+    raise ValueError(f'Failed to find location "{location_name}"')
 
 
 default_locations = [
