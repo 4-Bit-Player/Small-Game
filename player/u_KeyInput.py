@@ -6,7 +6,7 @@ from player import user, cheats
 import sys
 
 if sys.platform == "win32":
-    from msvcrt import getch
+    from msvcrt import getch as _getch
 else:
     import readchar
     _char_buffer = b''
@@ -14,26 +14,26 @@ else:
     _f_keys = {b'\x1b0P', b'\x1b0Q', b'\x1b0R', b'\x1b0S', b'\x1b[15~', b'\x1b[17~', b'\x1b[18~', b'\x1b[19~', b'\x1b[20~', b'\x1b[21~'}
     _char_lookup = {
         b'\n': b'\r',
-        b'\x1b[B': b'P',   # arrow down
-        b'\x1b[A': b'H',  # Up arrow key
-        b'\x1b[C': b'M',  # Right arrow key
-        b'\x1b[D': b'K',  # Left arrow key
+        b'\x1b[B': b'P',      # arrow down
+        b'\x1b[A': b'H',      # Up arrow key
+        b'\x1b[C': b'M',      # Right arrow key
+        b'\x1b[D': b'K',      # Left arrow key
         b'\xc2\xa7': b'\xf5', # shift+3 german layout
         b'\x1b\x1b': b'\x1b', # escape key
-        b'\x7f': b'\x08', # backspace
-        b'\x1b0P': b';', # F1
-        b'\x1b0Q': b'<', # F2
-        b'\x1b0R': b'=', # F3
-        b'\x1b0S': b'>', # F4
-        b'\x1b[15~': b'?', # F5
-        b'\x1b[17~': b'@', # F6
-        b'\x1b[18~': b'A', # F7
-        b'\x1b[19~': b'B', # F8
-        b'\x1b[20~': b'C', # F9
-        b'\x1b[21~': b'D', # F10
+        b'\x7f': b'\x08',     # backspace
+        b'\x1b0P': b';',      # F1
+        b'\x1b0Q': b'<',      # F2
+        b'\x1b0R': b'=',      # F3
+        b'\x1b0S': b'>',      # F4
+        b'\x1b[15~': b'?',    # F5
+        b'\x1b[17~': b'@',    # F6
+        b'\x1b[18~': b'A',    # F7
+        b'\x1b[19~': b'B',    # F8
+        b'\x1b[20~': b'C',    # F9
+        b'\x1b[21~': b'D',    # F10
 
     }
-    def getch():
+    def _getch():
         global _char_buffer
         if _char_buffer != b'':
             if _char_buffer in _char_lookup:
@@ -55,8 +55,18 @@ else:
         return char
 
 
-def _get_char():
-    return getch()
+def get_char(remove_cached_input=True):
+    if not remove_cached_input:
+        return _getch()
+    #return input_funcs.readkey()
+    old_time= perf_counter()
+    while True:
+        key = _getch()
+        new_time = perf_counter()
+        if new_time - old_time < 0.01:
+            continue
+        break
+    return key
 
 options_open = True
 
@@ -165,7 +175,7 @@ def handle_arrow_key(sel_list):
     sel_col = sel_list[0][1]
 
     # Handle arrow key events
-    key = _get_char()
+    key = get_char(False)
     if key == b'H':  # Up arrow key
         sel_col = sel_col - 1 if sel_col - 1 >= 1 else sel_list[0][5]
 
@@ -320,7 +330,7 @@ def display_shortcuts(full=False):
 
 
 def wait_for_keypress():
-    _get_char()
+    get_char()
 
 
 def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
@@ -344,7 +354,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         if temp_input:
             out += "Action: " + str(temp_input)
         n_print(out)
-        key = _get_char()
+        key = get_char()
 
         if key in current_keyboard_layout:
             val = current_keyboard_layout[key]
@@ -392,7 +402,7 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
 
 
 def handle_f_keys():
-    char = _get_char()
+    char = get_char(False)
     if char == b';': # F1
         pass
     elif char == b'<': # F2

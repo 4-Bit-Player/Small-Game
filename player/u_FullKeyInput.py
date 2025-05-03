@@ -30,7 +30,7 @@ def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False)
             out += "Action: " + str(temp_input)
 
         n_print(out)
-        key = u_KeyInput._get_char()
+        key = u_KeyInput.get_char()
 
         if key in u_KeyInput.current_keyboard_layout:
             val = u_KeyInput.current_keyboard_layout[key]
