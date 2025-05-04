@@ -458,3 +458,74 @@ def change_fps():
         if invalid:
             n_print("\nInvalid input")
             sleep(0.5)
+
+
+def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:
+    """
+    :param key: last key pressed as bytes
+    :param la_class: a LAClass
+    :return: Returns the selected number or -1 if nothing got selected yet.
+    """
+    index_class: KeyinputIndexClass = la_class.index
+    temp_input: TempInput = index_class.temp_input
+
+    if index_class.invalid:
+        temp_input.clear()
+        index_class.invalid = False
+
+    if key in current_keyboard_layout:
+        val = current_keyboard_layout[key]
+        if 0 < val <= index_class.limit:
+            return val - 1
+        else:
+            index_class.invalid = True
+        return -1
+
+    if key == b'\x1b':  # Escape key
+        return 0
+    elif key == b'\xe0':  # Arrow keys
+        temp_input.clear()
+        la_class.updated = True
+        handle_arrow_key([index_class])
+    elif key == b'\r':  # Enter key
+        la_class.updated = True
+        if temp_input.size != 0:
+            selected = temp_input.text()
+            temp_input.clear()
+        else:
+            selected = index_class.index
+        if 0 < int(selected) <= index_class.limit:
+            return int(selected) - 1
+        else:
+            index_class.invalid = True
+
+    elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
+        key = key.decode()
+        index_class.temp_input += key
+        la_class.updated = True
+        return -1
+    elif key == b'\x08':  # backspace
+        if temp_input.size != 0:
+            temp_input.rm_last_char()
+            la_class.updated = True
+    elif key == b'\x03':  # ctrl + c
+        raise KeyboardInterrupt
+    elif key == b'h':
+        la_class.paused = True
+        sleep(0.1)
+        display_shortcuts(False)
+        la_class.paused = False
+    elif key == b'o':
+        la_class.paused = True
+        sleep(0.1)
+        change_options()
+        la_class.paused = False
+    elif key == b'\x00':
+        la_class.paused = True
+        sleep(0.1)
+        handle_f_keys()
+        la_class.paused = False
+    else:
+        print(key)
+    return -1
+

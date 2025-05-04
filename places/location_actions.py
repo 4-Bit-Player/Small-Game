@@ -129,49 +129,6 @@ def inspect(current_location):
     return
 
 
-def look_around(current_location):
-    pick = random.randint(1, 1000)
-    out = deco.line_r() + f'\nYou are wandering through the {current_location["name"]} looking for usable Items...\n'
-    n_print(out)
-    time.sleep(random.uniform(0.5, 1.2))
-    if pick <= current_location["enemy_chance"]:
-        out += "Suddenly you hear something behind you.\n"
-        n_print(out)
-        time.sleep(1)
-        combat.combat(current_location)
-        return
-
-    if pick <= current_location["item_find_chance"]:
-        drop_malus = 0
-        findable_items = list(current_location["findable_items"].keys())
-        random.shuffle(findable_items)
-
-        for item in findable_items:
-            it_pick = random.randint(1, 1000)
-
-            item_ending = ""
-
-            drop_chances = current_location["findable_items"][item]
-            for amount, chance in drop_chances.items():
-                if it_pick <= chance - drop_malus:
-                    crafting.item_add(item, amount)
-                    drop_malus += 100
-                    if amount >= 2:
-                        item_ending = "s"
-
-                    out += f'You found {colors.green}{amount}x {item}{item_ending}{colors.reset}.\n'
-                    n_print(out)
-                    time.sleep(1.3)
-
-                    break
-
-        if drop_malus == 0:
-            out += "You didn't find anything useful...\n"
-
-        out += "Press enter to continue...\n"
-        n_print(out)
-        wait_for_keypress()
-
 
 def restart():
     display_shortcuts(True)

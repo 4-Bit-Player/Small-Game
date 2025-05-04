@@ -1,7 +1,7 @@
 from save_system.save_logic import save_load
 from player import u_FullKeyInput
 from decoration import *
-from places import location_actions, shop, quest_logic, location_data
+from places import location_actions, shop, quest_logic, location_data, look_around_funcs
 from player import *
 import enemies
 import combat
@@ -73,7 +73,7 @@ def show_location_actions(current_location, overflow):
 actions = {"encounter": enemies.encounter,
            "inspect": location_actions.inspect,
            "combat": combat.combat,
-           "look_around": location_actions.look_around,
+           "look_around": look_around_funcs.look_around,
            "shop": location_actions.shop,
            "go_to_location": location_data.go_to_location,
            "buy": shop.buy,
