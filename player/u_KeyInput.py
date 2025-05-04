@@ -1,6 +1,6 @@
-import time
-from time import perf_counter
+from time import perf_counter, sleep
 from decoration import colors, deco
+from player.keyinput_index_class import KeyinputIndexClass, TempInput, LAClass
 from printing.print_queue import n_print
 from printing import print_queue
 from player import user, cheats
@@ -121,7 +121,12 @@ def change_options():
             print_queue.toggle_fps()
 
 
-def user_confirmation(stuff_to_confirm:str):
+def user_confirmation(stuff_to_confirm:str) -> bool:
+    """
+    are you sure that you want to {stuff_to_confirm}?
+    :param stuff_to_confirm: stuff to confirm
+    :return: Bool if they are sure or not
+    """
     pick = keyinput([[f"Are you sure that you want to {stuff_to_confirm}?"], "No", "Yes"])
     if pick == 0:
         return False
@@ -173,15 +178,14 @@ def user_confirmation(stuff_to_confirm:str):
 
 
 def handle_arrow_key(sel_list):
-    sel_col = sel_list[0][1]
-
+    sel_col = sel_list[0].index
     # Handle arrow key events
     key = get_char(False)
     if key == b'H':  # Up arrow key
-        sel_col = sel_col - 1 if sel_col - 1 >= 1 else sel_list[0][5]
+        sel_col = sel_col - 1 if sel_col - 1 >= 1 else sel_list[0].limit
 
     elif key == b'P':  # Down arrow key
-        sel_col = sel_col + 1 if sel_col + 1 <= sel_list[0][5] else 1
+        sel_col = sel_col + 1 if sel_col + 1 <= sel_list[0].limit else 1
 
     # elif key == b'M':  # Right arrow key
     #     sel_row = sel_row + 1 if not sel_row + 1 > len(sel_list) - 1 else len(sel_list) - 1
@@ -207,7 +211,7 @@ def handle_arrow_key(sel_list):
     #     elif sel_col < 1:
     #         sel_col = 1
 
-    sel_list[0][1] = sel_col
+    sel_list[0].index = sel_col
 
 
 current_keyboard_layout = {}
@@ -261,12 +265,14 @@ def return_screen_prt_h(lists, start=1):
     num = start
     selected = 0
     lines:list[str] = []
+    if isinstance(lists[0], KeyinputIndexClass):
+        selected = lists[0].index
     for line in lists:
-        if line[0] == "index":
-            selected = lists[0][1]
-            continue
 
         if isinstance(line, list):
+            if len(line) == 0:
+                lines.append("")
+                continue
             if line[0] == 1:
                 for l in line[1:]:
                     if num == selected:
@@ -279,7 +285,7 @@ def return_screen_prt_h(lists, start=1):
                 for l in line:
                     lines.append(l)
 
-        else:
+        if isinstance(line, str):
             if num == selected:
                 l_line = colors.negative + str(num) + ". " + str(line) + " " + colors.reset
             else:
@@ -294,22 +300,28 @@ def return_screen_prt_h(lists, start=1):
 def create_index(options):
     limit = 0
     for line in options:
+        if isinstance(line, str):
+            limit += 1
+            continue
         if isinstance(line, list):
+            if len(line) == 0:
+                continue
             if line[0] == 1:
                 limit += len(line) - 1
             continue
         else:
-            limit += 1
-    if options[0][0] == "index":
-        options[0][5] = limit
-        if options[0][1] > limit:
-            options[0][1] = limit
+            continue
+    if isinstance(options[0], KeyinputIndexClass):
+        options[0].limit = limit
+        if options[0].index > limit:
+            options[0].index = limit
+
     else:
-        index = [
-            "index", 1,
-            "persistent", 1,
-            "limit", limit]
-        options.insert(0, index)
+        c = KeyinputIndexClass(1, limit, True)
+        if len(options[0]) != 0 and options[0][0] == "index":
+            options[0] = c
+        else:
+            options.insert(0, c)
     return options
 
 
@@ -336,8 +348,8 @@ def wait_for_keypress():
 
 def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     options = create_index(options)
-
-    temp_input: str = ""
+    index_class:KeyinputIndexClass = options[0]
+    temp_input: TempInput = index_class.temp_input
     invalid = False
 
     while True:
@@ -348,18 +360,18 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             out += deco.print_header_r(header) + "\n"
         out += return_screen_prt_h(options, start_at) + "\n\n"
         if invalid:
-            temp_input = ""
+            temp_input.clear()
             invalid = False
-            out += f"{colors.red}Invalid number, please pick a number from 1 to {options[0][5]}{colors.reset}"
+            out += f"{colors.red}Invalid number, please pick a number from 1 to {index_class.limit}{colors.reset}"
 
-        if temp_input:
-            out += "Action: " + str(temp_input)
+        if temp_input.size != 0:
+            out += "Action: " + str(temp_input.text())
         n_print(out)
         key = get_char()
 
         if key in current_keyboard_layout:
             val = current_keyboard_layout[key]
-            if 0 < val <= options[0][5]:
+            if 0 < val <= index_class.limit:
                 return val - 1
             else:
                 invalid = True
@@ -368,27 +380,27 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         if key == b'\x1b':  # Escape key
             return 0
         elif key == b'\xe0':  # Arrow keys
-            temp_input = ""
+            temp_input.clear()
             handle_arrow_key(options)
         elif key == b'\r':  # Enter key
-            if temp_input:
-                selected = temp_input
+            if temp_input.size != 0:
+                selected = temp_input.text()
+                temp_input.clear()
             else:
-                selected = options[0][1]
-            if 0 < int(selected) <= options[0][5]:
+                selected = index_class.index
+            if 0 < int(selected) <= index_class.limit:
                 return int(selected) - 1
             else:
                 invalid = True
         elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
             key = key.decode()
-            if not temp_input:
-                temp_input += key
-            else:
-                temp_input += key
-            pass
+            index_class.temp_input += key
+            continue
         elif key == b'\x08':  # backspace
-            if temp_input:
-                temp_input = temp_input[:-1]
+            if temp_input.size != 0:
+                temp_input.rm_last_char()
+        elif key == b'\x7f': # ctrl+backspace
+            temp_input.clear()
         elif key == b'\x03':  # ctrl + c
             raise KeyboardInterrupt
         elif key == b'h':
@@ -445,4 +457,4 @@ def change_fps():
             pass
         if invalid:
             n_print("\nInvalid input")
-            time.sleep(0.5)
+            sleep(0.5)

@@ -1,5 +1,6 @@
 from player import user, crafting, u_KeyInput
 from decoration import deco, colors
+from player.keyinput_index_class import KeyinputIndexClass
 from printing.print_queue import n_print
 
 
@@ -57,7 +58,7 @@ def open_inventory():
         elif pick >= 4:
             overflow = use_item(available_items[pick - 4])
 
-        if a_selection[0][0] == "index":
+        if isinstance(a_selection[0], KeyinputIndexClass):
             index = a_selection[0]
     deco.clear_screen()
 
@@ -134,7 +135,7 @@ def inv_inspect():
         else:
             item_inspect(user.Player["inv"][pick - 1])
 
-        if show[0][0] == "index":
+        if isinstance(show[0], KeyinputIndexClass):
             index = show[0]
 
 
@@ -207,7 +208,7 @@ def inv_crafting():
             else:
                 crafting.craft_list(shown_recipes[pick - 2])
 
-        if show[0][0] == "index":
+        if isinstance(show[0], KeyinputIndexClass):
             show = [show[0]]
 
 
@@ -242,7 +243,7 @@ def list_inventory(start_number=1, item_type="All"):
             available_items.append(item)
 
             show_text.append(f'{item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else""}'
-                             f'{equipped}{upgraded}')
+                             f'{upgraded}{equipped}')
 
     #for i, text in enumerate(show_text):
     #    print(f'{i+start_number}. {text}')
@@ -281,7 +282,7 @@ def show_inventory(item_type="All"):
             available_items.append(item)
 
             show_text.append(f'{item["item_name"]}{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else""}'
-                             f'{equipped}{upgraded}')
+                             f'{upgraded}{equipped}')
 
     return show_text
 
