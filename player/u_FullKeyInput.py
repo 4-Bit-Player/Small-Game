@@ -3,6 +3,7 @@ import player.inventory
 from player import u_KeyInput
 from decoration import colors, deco
 from player.keyinput_index_class import KeyinputIndexClass, TempInput
+from player.u_KeyInput import handle_number_keys, handle_backspace
 from printing.print_queue import n_print
 
 
@@ -49,23 +50,20 @@ def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False)
 
         elif key == b'\r':  # Enter key
             if temp_input.size != 0:
-                selected = temp_input.text()
+                selected = int(temp_input.text())
                 temp_input.clear()
             else:
                 selected = index_class.index
-            if 0 < int(selected) <= index_class.limit:
-                return int(selected) - 1
+            if 0 < selected <= index_class.limit:
+                return selected - 1
             else:
                 invalid = True
         elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
-            key = key.decode()
-            temp_input += key
+            handle_number_keys(key, index_class)
             continue
-        elif key == b'\x08':  # backspace
+        elif key == b'\x7f' or key == b'\x08':  # (ctrl+) backspace
             if temp_input.size != 0:
-                temp_input.rm_last_char()
-        elif key == b'\x7f': # ctrl+backspace
-            temp_input.clear()
+                handle_backspace(key, index_class)
 
         elif key == b'\x03':  # ctrl + c
             raise KeyboardInterrupt

@@ -22,6 +22,7 @@ else:
         b'\xc2\xa7': b'\xf5', # shift+3 german layout
         b'\x1b\x1b': b'\x1b', # escape key
         b'\x7f': b'\x08',     # backspace
+        b'\x08': b'\x7f',     # Ctrl + Backspace
         b'\x1b0P': b';',      # F1
         b'\x1b0Q': b'<',      # F2
         b'\x1b0R': b'=',      # F3
@@ -49,7 +50,6 @@ else:
         if char in _f_keys:
             _char_buffer = char
             return b'\00'
-
 
         if char in _char_lookup:
             return _char_lookup[char]
@@ -393,14 +393,11 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
             else:
                 invalid = True
         elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
-            key = key.decode()
-            index_class.temp_input += key
+            handle_number_keys(key,index_class)
             continue
-        elif key == b'\x08':  # backspace
+        elif key == b'\x7f' or key == b'\x08':  # (ctrl+) backspace
             if temp_input.size != 0:
-                temp_input.rm_last_char()
-        elif key == b'\x7f': # ctrl+backspace
-            temp_input.clear()
+                handle_backspace(key, index_class)
         elif key == b'\x03':  # ctrl + c
             raise KeyboardInterrupt
         elif key == b'h':
@@ -490,24 +487,24 @@ def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:
     elif key == b'\r':  # Enter key
         la_class.updated = True
         if temp_input.size != 0:
-            selected = temp_input.text()
+            selected = int(temp_input.text())
             temp_input.clear()
         else:
             selected = index_class.index
-        if 0 < int(selected) <= index_class.limit:
-            return int(selected) - 1
+        if 0 < selected <= index_class.limit:
+            return selected - 1
         else:
             index_class.invalid = True
 
     elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
-        key = key.decode()
-        index_class.temp_input += key
+        handle_number_keys(key, la_class.index)
         la_class.updated = True
         return -1
-    elif key == b'\x08':  # backspace
+    elif key == b'\x7f' or key == b'\x08':  # (ctrl+) backspace
         if temp_input.size != 0:
-            temp_input.rm_last_char()
+            handle_backspace(key, index_class)
             la_class.updated = True
+
     elif key == b'\x03':  # ctrl + c
         raise KeyboardInterrupt
     elif key == b'h':
@@ -529,3 +526,27 @@ def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:
         print(key)
     return -1
 
+
+def handle_number_keys(key:bytes, index_class:KeyinputIndexClass):
+    key:str = key.decode()
+    num = int(index_class.temp_input.text() + key)
+    if 0 < num < index_class.limit:
+        index_class.index = num
+    index_class.temp_input += key
+
+def handle_backspace(key:bytes, index_class:KeyinputIndexClass):
+    if index_class.temp_input.size == 0:
+        return
+    tmp_input = index_class.temp_input
+
+    if key == b'\x08': # backspace
+        tmp_input.rm_last_char()
+        if tmp_input.size == 0:
+            return
+        num = int(tmp_input.text())
+        if 0 < num < index_class.limit:
+            index_class.index = num
+        return
+
+    if key == b'\x7f': # ctrl+backspace
+        tmp_input.clear()
