@@ -47,6 +47,7 @@ class LinkedList(Iterable[_T]):
         self._head:None|_Node = None
         self._end:None|_Node = None
         self._size = 0
+        self._reversed = False
         if iterable_sequence is not None:
             last_node = None
             self._size = len(iterable_sequence)
@@ -118,6 +119,8 @@ class LinkedList(Iterable[_T]):
         return self._size
 
     def __getitem__(self, index:int) -> _T:
+        if self._reversed:
+            index = -index-1
         if index > self._size:
             raise IndexError("list index out of range")
         if index < 0:
@@ -132,6 +135,8 @@ class LinkedList(Iterable[_T]):
         return self._search_left(index)
 
     def __iter__(self):
+        if self._reversed:
+            return _ReversedLLiterator(self._end)
         return _LLiterator(self._head)
 
 
@@ -159,16 +164,24 @@ class LinkedList(Iterable[_T]):
         return node.val
 
     @property
-    def size(self):
+    def size(self) -> int:
         return self._size
 
     def copy(self):
+        """
+        :return: Returns a new Linked List with the same values
+        """
         return self.__copy__()
 
     def __copy__(self):
-        new_ll:LinkedList[_T] = LinkedList()
-        new_ll._init_via_llist(self)
-        return new_ll
+        revrsd = self._reversed
+        if revrsd:
+            self.reverse()
+        new_list = LinkedList(self)
+        if revrsd:
+            new_list.reverse()
+            self.reverse()
+        return new_list
 
     def __str__(self):
         node = self._head
@@ -176,10 +189,14 @@ class LinkedList(Iterable[_T]):
         for _ in range(self._size):
             val_strs.append(str(node.val))
             node = node.right_node
+        if self._reversed:
+            val_strs.reverse()
         out = "[" + ", ".join(val_strs) + "]"
         return out
 
     def __reversed__(self):
+        if self._reversed:
+            return _LLiterator(self._head)
         return _ReversedLLiterator(self._end)
 
     def __bool__(self):
@@ -193,25 +210,34 @@ class LinkedList(Iterable[_T]):
 
         raise NotImplementedError(f"Can't add {type(other)} to a linked list")
 
+    def index(self, val, start=0, stop=-1) -> int:
+        """
+        :param val: The value to search
+        :param start:(optional) where it should start searching
+        :param stop: (optional) where it should stop searching
+        :return: The index of the first occurrence, if it contains it, else -1
+        """
+        current_node = self._head
+        for _ in range(start):
+            current_node = current_node.right_node
 
-    def _init_via_llist(self, llist):
-        if llist._size == 0:
-            return
-        self._size = llist._size
+        end = min(self._size, stop) if stop != -1 else self._size
 
-        previous_node = self._head
+        for i in range(start, end, 1):
+            if current_node is None:
+                return -1
+            if current_node.val == val:
+                return i
+            current_node = current_node.right_node
 
-        for other_node_val in llist:
-            if self._head is None:
-                self._head = self._end = previous_node = _Node(other_node_val)
-                continue
-            next_node = _Node(other_node_val, left_node=previous_node)
-            previous_node.right_node = next_node
-            previous_node = next_node
-        self._end = previous_node
+        return -1
 
-
-
-
+    def reverse(self) -> None:
+        """
+        Reverses the linked list in place.
+        """
+        self._reversed = not self._reversed
+        self.pop, self.popleft = self.popleft, self.pop
+        self.append, self.appendleft = self.appendleft, self.append
 
 
