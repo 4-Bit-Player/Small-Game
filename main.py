@@ -30,7 +30,7 @@
 import time
 from decoration import story, deco, colors
 from places.location_data import get_location, unlocks_init, location_init
-from player import user, crafting, u_KeyInput
+from player import user, crafting, u_KeyInput, terminal_funcs
 from places import show_location_actions, location_actions, quests
 from printing import init_print
 from printing.print_queue import n_print
@@ -138,8 +138,9 @@ def main():
                 game_init()
 
 if __name__ == '__main__':
+    terminal_funcs.init_keyboard_input()
     crafting.item_init()
     init_print.init_print()
-    u_KeyInput.keyboard_layout_init()
+    #u_KeyInput.keyboard_layout_init()
     u_KeyInput.options_open = False
     main()

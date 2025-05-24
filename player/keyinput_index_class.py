@@ -1,6 +1,6 @@
-from typing import Deque
 from decoration import colors
 from decoration.deco import line_r
+from tools.LList import LinkedList
 
 
 class TempInput:
@@ -124,7 +124,7 @@ class KeyinputIndexClass:
         self.invalid:bool = False
 
     @property
-    def index(self):
+    def index(self) -> int:
         return self._index
 
 
@@ -139,7 +139,7 @@ class KeyinputIndexClass:
         self._index = val
 
     @property
-    def limit(self):
+    def limit(self) -> int:
         return self._limit
 
     @limit.setter
@@ -167,12 +167,14 @@ class LAClass:
     def __init__(self, current_location:dict[str:any]):
         self.index = KeyinputIndexClass(1,1,True)
         self.active = True
-        self._events:Deque[str] = Deque(["" for _ in range(5)])
+        self._events:LinkedList[str] = LinkedList()
         self.location = current_location
         self.updated = True
         self.paused = False
         self.combat_init = False
         self.combat = False
+        for i in range(5):
+            self._events.append("")
 
 
 
@@ -186,10 +188,7 @@ class LAClass:
             list(self._events), [l_r],
             [f"{colors.red}Invalid number, please pick a number from 1 to {self.index.limit}{colors.reset}" if self.index.invalid else ""],
             ["Action: " + self.index.temp_input.text() if self.index.temp_input.text() else ""],
-
-
         ]
-
 
         #if self.out:
         #    out.append([self.out])
@@ -200,7 +199,7 @@ class LAClass:
         else:
             out.append("Fight!")
 
-        return return_screen_prt_h(out)
+        return _return_screen_prt_h(out)
 
     @property
     def events(self):
@@ -215,7 +214,7 @@ class LAClass:
 
 
 
-def return_screen_prt_h(lists, start=1):
+def _return_screen_prt_h(lists, start=1):
     num = start
     selected = 0
     lines:list[str] = []
@@ -249,15 +248,6 @@ def return_screen_prt_h(lists, start=1):
     if len(lines) == 0:
         return ""
     return "\n".join(lines)
-
-
-
-
-
-
-
-
-
 
 
 

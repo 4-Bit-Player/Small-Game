@@ -1,73 +1,12 @@
-from time import perf_counter, sleep
+from time import sleep
 from decoration import colors, deco
 from player.keyinput_index_class import KeyinputIndexClass, TempInput, LAClass
 from printing.print_queue import n_print
 from printing import print_queue
 from player import user, cheats
+from player.terminal_funcs import get_char
 import sys
 
-if sys.platform == "win32":
-    from msvcrt import getch as _getch
-else:
-    import readchar
-    _char_buffer = b''
-    _arrow_keys = [ b'\x1b[B',b'\x1b[A', b'\x1b[C', b'\x1b[D']
-    _f_keys = {b'\x1b0P', b'\x1b0Q', b'\x1b0R', b'\x1b0S', b'\x1b[15~', b'\x1b[17~', b'\x1b[18~', b'\x1b[19~', b'\x1b[20~', b'\x1b[21~'}
-    _char_lookup = {
-        b'\n': b'\r',
-        b'\x1b[B': b'P',      # arrow down
-        b'\x1b[A': b'H',      # Up arrow key
-        b'\x1b[C': b'M',      # Right arrow key
-        b'\x1b[D': b'K',      # Left arrow key
-        b'\xc2\xa7': b'\xf5', # shift+3 german layout
-        b'\x1b\x1b': b'\x1b', # escape key
-        b'\x7f': b'\x08',     # backspace
-        b'\x08': b'\x7f',     # Ctrl + Backspace
-        b'\x1b0P': b';',      # F1
-        b'\x1b0Q': b'<',      # F2
-        b'\x1b0R': b'=',      # F3
-        b'\x1b0S': b'>',      # F4
-        b'\x1b[15~': b'?',    # F5
-        b'\x1b[17~': b'@',    # F6
-        b'\x1b[18~': b'A',    # F7
-        b'\x1b[19~': b'B',    # F8
-        b'\x1b[20~': b'C',    # F9
-        b'\x1b[21~': b'D',    # F10
-
-    }
-    def _getch():
-        global _char_buffer
-        if _char_buffer != b'':
-            if _char_buffer in _char_lookup:
-                char = _char_lookup[_char_buffer]
-                _char_buffer = b''
-                return char
-            _char_buffer = b''
-        char = readchar.readkey().encode()
-        if char in _arrow_keys: # arrow keys
-            _char_buffer = char
-            return b'\xe0'
-        if char in _f_keys:
-            _char_buffer = char
-            return b'\00'
-
-        if char in _char_lookup:
-            return _char_lookup[char]
-        return char
-
-
-def get_char(remove_cached_input=True):
-    if not remove_cached_input:
-        return _getch()
-    #return input_funcs.readkey()
-    old_time= perf_counter()
-    while True:
-        key = _getch()
-        new_time = perf_counter()
-        if new_time - old_time < 0.01:
-            continue
-        break
-    return key
 
 options_open = True
 
