@@ -16,6 +16,8 @@ class _LLiterator:
         """
         self._current_node:_Node = node
 
+    def __iter__(self):
+        return self
 
     def __next__(self) -> _T:
         if self._current_node is None:
@@ -24,6 +26,16 @@ class _LLiterator:
         self._current_node = self._current_node.right_node
         return val
 
+
+class _ReversedLLiterator(_LLiterator):
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self._current_node is None:
+            raise StopIteration
+        val = self._current_node.val
+        self._current_node = self._current_node.left_node
+        return val
 
 
 class LinkedList(Iterable[_T]):
@@ -159,22 +171,41 @@ class LinkedList(Iterable[_T]):
         return new_ll
 
     def __str__(self):
-        out = ""
         node = self._head
-        for i in range(self._size):
-            out +=str(node.val) + ", "
+        val_strs = []
+        for _ in range(self._size):
+            val_strs.append(str(node.val))
             node = node.right_node
+        out = "[" + ", ".join(val_strs) + "]"
         return out
+
+    def __reversed__(self):
+        return _ReversedLLiterator(self._end)
+
+    def __bool__(self):
+        return self._size != 0
+
+    def __iadd__(self, other:Iterable[_T]):
+        if type(other) in [list, tuple, LinkedList]:
+            for val in other:
+                self.append(val)
+            return self
+
+        raise NotImplementedError(f"Can't add {type(other)} to a linked list")
+
 
     def _init_via_llist(self, llist):
         if llist._size == 0:
             return
         self._size = llist._size
 
-        previous_node = self._head = self._end = _Node(llist._head.val)
+        previous_node = self._head
 
-        for other_node in llist:
-            next_node = _Node(other_node, left_node=previous_node)
+        for other_node_val in llist:
+            if self._head is None:
+                self._head = self._end = previous_node = _Node(other_node_val)
+                continue
+            next_node = _Node(other_node_val, left_node=previous_node)
             previous_node.right_node = next_node
             previous_node = next_node
         self._end = previous_node
