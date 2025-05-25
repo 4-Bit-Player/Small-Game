@@ -28,9 +28,10 @@ class _LLiterator:
 
 
 class _ReversedLLiterator(_LLiterator):
-    def __iter__(self):
-        return self
-    def __next__(self):
+    """
+    The reversed iterator for the Linked List class.
+    """
+    def __next__(self) -> _T:
         if self._current_node is None:
             raise StopIteration
         val = self._current_node.val
@@ -39,7 +40,7 @@ class _ReversedLLiterator(_LLiterator):
 
 
 class LinkedList(Iterable[_T]):
-    def __init__(self, iterable_sequence:Iterable=None):
+    def __init__(self, iterable_sequence:Iterable[_T]=None):
         """
         A linked list made in pure python. :>
         :param iterable_sequence: An optional iterable sequence. It will add the items of it to itself.
@@ -63,7 +64,7 @@ class LinkedList(Iterable[_T]):
             self._end = last_node
 
 
-    def appendleft(self, val):
+    def appendleft(self, val:_T) -> None:
         node = _Node(val, right_node=self._head)
         self._size += 1
         if self._head is not None:
@@ -73,7 +74,7 @@ class LinkedList(Iterable[_T]):
         self._end = node
         self._head = node
 
-    def append(self, val):
+    def append(self, val:_T) -> None:
         node = _Node(val, left_node=self._end)
         self._size += 1
         if self._end is not None:
@@ -120,19 +121,21 @@ class LinkedList(Iterable[_T]):
 
     def __getitem__(self, index:int) -> _T:
         if self._reversed:
-            index = -index-1
+            index = - index - 1
+            if index < 0:
+                index -= 1
+
+        if index < 0:
+            index = self._size + index + 1
+            if index < 0:
+                raise IndexError("Index out of range!")
+
         if index > self._size:
             raise IndexError("list index out of range")
-        if index < 0:
-            index = -index
-            if index > self._size:
-                raise IndexError("list index out of range")
-            if index + index > self._size:
-                return self._search_left(self._size - index)
-            return self._search_right(index-1)
-        if index + index > self._size:
-            return self._search_right(self._size -1 - index)
-        return self._search_left(index)
+
+        if index * 2 > self._size:
+            return self._search_from_right(self._size - 1 - index).val
+        return self._search_from_left(index).val
 
     def __iter__(self):
         if self._reversed:
@@ -140,7 +143,7 @@ class LinkedList(Iterable[_T]):
         return _LLiterator(self._head)
 
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item:_T) -> bool:
         if self._head is None:
             return False
         current_node = self._head
@@ -151,17 +154,17 @@ class LinkedList(Iterable[_T]):
         return False
 
 
-    def _search_left(self, index):
+    def _search_from_left(self, index) -> _Node:
         node:_Node = self._head
         for _ in range(index):
             node = node.right_node
-        return node.val
+        return node
 
-    def _search_right(self, index):
+    def _search_from_right(self, index) -> _Node:
         node: _Node = self._end
         for _ in range(index):
             node = node.left_node
-        return node.val
+        return node
 
     @property
     def size(self) -> int:
@@ -199,29 +202,98 @@ class LinkedList(Iterable[_T]):
             return _LLiterator(self._head)
         return _ReversedLLiterator(self._end)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self._size != 0
 
     def __iadd__(self, other:Iterable[_T]):
         if type(other) in [list, tuple, LinkedList]:
-            for val in other:
-                self.append(val)
-            return self
+            raise NotImplementedError(f"Can't add {type(other)} to a linked list")
+        for val in other:
+            self.append(val)
+        return self
 
-        raise NotImplementedError(f"Can't add {type(other)} to a linked list")
+    def __add__(self, other:Iterable[_T]):
+        if type(other) not in [list, tuple, LinkedList]:
+            raise NotImplementedError(f"Can't add {type(other)} to a linked list")
+        new_llist = LinkedList(self)
+        new_llist += other
+        return new_llist
 
-    def index(self, val, start=0, stop=-1) -> int:
+
+    def clear(self) -> None:
+        self._head = self._end = None
+        self._size = 0
+
+
+    def insert(self, index:int, val:_T) -> None:
         """
+        Insert a value at the given index.
+        """
+
+        if index < 0:
+            index = self._size + index + 1
+            if index < 0:
+                raise IndexError("Index out of range!")
+
+        if index > self._size:
+            raise IndexError("Index out of range!")
+
+        if self._reversed:
+            index = self._size-index
+
+        if index == self._size:
+            self.append(val) if not self._reversed else self.appendleft(val)
+            return
+
+        if index == 0:
+            self.appendleft(val) if not self._reversed else self.append(val)
+            return
+
+        self._size += 1
+        if self._size == 1:
+            self._head = self._end = _Node(val)
+            return
+
+        if index*2 > self._size:
+            right_node:_Node = self._search_from_right(self._size - 2 - index)
+        else:
+            right_node:_Node = self._search_from_left(index)
+
+        new_node = _Node(val,left_node=right_node.left_node, right_node=right_node)
+        left_node = right_node.left_node
+        right_node.left_node = new_node
+        left_node.right_node = new_node
+        return
+
+
+    def index(self, val:_T, start:int=0, stop:int=-1) -> int:
+        """
+        Returns the index of the first occurrence of the value.
+        Returns -1 if it doesn't exist.
+
         :param val: The value to search
         :param start:(optional) where it should start searching
         :param stop: (optional) where it should stop searching
         :return: The index of the first occurrence, if it contains it, else -1
         """
-        current_node = self._head
-        for _ in range(start):
-            current_node = current_node.right_node
+        if start >= self._size:
+            return -1
+        if start < 0:
+            start = 0
 
         end = min(self._size, stop) if stop != -1 else self._size
+
+        if self._reversed:
+            current_node = self._search_from_right(start)
+            for i in range(start, end, 1):
+                if current_node is None:
+                    return -1
+                if current_node.val == val:
+                    return i
+                current_node = current_node.left_node
+            return -1
+
+        current_node = self._search_from_left(start)
 
         for i in range(start, end, 1):
             if current_node is None:
@@ -239,5 +311,3 @@ class LinkedList(Iterable[_T]):
         self._reversed = not self._reversed
         self.pop, self.popleft = self.popleft, self.pop
         self.append, self.appendleft = self.appendleft, self.append
-
-
