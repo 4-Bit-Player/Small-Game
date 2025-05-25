@@ -65,6 +65,9 @@ class LinkedList(Iterable[_T]):
 
 
     def appendleft(self, val:_T) -> None:
+        """
+        Adds the value to its beginning.
+        """
         node = _Node(val, right_node=self._head)
         self._size += 1
         if self._head is not None:
@@ -75,6 +78,9 @@ class LinkedList(Iterable[_T]):
         self._head = node
 
     def append(self, val:_T) -> None:
+        """
+        Adds the value to its end.
+        """
         node = _Node(val, left_node=self._end)
         self._size += 1
         if self._end is not None:
@@ -85,6 +91,9 @@ class LinkedList(Iterable[_T]):
         self._head = node
 
     def pop(self) -> _T:
+        """
+        Removes and returns the rightmost value.
+        """
         if self._end is None:
             raise IndexError("pop from an empty linked list")
         if self._size == 1:
@@ -101,6 +110,9 @@ class LinkedList(Iterable[_T]):
         return val
 
     def popleft(self) -> _T:
+        """
+        Removes and returns the leftmost value.
+        """
         if self._head is None:
             raise IndexError("pop from an empty linked list")
         if self._size == 1:
@@ -221,6 +233,9 @@ class LinkedList(Iterable[_T]):
 
 
     def clear(self) -> None:
+        """
+        Clears itself and sets its size to 0.
+        """
         self._head = self._end = None
         self._size = 0
 
@@ -303,6 +318,41 @@ class LinkedList(Iterable[_T]):
             current_node = current_node.right_node
 
         return -1
+
+    def count(self, val:_T) -> int:
+        """
+        Returns the occurrences count of the given value.
+        """
+        current_node = self._head
+        found = 0
+        while current_node is not None:
+            if current_node.val == val:
+                found += 1
+            current_node = current_node.right_node
+        return found
+
+    def rotate(self, n:int) -> None:
+        """
+        Rotate the list n steps in place to the right.
+        Use negative numbers to rotate it to the left.
+        """
+        n = n % self._size
+        if n == 0:
+            return
+        if n*2 < self._size:
+            new_start_node = self._search_from_right(n-1)
+        else:
+            new_start_node = self._search_from_left(self._size - n)
+        new_end = new_start_node.left_node
+
+        self._head.left_node = self._end
+        self._end.right_node = self._head
+
+        new_start_node.left_node = None
+        self._end = new_end
+        self._head = new_start_node
+        return
+
 
     def reverse(self) -> None:
         """
