@@ -14,6 +14,7 @@ default_locations = [
     {
         "name": "Castell City",
         "type": "City",
+        "index_class":None,
         "welcome_text": [
             "You have arrived in Castell City!",
             "Welcome, adventurer!"
@@ -48,6 +49,7 @@ default_locations = [
     {
       "name": "Trinkets and Tincture Trove",
       "type": "shop",
+      "index_class": None,
       "welcome_text": [
           "Welcome to the best shop in Castell City.",
       ],
@@ -129,6 +131,7 @@ default_locations = [
     {
         "name": "Potion shop",
         "type": "shop",
+        "index_class": None,
         "welcome_text": [
             "Welcome to the Potion shop.",
         ],
@@ -171,6 +174,7 @@ default_locations = [
     {
      "name": "Forest",
      "type": "Wilderness",
+     "index_class": None,
      "enemy_chance": 200,
      "enemies": {
          "wild_boar": 1000,
@@ -225,6 +229,7 @@ default_locations = [
     {
         "name": "Dark Forest",
         "type": "Wilderness",
+        "index_class": None,
         "enemy_chance": 300,
         "enemies": {
             "wild_boar": 300,
@@ -277,6 +282,7 @@ default_locations = [
     {
         "name": "Bottom of the Mountain",
         "type": "City",
+        "index_class": None,
 
         "welcome_text": [
             "You arrived at the Bottom of the huge Mountain!",
@@ -311,6 +317,7 @@ default_locations = [
     {
         "name": "Blacksmith",
         "type": "forge",
+        "index_class": None,
         "welcome_text": [
             f"Greetings, traveler.",
             "Welcome to my small tent.",
@@ -354,6 +361,7 @@ default_locations = [
     {
         "name": "The Cave",
         "type": "Wilderness",
+        "index_class": None,
         "enemy_chance": 300,
         "enemies": {
             "skeleton": 990,

@@ -1,3 +1,4 @@
+from player.keyinput_index_class import KeyinputIndexClass
 from save_system.save_logic import save_load
 from player import u_FullKeyInput
 from decoration import *
@@ -42,9 +43,12 @@ def show_location_actions(current_location, overflow):
     if overflow:
         options.append([overflow])
         overflow = ""
-
+    if "index_class" in current_location:
+        if current_location["index_class"] is not None:
+            options.insert(0, current_location["index_class"])
     pick = u_FullKeyInput.keyinputfull(options, header=current_location["name"], hud=True)
-
+    if isinstance(options[0], KeyinputIndexClass):
+        current_location["index_class"] = options[0]
 
     if pick <= len(current_location["list_of_actions"]) - 1:
 
