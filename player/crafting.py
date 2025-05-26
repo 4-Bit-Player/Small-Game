@@ -2,6 +2,7 @@ from player import user, u_KeyInput
 from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
+from player.keyinput_index_class import KeyinputIndexClass
 from printing.print_queue import n_print
 import recipies.weapons as r_weapons
 import recipies.armor as r_armor
@@ -326,7 +327,7 @@ def craft_list(c_list):
             overflow = ([f'{colors.red}You have to be level {c_list["parts"][pick-1]["req_lvl"]} to craft this '
                         f'item.{colors.reset}'])
 
-        if selection[0][0] == "index":
+        if isinstance(selection[0], KeyinputIndexClass):
             selection = [selection[0]]
         else:
             selection = []
