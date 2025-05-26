@@ -68,6 +68,10 @@ class LinkedList(Iterable[_T]):
         """
         Adds the value to its beginning.
         """
+        return self._append(val) if self._reversed else self._appendleft(val)
+
+
+    def _appendleft(self, val) -> None:
         node = _Node(val, right_node=self._head)
         self._size += 1
         if self._head is not None:
@@ -81,6 +85,10 @@ class LinkedList(Iterable[_T]):
         """
         Adds the value to its end.
         """
+        return self._appendleft(val) if self._reversed else self._append(val)
+
+
+    def _append(self, val):
         node = _Node(val, left_node=self._end)
         self._size += 1
         if self._end is not None:
@@ -90,10 +98,15 @@ class LinkedList(Iterable[_T]):
         self._end = node
         self._head = node
 
+
     def pop(self) -> _T:
         """
         Removes and returns the rightmost value.
         """
+        return self._popleft() if self._reversed else self._pop()
+
+
+    def _pop(self) -> _T:
         if self._end is None:
             raise IndexError("pop from an empty linked list")
         if self._size == 1:
@@ -109,10 +122,15 @@ class LinkedList(Iterable[_T]):
         self._end = left_node
         return val
 
+
     def popleft(self) -> _T:
         """
         Removes and returns the leftmost value.
         """
+        return self._pop() if self._reversed else self._popleft()
+
+
+    def _popleft(self) -> _T:
         if self._head is None:
             raise IndexError("pop from an empty linked list")
         if self._size == 1:
@@ -359,5 +377,3 @@ class LinkedList(Iterable[_T]):
         Reverses the linked list in place.
         """
         self._reversed = not self._reversed
-        self.pop, self.popleft = self.popleft, self.pop
-        self.append, self.appendleft = self.appendleft, self.append
