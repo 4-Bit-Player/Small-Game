@@ -80,7 +80,7 @@ default_locations = [
                   "Cheese-Wheel", "Steamed Ham", "Sandwich", "Noodles", "Ramen", "Salad", "Cucumber", "Fried Rice",
                   "Pancake", "Melon", "Rice Cracker", "Beagle", "Sushi", "Fruit Salad", "Strawberry", "Pineapple",
                   "Block of Butter", "Salami", "Lettuce", "Chips", "Fries", "Fish", "Onion", "Peanuts", "Sausage",
-                  "Garlic", "Hazelnuts", "Tinned Tuna", "Fried Plaice", "Turkey", "Mayonnaise"
+                  "Garlic", "Hazelnuts", "Tinned Tuna", "Fried Plaice", "Turkey", "Mayonnaise", "Standwich"
               ]
           },
           {
@@ -350,7 +350,7 @@ default_locations = [
                     "Cheese-Wheel", "Steamed Ham", "Sandwich", "Noodles", "Ramen", "Salad", "Cucumber", "Fried Rice",
                     "Pancake", "Melon", "Rice Cracker", "Beagle", "Sushi", "Fruit Salad", "Strawberry", "Pineapple",
                     "Block of Butter", "Salami", "Lettuce", "Chips", "Fries", "Fish", "Onion", "Peanuts", "Sausage",
-                    "Garlic", "Hazelnuts", "Tinned Tuna", "Fried Plaice", "Turkey", "Mayonnaise"
+                    "Garlic", "Hazelnuts", "Tinned Tuna", "Fried Plaice", "Turkey", "Mayonnaise", "Standwich"
                 ]
             },
 
