@@ -77,7 +77,7 @@ def use_item(item):
             overflow += (crafting.show_item_effects(item, already_did=1))
 
         else:
-            return "You are at full HP already."
+            return [colors.red +"You are at full HP already."+colors.reset]
 
     elif item["item_type"] in ["potion"]:
         healing = False
