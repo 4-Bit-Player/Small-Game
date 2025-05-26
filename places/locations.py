@@ -82,7 +82,7 @@ default_locations = [
               ]
           },
           {
-              "action_text": "Upgrade your Sword",
+              "action_text": "Upgrade your Sword (available at the Blacksmith)",
               "action_type": "buy",
               "player_affected_stats": {
                   "str": 5
@@ -94,7 +94,7 @@ default_locations = [
 
           },
           {
-              "action_text": "Upgrade your Shield",
+              "action_text": "Upgrade your Shield (available at the Blacksmith)",
               "action_type": "buy",
               "player_affected_stats": {
                   "def": 1
