@@ -86,10 +86,21 @@ def init_keyboard_input() -> None:
     _input_thread = Thread(target=_thread_func, daemon=True)
     _input_thread.start()
 
+_keyboard_input_paused = False
+def pause_keyboard_input():
+    global _keyboard_input_paused
+    _keyboard_input_paused = True
+
+def resume_keyboard_input():
+    global _keyboard_input_paused
+    _keyboard_input_paused = False
 
 def _thread_func():
     global _key_cache
     while True:
+        if _keyboard_input_paused:
+            sleep(0.1)
+            continue
         with _lock:
             key = _getch()
             #while len(_key_cache) > 100:
