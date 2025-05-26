@@ -39,7 +39,7 @@ from save_system.save_logic import save_check, save_update_score, highscore_chec
 
 def game_init():
     story.navigation_intro()
-    out = [[deco.line_r()], ["Do you want to play this game as a rogue like? \n(Your save will get deleted if you die)", ""], [1, "No", "Yes"], [deco.line_r()]]
+    out = [[deco.line_r()], ["Do you want to play this game as a rogue like? \n(Your save will get deleted if you die)\n(not recommended)", ""], [1, "No", "Yes"], [deco.line_r()]]
     user.settings["delete_save_on_death"] = bool(u_KeyInput.keyinput(out))
     out = [[deco.line_r()], ["Should everything be centered?", "(you can change it later as well)", ""], [1, "No", "Yes"], [deco.line_r()]]
     user.settings["centered_screen"] = bool(u_KeyInput.keyinput(out))
@@ -138,9 +138,9 @@ def main():
                 game_init()
 
 if __name__ == '__main__':
+    init_print.init_print()
+    u_KeyInput.keyboard_layout_init()
     terminal_funcs.init_keyboard_input()
     crafting.item_init()
-    init_print.init_print()
-    #u_KeyInput.keyboard_layout_init()
     u_KeyInput.options_open = False
     main()
