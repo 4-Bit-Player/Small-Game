@@ -1,6 +1,7 @@
 import sys
 from time import sleep, perf_counter
 from threading import Thread, Lock
+from printing.print_queue import TemporaryDisablePrintUpdates
 from tools.LList import LinkedList
 
 if sys.platform == "win32":
@@ -107,6 +108,15 @@ def _thread_func():
             #    _key_cache.popleft()
             _key_cache.append(key)
         sleep(0.01)
+
+
+def legacy_input(input_text:str="")->str:
+    pause_keyboard_input()
+    with TemporaryDisablePrintUpdates():
+        out = input(input_text)
+    resume_keyboard_input()
+    return out
+
 
 """
 def readchar() -> str:

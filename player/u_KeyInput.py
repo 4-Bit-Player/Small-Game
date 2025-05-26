@@ -4,7 +4,7 @@ from player.keyinput_index_class import KeyinputIndexClass, TempInput, LAClass
 from printing.print_queue import n_print
 from printing import print_queue
 from player import user, cheats
-from player.terminal_funcs import get_char, pause_keyboard_input, resume_keyboard_input
+from player.terminal_funcs import get_char, legacy_input
 import sys
 
 
@@ -182,11 +182,9 @@ english_layout = {
 
 
 def name_init():
-    pause_keyboard_input()
     n_print("\nPlease enter your name:")
     #time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
-    user.Player["name"] = user.Player_default["name"] = input()
-    resume_keyboard_input()
+    user.Player["name"] = user.Player_default["name"] = legacy_input()
 
 def keyboard_layout_init():
     global current_keyboard_layout
@@ -196,7 +194,7 @@ def keyboard_layout_init():
                 "(It's just for number hotkeys)\n"
                 "Keyboard Layout: ")
 
-    if input().lower() == "e":
+    if legacy_input().lower() == "e":
         current_keyboard_layout = english_layout
     else:
         current_keyboard_layout = german_layout
@@ -383,19 +381,18 @@ def exit_game():
     exit()
 
 def change_fps():
-    with print_queue.TemporaryDisablePrintUpdates() as _:
-        invalid = True
-        try:
-            n_print("\nWhat should be the new fps limit?\n")
-            new_limit = float(input("Limit: "))
-            if 1_000_001 > new_limit > 0:
-                invalid = False
-                print_queue.change_fps_limit(new_limit)
-        except ValueError:
-            pass
-        if invalid:
-            n_print("\nInvalid input")
-            sleep(0.5)
+    invalid = True
+    try:
+        n_print("\nWhat should be the new fps limit?\n")
+        new_limit = float(legacy_input("Limit: "))
+        if 1_000_001 > new_limit > 0:
+            invalid = False
+            print_queue.change_fps_limit(new_limit)
+    except ValueError:
+        pass
+    if invalid:
+        n_print("\nInvalid input")
+        sleep(0.5)
 
 
 def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:

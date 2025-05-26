@@ -3,9 +3,8 @@ from numbers import Number
 from player import user, u_KeyInput
 from decoration import deco
 from player.crafting import item_add
-from player.terminal_funcs import pause_keyboard_input, resume_keyboard_input
-from printing.print_queue import n_print, TemporaryDisablePrintUpdates
-#from places.location_actions import restart
+from player.terminal_funcs import legacy_input
+from printing.print_queue import n_print
 
 def cheat_menu():
     options = [
@@ -54,38 +53,32 @@ def change_stats():
 
 
 def change_that_stat(stat):
-    pause_keyboard_input()
     n_print(f"Please enter a new value for the stat ({stat})\n(leave empty to return)\n\nCurrent Value: {user.Player[stat]}\nNew Value:")
-    with TemporaryDisablePrintUpdates() as _:
-        pick = input()
-        resume_keyboard_input()
-        if pick == "":
-            return
-        try:
-            val = float(pick)
-            user.Player[stat] = val
-        except ValueError:
-            return
+
+    pick = legacy_input()
+    if pick == "":
+        return
+    try:
+        val = float(pick)
+        user.Player[stat] = val
+    except ValueError:
+        return
 
 
 def give_item():
     out = "Enter the item name you want to get: "
-    pause_keyboard_input()
     n_print(out)
-    with TemporaryDisablePrintUpdates() as _:
-        item_name = input()
-        if not item_name:
-            resume_keyboard_input()
-            return
-        n_print(f"How many do you want to get of {item_name}?\nAmount: ")
-        item_amount = input()
-        resume_keyboard_input()
-        if not item_amount:
-            return
-        try:
-            item_amount = int(item_amount)
-        except ValueError:
-            return
-        if item_add(item_name, item_amount, False):
-            n_print(f"{item_name} x {item_amount} added successfully")
-            time.sleep(1)
+    item_name = legacy_input()
+    if not item_name:
+        return
+    n_print(f"How many do you want to get of {item_name}?\nAmount: ")
+    item_amount = legacy_input()
+    if not item_amount:
+        return
+    try:
+        item_amount = int(item_amount)
+    except ValueError:
+        return
+    if item_add(item_name, item_amount, False):
+        n_print(f"{item_name} x {item_amount} added successfully")
+        time.sleep(1)
