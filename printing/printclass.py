@@ -29,7 +29,6 @@ class PrintClass:
 
             if self.check_terminal_update():
                 deco.full_clear()
-                #deco.clear_screen(self.output.count("\n")+1000, 100)
                 self.refresh_output()
 
             if self.constant_refresh:
@@ -82,7 +81,6 @@ class PrintClass:
 
     def get_new_output(self):
         n_out:list[tuple[str], bool] = self.queue.get()
-        print(n_out)
         if type(n_out[0]) == tuple:
             call = n_out[0][0]
             if call == "show fps":
