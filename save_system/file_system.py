@@ -1,11 +1,13 @@
-import pathlib, sys, os
-from pickle import dump, load
+import sys, os
+import zlib
+from pathlib import Path
+from pickle import loads
+from tools.encoding import encode_data, decode_data, compress_data, decompress_data
 
 
 
-
-def _get_save_path() -> pathlib.Path:
-    home = pathlib.Path.home()
+def _get_save_path() -> Path:
+    home = Path.home()
     if sys.platform == "win32":
         return home / "AppData/Roaming" / "4 Bit Projects" / "Small Game"
     elif sys.platform.startswith("linux"):
@@ -16,13 +18,15 @@ def _get_save_path() -> pathlib.Path:
 
 
 
-def save_game(save_num:int, data) -> int:
+def save_game(save_num:int, data:dict) -> int:
     path = _get_save_path()
     if not path.exists():
         os.makedirs(path, exist_ok=True)
     path = path / f"save {save_num}"
+    data2 = compress_data(encode_data(data).encode())
+
     with open(path, "wb") as file:
-        dump(data, file)
+        file.write(data2)
     return 0
 
 
@@ -30,12 +34,20 @@ def load_save(save_num:int):
     path = _get_save_path() / f"save {save_num}"
     if not path.exists():
         return ""
+
     with open(path, "rb") as file:
-        try:
-            save = load(file)
-            return save
-        except MemoryError:
-            return ""
+        data = file.read()
+    try:
+        save = decode_data(decompress_data(data).decode())
+        return save
+    except zlib.error:
+        pass
+
+    try:
+        save = loads(data)
+        return save
+    except MemoryError:
+        return ""
 
 
 def get_save_nums() -> list[int]:
@@ -66,4 +78,3 @@ def delete_save(save_num:int) -> None:
     path = _get_save_path() / f"save {save_num}"
     if path.exists():
         os.remove(path)
-
