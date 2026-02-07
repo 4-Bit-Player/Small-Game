@@ -2,7 +2,9 @@ import sys, os
 import zlib
 from pathlib import Path
 from pickle import loads
-from tools.encoding import encode_data, decode_data, compress_data, decompress_data
+
+from tools.encoding import compress_data, decompress_data
+from tools.py_encoding import decode_from_bytes, encode_to_bytes
 
 
 
@@ -22,11 +24,12 @@ def save_game(save_num:int, data:dict) -> int:
     path = _get_save_path()
     if not path.exists():
         os.makedirs(path, exist_ok=True)
-    path = path / f"save {save_num}"
-    data2 = compress_data(encode_data(data).encode())
+    file_path = path / f"save {save_num}"
+    data2 = compress_data(encode_to_bytes(data))
 
-    with open(path, "wb") as file:
+    with open(file_path, "wb") as file:
         file.write(data2)
+
     return 0
 
 
@@ -38,7 +41,7 @@ def load_save(save_num:int):
     with open(path, "rb") as file:
         data = file.read()
     try:
-        save = decode_data(decompress_data(data).decode())
+        save = decode_from_bytes(decompress_data(data))
         return save
     except zlib.error:
         pass
