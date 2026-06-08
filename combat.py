@@ -4,7 +4,7 @@ from decoration import deco, colors
 import time
 import enemies
 from places import quest_logic
-from printing.print_queue import n_print
+from printing import n_print
 
 
 def combat(current_location):

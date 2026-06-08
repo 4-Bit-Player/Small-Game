@@ -3,7 +3,7 @@ from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
 from player.keyinput_index_class import KeyinputIndexClass
-from printing.print_queue import n_print
+from printing import n_print
 import recipies.weapons as r_weapons
 import recipies.armor as r_armor
 import recipies.use_ables as r_use_ables

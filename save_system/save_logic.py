@@ -7,7 +7,7 @@ from places.location_data import search_for_unlock, get_unlocked, get_location, 
 from places.locations import search_location
 from player import user, u_KeyInput
 from player.u_KeyInput import keyinput, wait_for_keypress
-from printing.print_queue import n_print
+from printing import n_print
 from save_system.file_system import save_game, get_save_nums, load_save, delete_save
 
 

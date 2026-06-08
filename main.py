@@ -30,10 +30,10 @@
 import time
 from decoration import story, deco, colors
 from places.location_data import get_location, unlocks_init, location_init
-from player import user, crafting, u_KeyInput, terminal_funcs
+from player import user, crafting, u_KeyInput
+from input_system import init_keyboard_input
 from places import show_location_actions, location_actions, quests
-from printing import init_print
-from printing.print_queue import n_print
+from printing import init_print, n_print, center_text, uncenter_text, full_clear
 from save_system.save_logic import save_check, save_update_score, highscore_check, save_just_highscore, load_all
 
 
@@ -41,8 +41,17 @@ def game_init():
     story.navigation_intro()
     out = [[deco.line_r()], ["Do you want to play this game as a rogue like? \n(Your save will get deleted if you die)\n(not recommended)", ""], [1, "No", "Yes"], [deco.line_r()]]
     user.settings["delete_save_on_death"] = bool(u_KeyInput.keyinput(out))
-    out = [[deco.line_r()], ["Should everything be centered?", "(you can change it later as well)", ""], [1, "No", "Yes"], [deco.line_r()]]
-    user.settings["centered_screen"] = bool(u_KeyInput.keyinput(out))
+    out = [[deco.line_r()], ["Should everything be centered?", "(you can change it later as well)", ""],
+           "No",
+           "Yes",
+           [deco.line_r()]
+           ]
+    pick = u_KeyInput.keyinput(out)
+    if pick == 1:
+        center_text()
+    else:
+        uncenter_text()
+    user.settings["centered_screen"] = bool(pick)
 
     quests.init_quests()
     unlocks_init()
@@ -65,7 +74,6 @@ def main():
     while playing:
 
         highscore = highscore_check()
-        deco.clear_screen()
         overflow = ""
         while user.Player["hp"] > 0:
 
@@ -138,9 +146,10 @@ def main():
                 game_init()
 
 if __name__ == '__main__':
-    init_print.init_print()
+    init_print()
+    init_keyboard_input()
+    full_clear()
     u_KeyInput.keyboard_layout_init()
-    terminal_funcs.init_keyboard_input()
     crafting.item_init()
     u_KeyInput.options_open = False
     main()

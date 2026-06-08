@@ -1,10 +1,11 @@
 from time import sleep
 from decoration import colors, deco
 from player.keyinput_index_class import KeyinputIndexClass, TempInput, LAClass
-from printing.print_queue import n_print
-from printing import print_queue
+from printing import n_print, toggle_constant_refresh, toggle_fps, change_fps_limit, TemporaryDisablePrintUpdates, \
+    toggle_centered_text, get_header, full_clear, n_exit
+from printing import _print_queue
 from player import user, cheats
-from player.terminal_funcs import get_char, legacy_input
+from input_system import get_key, input as legacy_input, text_input, SpecialChar, Key, stop_keyboard_input, num_input, wait_for_keypress
 import sys
 
 
@@ -13,6 +14,7 @@ options_open = True
 
 def toggle_ui_centered():
     user.settings["centered_screen"] = not user.settings["centered_screen"]
+    toggle_centered_text()
 
 def change_options():
     global options_open
@@ -33,8 +35,8 @@ def change_options():
             options += [
                 f"Cheat Menu",
                 f"Toggle test setting (currently: {user.test})",
-                f"Toggle constant refresh (currently: {print_queue._constant_refresh})",
-                f"Toggle fps (currently: {print_queue._show_fps})",
+                f"Toggle constant refresh (currently: {_print_queue._constant_refresh})",
+                f"Toggle fps (currently: {_print_queue._show_fps})",
             ]
 
         pick = keyinput(options, header="Options")
@@ -55,9 +57,9 @@ def change_options():
         elif pick == len(options)-5:
             user.toggle_test()
         elif pick == len(options)-4:
-            print_queue.toggle_constant_refresh()
+            toggle_constant_refresh()
         elif pick == len(options)-3:
-            print_queue.toggle_fps()
+            toggle_fps()
 
 
 def user_confirmation(stuff_to_confirm:str) -> bool:
@@ -75,126 +77,56 @@ def user_confirmation(stuff_to_confirm:str) -> bool:
 
 
 
-
-# def handle_arrow_key_vert(sel_list):
-#     selected = sel_list[0][1]
-#     sel_row = int(str(selected)[0])
-#     sel_col = int(str(selected)[1:])
-#
-#     # Handle arrow key events
-#     key = msvcrt.getch()
-#     if key == b'H':  # Up arrow key
-#         sel_col = sel_col - 1 if sel_col - 1 >= 1 else 1
-#
-#     elif key == b'P':  # Down arrow key
-#         sel_col = sel_col + 1 if sel_col + 1 < len(sel_list[sel_row]) else len(sel_list[sel_row]) - 1
-#
-#     elif key == b'M':  # Right arrow key
-#         sel_row = sel_row + 1 if not sel_row + 1 > len(sel_list) - 1 else len(sel_list) - 1
-#         while not sel_list[sel_row][0]:
-#             sel_row = sel_row + 1 if not sel_row + 1 > len(sel_list) - 1 else int(str(selected)[0])
-#
-#         if sel_col >= len(sel_list[sel_row]):
-#             sel_col = len(sel_list[sel_row]) - 1
-#         elif sel_col < 1:
-#             sel_col = 1
-#
-#     elif key == b'K':  # Left arrow key
-#         sel_row = sel_row - 1 if not sel_row - 1 < 1 else 1
-#         while not sel_list[sel_row][0]:
-#             if not sel_row - 1 == 0:
-#                 sel_row = sel_row - 1
-#             elif sel_row - 1 == 0:
-#                 sel_row = int(str(selected)[0])
-#                 break
-#
-#         if sel_col >= len(sel_list[sel_row]):
-#             sel_col = len(sel_list[sel_row]) - 1
-#         elif sel_col < 1:
-#             sel_col = 1
-#
-#     sel_list[0][1] = sel_row * 100 + sel_col
-
-
-def handle_arrow_key(sel_list):
+def handle_arrow_key(sel_list, key:Key):
     sel_col = sel_list[0].index
-    # Handle arrow key events
-    key = get_char(False)
-    if key == b'H':  # Up arrow key
+
+    if key.pressed_special_key == SpecialChar.ArrowUp:
         sel_col = sel_col - 1 if sel_col - 1 >= 1 else sel_list[0].limit
-
-    elif key == b'P':  # Down arrow key
+    elif key.pressed_special_key == SpecialChar.ArrowDown:
         sel_col = sel_col + 1 if sel_col + 1 <= sel_list[0].limit else 1
-
-    # elif key == b'M':  # Right arrow key
-    #     sel_row = sel_row + 1 if not sel_row + 1 > len(sel_list) - 1 else len(sel_list) - 1
-    #     while not sel_list[sel_row][0]:
-    #         sel_row = sel_row + 1 if not sel_row + 1 > len(sel_list) - 1 else int(str(selected)[0])
-    #
-    #     if sel_col >= len(sel_list[sel_row]):
-    #         sel_col = len(sel_list[sel_row]) - 1
-    #     elif sel_col < 1:
-    #         sel_col = 1
-
-    # elif key == b'K':  # Left arrow key
-    #     sel_row = sel_row - 1 if not sel_row - 1 < 1 else 1
-    #     while not sel_list[sel_row][0]:
-    #         if not sel_row - 1 == 0:
-    #             sel_row = sel_row - 1
-    #         elif sel_row - 1 == 0:
-    #             sel_row = int(str(selected)[0])
-    #             break
-    #
-    #     if sel_col >= len(sel_list[sel_row]):
-    #         sel_col = len(sel_list[sel_row]) - 1
-    #     elif sel_col < 1:
-    #         sel_col = 1
-
     sel_list[0].index = sel_col
 
 
 current_keyboard_layout = {}
 
 german_layout = {
-    b'!': 1,
-    b'"': 2,
-    b'\xf5': 3,
-    b'$': 4,
-    b'%': 5,
-    b'&': 6,
-    b'/': 7,
-    b'(': 8,
-    b')': 9,
+    '!': 1,
+    '"': 2,
+    '\xf5': 3,
+    '$': 4,
+    '%': 5,
+    '&': 6,
+    '/': 7,
+    '(': 8,
+    ')': 9,
     "layout_name":"german"
 }
 english_layout = {
-    b'!': 1,
-    b'@': 2,
-    b'#': 3,
-    b'$': 4,
-    b'%': 5,
-    b'^': 6,
-    b'&': 7,
-    b'*': 8,
-    b'(': 9,
+    '!': 1,
+    '@': 2,
+    '#': 3,
+    '$': 4,
+    '%': 5,
+    '^': 6,
+    '&': 7,
+    '*': 8,
+    '(': 9,
     "layout_name":"english"
 }
 
 
 def name_init():
-    n_print("\nPlease enter your name:")
-    #time.sleep(0.02) # input() blocks the print function. sleeping so the print function can render it at least once correctly.
-    user.Player["name"] = user.Player_default["name"] = legacy_input()
+    name = text_input([get_header("The Name of the Hero"), "\nPlease enter your name:"])
+    user.Player["name"] = user.Player_default["name"] = name
 
 def keyboard_layout_init():
     global current_keyboard_layout
-    n_print("What keyboard are you using?\n"
+    layout = text_input(["What keyboard are you using?\n"
                 "Type 'e' if you are using the english layout,\n"
                 "or anything else if you are using the german layout.\n"
                 "(It's just for number hotkeys)\n"
-                "Keyboard Layout: ")
-
-    if legacy_input().lower() == "e":
+                "Keyboard Layout: "])
+    if layout.lower() == "e":
         current_keyboard_layout = english_layout
     else:
         current_keyboard_layout = german_layout
@@ -281,8 +213,6 @@ def display_shortcuts(full=False):
     wait_for_keypress()
 
 
-def wait_for_keypress():
-    get_char()
 
 
 def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
@@ -306,22 +236,31 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
         if temp_input.size != 0:
             out += "Action: " + str(temp_input.text())
         n_print(out)
-        key = get_char()
+        key = get_key()
 
-        if key in current_keyboard_layout:
-            val = current_keyboard_layout[key]
+        if key.val in current_keyboard_layout:
+            val = current_keyboard_layout[key.val]
             if 0 < val <= index_class.limit:
                 return val - 1
             else:
                 invalid = True
             continue
 
-        if key == b'\x1b':  # Escape key
-            return 0
-        elif key == b'\xe0':  # Arrow keys
-            temp_input.clear()
-            handle_arrow_key(options)
-        elif key == b'\r':  # Enter key
+        if key.is_special_char:
+            if key.pressed_special_key == SpecialChar.KeyboardInterrupt:
+                raise KeyboardInterrupt()
+            if key.pressed_special_key == SpecialChar.Escape:
+                return 0
+            elif key.pressed_special_key in [SpecialChar.ArrowUp, SpecialChar.ArrowDown]:
+                temp_input.clear()
+                handle_arrow_key(options, key)
+                continue
+            elif key.pressed_special_key == SpecialChar.Backspace:
+                handle_backspace(key, index_class)
+            else:
+                handle_f_keys(key)
+
+        elif key.val == '\n':  # Enter key
             if temp_input.size != 0:
                 selected = temp_input.text()
                 temp_input.clear()
@@ -331,71 +270,46 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
                 return int(selected) - 1
             else:
                 invalid = True
-        elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
+        elif key.val in "0123456789":
             handle_number_keys(key,index_class)
             continue
-        elif key == b'\x7f' or key == b'\x08':  # (ctrl+) backspace
-            if temp_input.size != 0:
-                handle_backspace(key, index_class)
-        elif key == b'\x03':  # ctrl + c
-            raise KeyboardInterrupt
-        elif key == b'h':
+        elif key.val == 'h':
             display_shortcuts(False)
-        elif key == b'o':
+        elif key.val == 'o':
             change_options()
-        elif key == b'\x00':
-            handle_f_keys()
-        else:
-            print(key)
 
 
 
-def handle_f_keys():
-    char = get_char(False)
-    if char == b';': # F1
-        pass
-    elif char == b'<': # F2
-        pass
-    elif char == b'=': # F3
-        pass
-    elif char == b'>': # F4
-        pass
-    elif char == b'?': # F5
-        print_queue.toggle_constant_refresh()
-    elif char == b'@': # F6
-        print_queue.toggle_fps()
-    elif char == b'A': # F7
+
+def handle_f_keys(key:Key):
+    if key.pressed_special_key == SpecialChar.F5:
+        toggle_constant_refresh()
+    if key.pressed_special_key == SpecialChar.F6:
+        toggle_fps()
+    if key.pressed_special_key == SpecialChar.F7:
         change_fps()
-    elif char == b'B': # F8
-        pass
-    elif char == b'C': # F9
-        pass
-    elif char == b'D': # F10
-        pass
-    else:
-        print("f? ",  char)
-
 
 def exit_game():
-    deco.full_clear()
+    full_clear()
+    stop_keyboard_input()
+    n_exit()
     exit()
 
 def change_fps():
     invalid = True
-    try:
-        n_print("\nWhat should be the new fps limit?\n")
-        new_limit = float(legacy_input("Limit: "))
-        if 1_000_001 > new_limit > 0:
-            invalid = False
-            print_queue.change_fps_limit(new_limit)
-    except ValueError:
-        pass
-    if invalid:
-        n_print("\nInvalid input")
-        sleep(0.5)
+    new_limit = num_input("\nWhat should be the new fps limit?\n"
+                          "(Press escape to cancel)\n"
+                          "New Limit:",
+                          min_num=1,
+                          max_num=1_000_000,
+                          whole_number=True,
+                          escape_allowed=True)
+    if new_limit is None:
+        return
+    change_fps_limit(new_limit)
 
 
-def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:
+def non_blocking_keyinput(key:Key, la_class:LAClass) -> int:
     """
     :param key: last key pressed as bytes
     :param la_class: a LAClass
@@ -408,21 +322,33 @@ def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:
         temp_input.clear()
         index_class.invalid = False
 
-    if key in current_keyboard_layout:
-        val = current_keyboard_layout[key]
+    if key.val in current_keyboard_layout:
+        val = current_keyboard_layout[key.val]
         if 0 < val <= index_class.limit:
             return val - 1
         else:
             index_class.invalid = True
         return -1
+    if key.is_special_char:
+        if key.pressed_special_key == SpecialChar.KeyboardInterrupt:
+            raise KeyboardInterrupt()
+        if key.pressed_special_key == SpecialChar.Escape:
+            return 0
+        if key.pressed_special_key in [SpecialChar.ArrowUp, SpecialChar.ArrowDown]:  # Arrow keys
+            temp_input.clear()
+            la_class.updated = True
+            handle_arrow_key([index_class], key)
+        elif key.pressed_special_key == SpecialChar.Backspace:
+            if temp_input.size != 0:
+                handle_backspace(key, index_class)
+                la_class.updated = True
+        else:
+            la_class.paused = True
+            sleep(0.1)
+            handle_f_keys(key)
+            la_class.paused = False
 
-    if key == b'\x1b':  # Escape key
-        return 0
-    elif key == b'\xe0':  # Arrow keys
-        temp_input.clear()
-        la_class.updated = True
-        handle_arrow_key([index_class])
-    elif key == b'\r':  # Enter key
+    elif key.val == '\n':  # Enter key
         la_class.updated = True
         if temp_input.size != 0:
             selected = int(temp_input.text())
@@ -434,57 +360,47 @@ def non_blocking_keyinput(key:bytes, la_class:LAClass) -> int:
         else:
             index_class.invalid = True
 
-    elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
+    elif key.val in "0123456789":  # number keys
         handle_number_keys(key, la_class.index)
         la_class.updated = True
         return -1
-    elif key == b'\x7f' or key == b'\x08':  # (ctrl+) backspace
-        if temp_input.size != 0:
-            handle_backspace(key, index_class)
-            la_class.updated = True
 
-    elif key == b'\x03':  # ctrl + c
-        raise KeyboardInterrupt
-    elif key == b'h':
+    elif key.val == 'h':
         la_class.paused = True
         sleep(0.1)
         display_shortcuts(False)
         la_class.paused = False
-    elif key == b'o':
+    elif key.val == 'o':
         la_class.paused = True
         sleep(0.1)
         change_options()
         la_class.paused = False
-    elif key == b'\x00':
-        la_class.paused = True
-        sleep(0.1)
-        handle_f_keys()
-        la_class.paused = False
-    else:
-        print(key)
     return -1
 
 
-def handle_number_keys(key:bytes, index_class:KeyinputIndexClass):
-    key:str = key.decode()
-    num = int(index_class.temp_input.text() + key)
+def handle_number_keys(key:Key, index_class:KeyinputIndexClass):
+    val:str = key.val
+    num = int(index_class.temp_input.text() + val)
     if 0 < num < index_class.limit:
         index_class.index = num
-    index_class.temp_input += key
+    index_class.temp_input += val
 
-def handle_backspace(key:bytes, index_class:KeyinputIndexClass):
-    if index_class.temp_input.size == 0:
+def handle_backspace(key:Key, index_class:KeyinputIndexClass):
+    if index_class.temp_input.size == 0 or not key.pressed_special_key == SpecialChar.Backspace:
         return
     tmp_input = index_class.temp_input
 
-    if key == b'\x08': # backspace
-        tmp_input.rm_last_char()
-        if tmp_input.size == 0:
-            return
+    if key.ctrl_pressed:
+        tmp_input.clear()
+        index_class.index = 0
+        return
+    tmp_input.rm_last_char()
+    if tmp_input.size == 0:
+        return
+    try:
         num = int(tmp_input.text())
         if 0 < num < index_class.limit:
             index_class.index = num
         return
-
-    if key == b'\x7f': # ctrl+backspace
-        tmp_input.clear()
+    except ValueError:
+        index_class.index = 0

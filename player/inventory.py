@@ -1,7 +1,7 @@
 from player import user, crafting, u_KeyInput
 from decoration import deco, colors
 from player.keyinput_index_class import KeyinputIndexClass
-from printing.print_queue import n_print
+from printing import n_print
 
 
 def open_inventory():

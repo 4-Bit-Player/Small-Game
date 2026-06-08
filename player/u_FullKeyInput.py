@@ -1,10 +1,11 @@
 import places.quest_logic
 import player.inventory
+from input_system import get_key, SpecialChar
 from player import u_KeyInput
 from decoration import colors, deco
 from player.keyinput_index_class import KeyinputIndexClass, TempInput
-from player.u_KeyInput import handle_number_keys, handle_backspace
-from printing.print_queue import n_print
+from player.u_KeyInput import handle_number_keys, handle_backspace, handle_arrow_key, handle_f_keys
+from printing import n_print
 
 
 def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False):
@@ -32,23 +33,29 @@ def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False)
             out += "Action: " + str(temp_input.text())
 
         n_print(out)
-        key = u_KeyInput.get_char()
+        key = get_key()
 
-        if key in u_KeyInput.current_keyboard_layout:
-            val = u_KeyInput.current_keyboard_layout[key]
+        if key.val in u_KeyInput.current_keyboard_layout:
+            val = u_KeyInput.current_keyboard_layout[key.val]
             if 0 < val <= index_class.limit:
                 return val - 1
             else:
                 invalid = True
             continue
+        if key.is_special_char:
+            if key.pressed_special_key == SpecialChar.KeyboardInterrupt:
+                raise KeyboardInterrupt()
+            if key.pressed_special_key == SpecialChar.Escape:
+                return 0
+            if key.pressed_special_key in [SpecialChar.ArrowUp, SpecialChar.ArrowDown]:
+                temp_input.clear()
+                u_KeyInput.handle_arrow_key(options, key)
+            elif key.pressed_special_key == SpecialChar.Backspace:
+                handle_backspace(key, index_class)
+            else:
+                handle_f_keys(key)
 
-        if key == b'\x1b':  # Escape key
-            return 0
-        elif key == b'\xe0':  # Arrow keys
-            temp_input.clear()
-            u_KeyInput.handle_arrow_key(options)
-
-        elif key == b'\r':  # Enter key
+        elif key.val == '\n':  # Enter key
             if temp_input.size != 0:
                 selected = int(temp_input.text())
                 temp_input.clear()
@@ -58,40 +65,17 @@ def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False)
                 return selected - 1
             else:
                 invalid = True
-        elif key in [b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0']:  # number keys
+        elif key.val in "0123456789":
             handle_number_keys(key, index_class)
             continue
-        elif key == b'\x7f' or key == b'\x08':  # (ctrl+) backspace
-            if temp_input.size != 0:
-                handle_backspace(key, index_class)
 
-        elif key == b'\x03':  # ctrl + c
-            raise KeyboardInterrupt
-
-        elif key == b'i':
+        elif key.val == 'i':
             player.inventory.open_inventory()
 
-        elif key == b'q':
+        elif key.val == 'q':
             places.quest_logic.check_active_quests()
 
-        elif key == b'h':
+        elif key.val == 'h':
             u_KeyInput.display_shortcuts(True)
-        elif key == b'\x00':
-            u_KeyInput.handle_f_keys()
-        elif key == b'o':
+        elif key.val == 'o':
             u_KeyInput.change_options()
-
-        else:
-            print(key)
-            #os.system('cls')
-
-# index = [
-#     "index", 101,
-#     "persistent", 0]
-
-# l_stuff = [1, "Apple"]
-# r_stuff = [0, f"{colors.red}▬{colors.reset}"*10]
-# w_stuff = [1, "Enemy1", "Enemy2", "Enemy3", ]
-# listed_stuff = [index, r_stuff, l_stuff,  r_stuff, w_stuff, r_stuff, w_stuff, ]
-
-

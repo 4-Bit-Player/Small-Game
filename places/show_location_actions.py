@@ -6,7 +6,7 @@ from places import location_actions, shop, quest_logic, location_data, look_arou
 from player import *
 import enemies
 import combat
-from printing.print_queue import n_print
+from printing import n_print
 
 def show_location_actions(current_location, overflow):
     options = [[deco.format_text_in_line(current_location["welcome_text"])]]

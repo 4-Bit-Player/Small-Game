@@ -2,7 +2,7 @@ import time
 from player import user, u_KeyInput
 from places import quests, locations, unlock
 from decoration import deco, story
-from printing.print_queue import n_print
+from printing import n_print
 
 
 def generate_quests_for_save():

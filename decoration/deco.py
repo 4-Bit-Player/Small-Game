@@ -2,6 +2,8 @@ from player import user
 from decoration import colors
 import sys
 
+from printing._deco import set_line_len
+
 line_len = 46
 
 def clear_screen(lines_to_remove=20, lines_to_remove_ahead=5):
@@ -160,6 +162,7 @@ def player_hud():
                     straight_line * gold_len + characters[0]["bottom_u"] +
                     straight_line * sc_len + characters[0]["corner_br"])
     line_len = len(last_line)
+    set_line_len(line_len)
     out = header + "\n" + header2 + "\n" + header3 + "\n" + header4 + "\n" + last_line
     return out
 

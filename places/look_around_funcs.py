@@ -1,12 +1,13 @@
 from threading import Thread
 import combat, random
 from decoration.deco import player_hud, line_r
+from input_system import get_key
 from player import user
 from decoration import colors
 from player import crafting
 from player.keyinput_index_class import LAClass
-from player.u_KeyInput import wait_for_keypress, non_blocking_keyinput, get_char
-from printing.print_queue import n_print
+from player.u_KeyInput import wait_for_keypress, non_blocking_keyinput
+from printing import n_print
 from time import sleep, perf_counter
 
 
@@ -15,7 +16,7 @@ def look_around(current_location: dict[str:any]):
     thread = Thread(target=_thread_func, args=[la_class], daemon=True)
     thread.start()
     while la_class.active:
-        key = get_char()
+        key = get_key()
         if non_blocking_keyinput(key, la_class) != 0:
             continue
         if la_class.combat:

@@ -1,7 +1,7 @@
 import time
 from decoration import deco
 from player import user, u_KeyInput
-from printing.print_queue import n_print
+from printing import n_print
 
 
 def navigation_intro():

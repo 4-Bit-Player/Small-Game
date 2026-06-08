@@ -1,10 +1,11 @@
 import time
 from numbers import Number
+
+from input_system import num_input, text_input
 from player import user, u_KeyInput
 from decoration import deco
 from player.crafting import item_add
-from player.terminal_funcs import legacy_input
-from printing.print_queue import n_print
+from printing import n_print
 
 def cheat_menu():
     options = [
@@ -53,32 +54,25 @@ def change_stats():
 
 
 def change_that_stat(stat):
-    n_print(f"Please enter a new value for the stat ({stat})\n(leave empty to return)\n\nCurrent Value: {user.Player[stat]}\nNew Value:")
-
-    pick = legacy_input()
-    if pick == "":
+    pick = num_input(f"Please enter a new value for the stat ({stat})\n(leave empty to return)\n\nCurrent Value: {user.Player[stat]}\nNew Value:",
+                     whole_number=False,
+                     escape_allowed=True)
+    if pick is None:
         return
-    try:
-        val = float(pick)
-        user.Player[stat] = val
-    except ValueError:
-        return
+    user.Player[stat] = pick
 
 
 def give_item():
-    out = "Enter the item name you want to get: "
-    n_print(out)
-    item_name = legacy_input()
+    item_name = text_input("Enter the item name you want to get: ")
     if not item_name:
         return
-    n_print(f"How many do you want to get of {item_name}?\nAmount: ")
-    item_amount = legacy_input()
-    if not item_amount:
-        return
-    try:
-        item_amount = int(item_amount)
-    except ValueError:
+    n_print()
+    item_amount = num_input(f"How many do you want to get of {item_name}?\nAmount: ",
+                            min_num=0, whole_number=True, escape_allowed=True)
+    if item_amount is None or item_amount == 0:
         return
     if item_add(item_name, item_amount, False):
         n_print(f"{item_name} x {item_amount} added successfully")
-        time.sleep(1)
+    else:
+        n_print("Wasn't able to give you the item.")
+    time.sleep(1)

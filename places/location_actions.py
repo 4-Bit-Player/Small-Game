@@ -7,7 +7,7 @@ from places.location_data import unlocks_init, location_init, \
     location_back, go_to_location, get_unlocked, get_location, search_for_unlock
 from places.locations import search_location
 from player import user, crafting
-from printing.print_queue import n_print
+from printing import n_print
 from player.u_KeyInput import keyinput, wait_for_keypress, display_shortcuts
 
 
