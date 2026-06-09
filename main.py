@@ -85,11 +85,12 @@ def main():
         if user.Player["hp"] <= 0:
             user.Player["deaths"] += 1
 
-        if user.settings["delete_save_on_death"]:
-            save_just_highscore()
+        if user.character_loaded:
+            if user.settings["delete_save_on_death"]:
+                save_just_highscore()
 
-        else:
-            save_update_score()
+            else:
+                save_update_score()
 
         if user.Player["hp"] > 0:
             out = story.outro_alive()

@@ -1,7 +1,7 @@
 import sys, os
 import zlib
 from pathlib import Path
-from pickle import loads
+from pickle import loads, UnpicklingError
 
 from tools.py_encoding import decode_from_bytes, encode_to_bytes, ByteDecodeError
 
@@ -48,7 +48,7 @@ def load_save(save_num:int):
     try:
         save = loads(data)
         return save
-    except MemoryError:
+    except (MemoryError, UnpicklingError) :
         return ""
 
 
