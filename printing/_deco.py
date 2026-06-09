@@ -131,6 +131,54 @@ class TextColouring:
 
 
     @staticmethod
+    def light_blue(text:str) -> str:
+        """
+        :return: Returns the text with ANSII escape sequences at the beginning and end.
+        """
+        return f"{p_light_blue}{text}{p_reset}"
+
+
+    @staticmethod
+    def light_green(text:str) -> str:
+        """
+        :return: Returns the text with ANSII escape sequences at the beginning and end.
+        """
+        return f"{p_light_green}{text}{p_reset}"
+
+
+    @staticmethod
+    def gold(text:str) -> str:
+        """
+        :return: Returns the text with ANSII escape sequences at the beginning and end.
+        """
+        return f"{p_gold}{text}{p_reset}"
+
+
+    @staticmethod
+    def turquoise(text:str) -> str:
+        """
+        :return: Returns the text with ANSII escape sequences at the beginning and end.
+        """
+        return f"{p_turquoise}{text}{p_reset}"
+
+
+    @staticmethod
+    def pink(text:str) -> str:
+        """
+        :return: Returns the text with ANSII escape sequences at the beginning and end.
+        """
+        return f"{p_pink}{text}{p_reset}"
+
+
+    @staticmethod
+    def gray(text:str) -> str:
+        """
+        :return: Returns the text with ANSII escape sequences at the beginning and end.
+        """
+        return f"{p_gray}{text}{p_reset}"
+
+
+    @staticmethod
     def colour(text:str, colour:str) -> str:
         """
         Returns the text with corresponding ANSII escape sequences.
