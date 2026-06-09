@@ -1,5 +1,5 @@
 from player import user
-from decoration import colors
+from printing import TextColouring
 from printing._deco import get_line_len, set_line_len
 
 line_len = get_line_len()
@@ -89,14 +89,14 @@ def player_hud():
               straight_line * sc_len + characters[0]["corner_tr"])
 
     header2 = str(characters[0]["middle_s"] +
-                  colors.turquoise + lvl_name + colors.reset + characters[0]["middle_s"] +
-                  colors.pink + xp_name + colors.reset + characters[0]["middle_s"] +
-                  colors.green + hp_name + colors.reset + characters[0]["middle_s"] +
-                  colors.red + dam_name + colors.reset + characters[0]["middle_s"] +
-                  colors.gray + defense_name + colors.reset + characters[0]["middle_s"] +
-                  colors.light_blue + dex_name + colors.reset + characters[0]["middle_s"] +
-                  colors.gold + gold_name + colors.reset + characters[0]["middle_s"] +
-                  colors.light_blue + sc_name + colors.reset + characters[0]["middle_s"])
+                  TextColouring.turquoise(lvl_name) + characters[0]["middle_s"] +
+                  TextColouring.pink(xp_name) + characters[0]["middle_s"] +
+                  TextColouring.green(hp_name) + characters[0]["middle_s"] +
+                  TextColouring.red(dam_name) + characters[0]["middle_s"] +
+                  TextColouring.gray(defense_name) + characters[0]["middle_s"] +
+                  TextColouring.light_blue(dex_name) + characters[0]["middle_s"] +
+                  TextColouring.gold(gold_name) + characters[0]["middle_s"] +
+                  TextColouring.light_blue(sc_name) + characters[0]["middle_s"])
 
     header3 = str(characters[0]["middle_l"] +
                   straight_line * lvl_len + characters[0]["middle_c"] +
@@ -108,15 +108,15 @@ def player_hud():
                   straight_line * gold_len + characters[0]["middle_c"] +
                   straight_line * sc_len + characters[0]["middle_r"])
 
-    header4 = str(characters[0]["middle_s"] +
-                  colors.turquoise + lvl + colors.reset + characters[0]["middle_s"] +
-                  colors.pink + xp + colors.reset + characters[0]["middle_s"] +
-                  colors.green + hp + colors.reset + characters[0]["middle_s"] +
-                  colors.red + damage + colors.reset + characters[0]["middle_s"] +
-                  colors.gray + defense + colors.reset + characters[0]["middle_s"] +
-                  colors.light_blue + dex + colors.reset + characters[0]["middle_s"] +
-                  colors.gold + gold + colors.reset + characters[0]["middle_s"] +
-                  colors.light_blue + score + colors.reset + characters[0]["middle_s"])
+    header4 = str(f"{characters[0]['middle_s']}"
+                  f"{TextColouring.turquoise(lvl)}{characters[0]['middle_s']}"
+                  f"{TextColouring.pink(xp)}{characters[0]['middle_s']}"
+                  f"{TextColouring.green(hp)}{characters[0]['middle_s']}"
+                  f"{TextColouring.red(damage)}{characters[0]['middle_s']}"
+                  f"{TextColouring.gray(defense)}{characters[0]['middle_s']}"
+                  f"{TextColouring.light_blue(dex)}{characters[0]['middle_s']}"
+                  f"{TextColouring.gold(gold)}{characters[0]['middle_s']}"
+                  f"{TextColouring.light_blue(score)}{characters[0]['middle_s']}")
 
     last_line = str(characters[0]["corner_bl"] +
                     straight_line * lvl_len + characters[0]["bottom_u"] +
