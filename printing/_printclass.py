@@ -90,8 +90,8 @@ class PrintClass:
 
     def _print_output(self):
         self.check_terminal_update()
-        self._format_lines()
         self._clear_output()
+        self._format_lines()
         out = self._current_lines
         if self.centered:
             offset = max(0, int((self.max_line_chars - get_line_len()) / 2))
@@ -182,20 +182,24 @@ class PrintClass:
             data[index] = new_line + p_reset
             data.insert(index + 1, trailing_esc_sequence + line[space_index:])
             return
-        
+
         data[index] = new_line
         data.insert(index + 1, line[space_index+1:])
 
     def _clear_output(self) -> None:
         if len(self._last_lines) <= 0:
             return
-        new_lines = 0
-        for line in self._last_lines:
-            new_lines += max(ceil((len(remove_escape_sequences(line))) / (self.max_line_chars + 1)), 1)
-        new_lines = min(new_lines, self.max_columns)
-        if new_lines >= self.max_columns and self._terminal_reset_allowed:
-            full_clear()
-            return
+        while True:
+            new_lines = 0
+            for line in self._last_lines:
+                new_lines += max(ceil((len(remove_escape_sequences(line))) / (self.max_line_chars + 1)), 1)
+            new_lines = min(new_lines, self.max_columns)
+            if new_lines >= self.max_columns and self._terminal_reset_allowed:
+                full_clear()
+                return
+            if self.check_terminal_update():
+                continue
+            break
         clear_lines(new_lines)
 
     def get_new_output(self) -> None:
