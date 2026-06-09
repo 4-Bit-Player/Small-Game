@@ -3,7 +3,8 @@ from shutil import get_terminal_size
 from queue import Queue
 from time import sleep, perf_counter
 
-from ._deco import using_ansi, replace_ansi, get_line_len, clear_lines, remove_escape_sequences, full_clear
+from ._deco import using_ansi, replace_ansi, get_line_len, clear_lines, remove_escape_sequences, full_clear, p_reset, \
+    _COLOR_LOOKUP_TABLE
 
 
 class PrintClass:
@@ -129,6 +130,20 @@ class PrintClass:
             return index # This should never be the case. It would require a different start for the escape sequences.
         return esc_begin
 
+    def _get_trailing_escape_sequence(self, line:str) -> str:
+        """
+        Checks if there is and returns the last escape sequence if the last sequence is not a reset.
+        """
+        index = line.rfind("\033")
+        if index == -1:
+            return ""
+        last_part:str = line[index:]
+        if last_part.startswith(p_reset):
+            return ""
+        for code in _COLOR_LOOKUP_TABLE.values():
+            if last_part.startswith(code):
+                return code
+        return ""
 
     def _format_long_line(self, data: list[str], no_seq_line:str ,index: int, max_length:int) -> None:
         line = data[index]
@@ -148,13 +163,27 @@ class PrintClass:
                 data.insert(index + 1, line[max_length+1:])
                 return
             index = self.__get_index_ascii_safe(line, index)
-            data[index] = line[:max_length]
+            new_line = line[:max_length]
+            trailing_esc_sequence = self._get_trailing_escape_sequence(new_line)
+            if len(trailing_esc_sequence) > 0:
+                data[index] = new_line + p_reset
+                data.insert(index + 1, trailing_esc_sequence + line[max_length:])
+                return
+            data[index] = new_line
             data.insert(index + 1, line[max_length:])
             return
         space_index = -1
         for i in range(space_number):
             space_index = line.find(" ", space_index + 1)
-        data[index] = line[:space_index]
+
+        new_line = line[:space_index]
+        trailing_esc_sequence = self._get_trailing_escape_sequence(new_line)
+        if len(trailing_esc_sequence) > 0:
+            data[index] = new_line + p_reset
+            data.insert(index + 1, trailing_esc_sequence + line[space_index:])
+            return
+        
+        data[index] = new_line
         data.insert(index + 1, line[space_index+1:])
 
     def _clear_output(self) -> None:
