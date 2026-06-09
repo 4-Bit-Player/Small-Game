@@ -4,7 +4,7 @@ from decoration import deco, colors
 import time
 import enemies
 from places import quest_logic
-from printing import n_print, TextColouring
+from printing import n_print, TextColouring, get_header
 
 
 def combat(current_location):
@@ -12,25 +12,24 @@ def combat(current_location):
     enemy = enemies.encounter(current_location)
 
     fighting = True
-    log = []
-    temp_log = []
+    log:list[str] = []
+    temp_log:str = ""
     total_hp_lost = 0
     hp_lost = 0
-    deco.clear_screen()
-    options: list = [[""]] + fighting_options[:] + [[]]
     overflow = ""
 
+    header: str = get_header(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}', char="=")
+    if user.test:
+        for key, val in enemy.items():
+            header = f"{key}: {val}\n" + header
+
+    options: list = [[header, ""]] + fighting_options[:] + [[]]
     while fighting:
 
         if user.Player["hp"] <= 0:
             return
 
-        header: str = (deco.line_r() + "\n" +
-                       f'You spotted a {enemy["name"]} Level {enemy["lvl"]}\n' +
-                       deco.line_r())
-        if user.test:
-            for key, val in enemy.items():
-                header = f"{key}: {val}\n" + header
+
 
         if temp_log:
             log.append(temp_log)
@@ -44,7 +43,7 @@ def combat(current_location):
         else:
             options[-1] = [""]
 
-        pick = u_KeyInput.keyinput(options, header)
+        pick = u_KeyInput.keyinput(options)
         if pick == 3:
             overflow = check_health_combat()
         elif pick == 2:
@@ -54,15 +53,10 @@ def combat(current_location):
                 enemy, temp_log, hp_lost = attack(enemy, 1)
         elif pick == 1:
             till_death = True
-            out = (
-                    deco.line_r() + "\n"
-                    f'You spotted a {enemy["name"]} Level {enemy["lvl"]}\n' +
-                    deco.line_r()+ "\n"
-            )
+            out = get_header(f'You spotted a {enemy["name"]} Level {enemy["lvl"]}\n', char="=")
 
             if log:
-                for line in log:
-                    out += deco.format_text_in_line([line])
+                out += "\n".join(log) + "\n"
 
             while till_death:
                 enemy, temp_log, hp_lost = attack(enemy, 0)
@@ -113,7 +107,6 @@ def fight_won(enemy, hp_lost, temp_log):
     user.Player["score"] += enemy["xp"]
     n_print(out)
     u_KeyInput.wait_for_keypress()
-    deco.clear_screen()
 
 
 def enemy_drop(enemy):

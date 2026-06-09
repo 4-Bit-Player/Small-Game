@@ -6,7 +6,7 @@ from places.location_data import search_for_unlock, get_unlocked, get_location, 
 from places.locations import search_location
 from player import user, u_KeyInput
 from player.u_KeyInput import keyinput, wait_for_keypress
-from printing import n_print, full_clear, TextColouring
+from printing import n_print, full_clear, TextColouring, center_text
 from save_system.file_system import save_game, get_save_nums, load_save, delete_save
 
 
@@ -101,9 +101,9 @@ def save_all():
 
     user.character_loaded = True
     n_print(
-        deco.line_r() + "\n" +
+        f"{deco.line_r()}\n" +
         TextColouring.green("Game saved successfully!") + "\n" +
-        deco.line_r() + "\n" +
+        f"{deco.line_r()}\n"
         "Press enter to continue.\n"
     )
     wait_for_keypress()
@@ -112,7 +112,7 @@ def save_all():
 def load_all():
     nums = get_save_nums()
     if len(nums) == 0:
-        n_print(TextColouring.red("No Save File Found!") + "\n" + "Press enter to continue.\n")
+        n_print(TextColouring.red("No Save File Found!") + "\nPress enter to continue.\n")
         wait_for_keypress()
         return
 
@@ -121,7 +121,8 @@ def load_all():
 
     options = [
         [deco.line_r(),
-         "Which save do you want to load?\n(Your current progress will be overwritten.)", deco.line_r()],
+         "Which save do you want to load?\n(Your current progress will be overwritten.)",
+         deco.line_r()],
         "Back",
         [""]
     ]
@@ -206,6 +207,10 @@ def try_load_save(save, save_num, active_game=False):
         active_q = save["active_quests"]
         quest_logic.load_saved_quests(finished_q, active_q)
 
+        if user.settings["centered_screen"]:
+            center_text()
+
+
         load_unlocked(save["unlocked"])
 
         full_clear() # required, because of the tons of text
@@ -248,6 +253,9 @@ def try_load_saved_player(save, save_num):
         user.Player.update(save["Player"])
         user.Equipped.update(save["Player_equip"])
         user.settings.update(save["settings"])
+        if user.settings["centered_screen"]:
+            center_text()
+
         user.game_code = save["game_code"]
         user.character_loaded = True
         user.save_slot = save_num
@@ -312,7 +320,7 @@ def save_check() -> bool:
         "Back",
         [""],
     ]
-    options += [f"Save {x}" for x in save_nums]
+    options.extend([f"Save {x}" for x in save_nums])
     pick = u_KeyInput.keyinput(options)
     if not pick:
         return False
@@ -321,7 +329,7 @@ def save_check() -> bool:
 
     if not "Player" in save:
         n_print(TextColouring.red("The save seems to be broken. D:") + "\nPress enter to start from the beginning...")
-        u_KeyInput.wait_for_keypress()
+        wait_for_keypress()
         return False
 
     if "Version" in save and save["Version"] in user.Compatible_versions:

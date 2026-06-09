@@ -18,7 +18,7 @@ _line_len:int = int(get_terminal_size()[0]/3)
 _use_ansi:bool = True
 _reset_console:str = "cls" if platform == "win32" else "clear"
 
-def clear_screen(lines_to_remove:int=20, lines_to_remove_ahead:int=0) -> None:
+def clear_lines(lines_to_remove:int=20, lines_to_remove_ahead:int=0) -> None:
     if not _use_ansi:
         system(_reset_console)
         return
@@ -46,11 +46,12 @@ def set_line_len(char_num:int) -> None:
     _line_len = char_num
 
 
-def get_header(*header, char:str='~') -> str:
+def get_header(*header, char:str='~', centered_text=True) -> str:
     header = [str(x) for x in header]
     hwidth = _line_len
-    for i in range(len(header)):
-        header[i] = header[i].center(hwidth) + "\n"
+    if centered_text:
+        for i in range(len(header)):
+            header[i] = header[i].center(hwidth) + "\n"
     return  (char * hwidth + "\n" +
               "".join(header) +
               char * hwidth + "\n")

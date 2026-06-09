@@ -6,7 +6,6 @@ from printing import n_print, get_header
 
 def open_inventory():
     inv_open = True
-    deco.clear_screen()
     available_items = []
     show_items = "All"
     show_items_list = ["All", "Use-Ables", "Weapons", "Armor", "Materials"]
@@ -60,7 +59,6 @@ def open_inventory():
 
         if isinstance(a_selection[0], KeyinputIndexClass):
             index = a_selection[0]
-    deco.clear_screen()
 
 
 def use_item(item):

@@ -94,7 +94,6 @@ def progress(event: dict):
 
 
 def check_quests():
-    deco.clear_screen()
     absolved_quest = []
     for quest in quests.active_quests:
         done = 0

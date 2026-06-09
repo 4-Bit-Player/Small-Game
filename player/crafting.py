@@ -82,14 +82,12 @@ def item_search(item_name, apology=True) -> dict | None:
         n_print(f"Failed to find {item_name}...\n"
                 f"(Press enter to continue)")
         u_KeyInput.wait_for_keypress()
-        deco.clear_screen(6)
         return None
     n_print(deco.line_r() + f'\nLooking up the item "{item_name}" was not successful... :(\n'
     "Please write me where you got this error, so I can fix it.\n"
     "Additionally you'll get a written apology. \nYou can sell that at a merchant for a bit of money.\n"
     "(Press enter to continue)")
     u_KeyInput.wait_for_keypress()
-    deco.clear_screen(6)
     item_add("An apology from the dev :(", 1, False)
     return None
 
@@ -127,7 +125,6 @@ def upgrading():
             pick = u_KeyInput.keyinput(options, "Upgrading Equipment")
 
             if not pick:
-                deco.clear_screen()
                 return
 
             upgrade_equipment(item_list[pick-1])
@@ -140,7 +137,6 @@ def upgrading():
 
 def upgrade_equipment(equip_to_upgrade):
     up_equipment = 1
-    deco.clear_screen()
     while up_equipment:
         header = (deco.line_r() + "\n" +
                   f'Upgrading {equip_to_upgrade["item_name"]} '
@@ -176,7 +172,6 @@ def upgrade_equipment(equip_to_upgrade):
             pick = u_KeyInput.keyinput(options, header)
 
         if not pick:
-            deco.clear_screen()
             return
 
         used_item = available_material[pick - 1]
@@ -280,8 +275,6 @@ def show_item_effects_r(item, already_did=0):
 
 
 def craft_list(c_list):
-
-    deco.clear_screen()
     overflow = []
     selection = []
     while colors:
@@ -316,7 +309,6 @@ def craft_list(c_list):
         if overflow:
             selection.append(overflow)
         pick = u_KeyInput.keyinput(selection)
-        deco.clear_screen()
 
         if not pick:
             return

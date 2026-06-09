@@ -4,9 +4,6 @@ from printing._deco import get_line_len, set_line_len
 
 line_len = get_line_len()
 
-def clear_screen(lines_to_remove=20, lines_to_remove_ahead=5):
-    return
-
 
 def line_r(s='='):
     return s * line_len

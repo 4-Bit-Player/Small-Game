@@ -3,7 +3,7 @@ from shutil import get_terminal_size
 from queue import Queue
 from time import sleep, perf_counter
 
-from ._deco import using_ansi, replace_ansi, get_line_len, clear_screen, remove_escape_sequences, full_clear
+from ._deco import using_ansi, replace_ansi, get_line_len, clear_lines, remove_escape_sequences, full_clear
 
 
 class PrintClass:
@@ -167,7 +167,7 @@ class PrintClass:
         if new_lines >= self.max_columns and self._terminal_reset_allowed:
             full_clear()
             return
-        clear_screen(new_lines)
+        clear_lines(new_lines)
 
     def get_new_output(self) -> None:
         n_out: list[str | bool | tuple] = self.queue.get()
@@ -262,7 +262,7 @@ class FpsCounter:
             self.actual_fps = "---"
 
     def display_fps_info(self, output: str, line_amount: int):
-        clear_screen(line_amount + 6, 0)
+        clear_lines(line_amount + 6, 0)
         print(output +
               f"\n\nOutput calculation time   : {self.calculation_time:.6f} (theoretic fps: {self.theoretic_fps})"
               f"\nAverage output calc time   : {sum(self.average_output_calc_time_list) / self.average_accuracy:.6f}"

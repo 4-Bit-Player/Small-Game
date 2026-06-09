@@ -50,7 +50,6 @@ def shop_sell():
         pick = u_KeyInput.keyinput(options, hud=True)
 
         if not pick:
-            deco.clear_screen()
             return
 
         if pick == 1:

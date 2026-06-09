@@ -1,13 +1,11 @@
 import random
-import time
 from places import quests
-import combat
-from decoration import deco, colors, story
+from decoration import deco, story
 from places.location_data import unlocks_init, location_init, \
     location_back, go_to_location, get_unlocked, get_location, search_for_unlock
 from places.locations import search_location
 from player import user, crafting
-from printing import n_print
+from printing import n_print, clear_lines, get_header, TextColouring
 from player.u_KeyInput import keyinput, wait_for_keypress, display_shortcuts
 
 
@@ -51,7 +49,7 @@ def shop(item):
         else:
             item_name = item["name"]
         article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
-        return deco.line_r() + "\n" + f'You bought {article} {item_name}\n' + deco.line_r() + "\n"
+        return get_header(f'You bought {article} {item_name}\n', char="=", centered_text=False)
 
 
     if isinstance(item["name"], list):
@@ -61,10 +59,8 @@ def shop(item):
         item_name = item["name"]
     article = "an" if item_name.lower() in ["a", "e", "i", "o", "u"] else "a"
 
-    return (deco.line_r() + "\n" +
-            f'{colors.red}You don\'t have enough money to buy {article} {item_name} right now.{colors.reset}' +
-            deco.line_r() + "\n"
-            )
+    return get_header(TextColouring.red(f'You don\'t have enough money to buy {article} {item_name} right now.'), char="=", centered_text=False)
+
 
 def check_hp_max():
     if user.Player["hp"] > user.Player["hp_max"]:
@@ -104,7 +100,7 @@ def inspect(current_location):
                 continue
             unlocked[curr_name]["inspect"].append(thing["u_name"])
         current_location["inspect"].clear()
-        deco.clear_screen()
+        clear_lines()
         return
 
     else:
@@ -125,7 +121,6 @@ def inspect(current_location):
     out += "Press enter to continue.\n"
     n_print(out)
     wait_for_keypress()
-    deco.clear_screen()
     return
 
 

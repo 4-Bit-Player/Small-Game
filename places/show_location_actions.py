@@ -1,15 +1,18 @@
 from player.keyinput_index_class import KeyinputIndexClass
 from save_system.save_logic import save_load
 from player import u_FullKeyInput
-from decoration import *
+from decoration import deco
 from places import location_actions, shop, quest_logic, location_data, look_around_funcs
-from player import *
+from player import user, inventory, crafting
 import enemies
 import combat
-from printing import n_print
+from printing import n_print, get_header
+
 
 def show_location_actions(current_location, overflow):
-    options = [[deco.format_text_in_line(current_location["welcome_text"])]]
+    hud = deco.player_hud()
+    header = get_header(current_location["name"], char="=")
+    options = [[f"{hud}\n{header}", "\n".join(current_location["welcome_text"])]]
 
     if current_location["type"] not in ["shop", "forge"]:
         current_location = location_data.weather(current_location)
@@ -46,7 +49,7 @@ def show_location_actions(current_location, overflow):
     if "index_class" in current_location:
         if current_location["index_class"] is not None:
             options.insert(0, current_location["index_class"])
-    pick = u_FullKeyInput.keyinputfull(options, header=current_location["name"], hud=True)
+    pick = u_FullKeyInput.keyinputfull(options)
     if isinstance(options[0], KeyinputIndexClass):
         current_location["index_class"] = options[0]
 
