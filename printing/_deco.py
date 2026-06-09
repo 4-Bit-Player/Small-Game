@@ -48,7 +48,7 @@ def set_line_len(char_num:int) -> None:
 
 def get_header(*header, char:str='~') -> str:
     header = [str(x) for x in header]
-    hwidth = int(get_terminal_size()[0] / 2)
+    hwidth = _line_len
     for i in range(len(header)):
         header[i] = header[i].center(hwidth) + "\n"
     return  (char * hwidth + "\n" +
@@ -103,7 +103,7 @@ class TextColouring:
         """
         :return: Returns the text with ANSII escape sequences at the beginning and end.
         """
-        return "".join([p_red, text, p_reset])
+        return f"{p_red}{text}{p_reset}"
 
 
     @staticmethod
@@ -111,7 +111,7 @@ class TextColouring:
         """
         :return: Returns the text with ANSII escape sequences at the beginning and end.
         """
-        return "".join([p_green, text, p_reset])
+        return f"{p_green}{text}{p_reset}"
 
 
     @staticmethod
@@ -119,7 +119,7 @@ class TextColouring:
         """
         :return: Returns the text with ANSII escape sequences at the beginning and end.
         """
-        return "".join([p_negative, text, p_reset])
+        return f"{p_negative}{text}{p_reset}"
 
 
     @staticmethod
@@ -127,7 +127,7 @@ class TextColouring:
         """
         :return: Returns the text with ANSII escape sequences at the beginning and end.
         """
-        return "".join([p_yellow, text, p_reset])
+        return f"{p_yellow}{text}{p_reset}"
 
 
     @staticmethod
@@ -140,5 +140,5 @@ class TextColouring:
         :param colour: The colour it should have.
         """
         if colour.lower() in _COLOR_LOOKUP_TABLE:
-            return "".join([_COLOR_LOOKUP_TABLE[colour.lower()], text, p_reset])
+            return f"{_COLOR_LOOKUP_TABLE[colour.lower()]}{text}{p_reset}"
         return text
