@@ -1,9 +1,9 @@
 import random
 import time
 from copy import deepcopy
-from decoration import colors
 from places import unlock, locations as loc
 from places.locations import search_location
+from printing import TextColouring
 
 
 _weather_day = "sunny"
@@ -50,9 +50,8 @@ def search_for_unlock(name:str):
     if name in _unlocks:
         return _unlocks[name]
     else:
-        print(colors.red + "Failed To Get Unlock!!\n"+name + colors.reset)
+        print(TextColouring.red(f"Failed To Get Unlock!!\n{name}"))
         time.sleep(0.2)
-        # wait_for_keypress()
 
 def get_unlocked():
     return _unlocked

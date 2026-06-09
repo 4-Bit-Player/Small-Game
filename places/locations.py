@@ -1,8 +1,9 @@
 from places.unlock import unlocks
+from typing import Any
 locations = []
 
 
-def search_location(location_name: str) -> dict[str:any]:
+def search_location(location_name: str) -> dict[str,Any]:
     for location in locations:
         if location["name"] == location_name:
             return location

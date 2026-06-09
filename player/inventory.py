@@ -1,7 +1,7 @@
 from player import user, crafting, u_KeyInput
 from decoration import deco, colors
 from player.keyinput_index_class import KeyinputIndexClass
-from printing import n_print
+from printing import n_print, get_header
 
 
 def open_inventory():
@@ -140,7 +140,7 @@ def inv_inspect():
 
 
 def item_inspect(item):
-    out = deco.print_header_r(item["item_name"]) + "\n" + deco.format_text_in_line([item["item_desc"]]) + "\n"
+    out = get_header(item["item_name"], char="=") + deco.format_text_in_line([item["item_desc"]]) + "\n"
 
     if item["item_type"] in ["potion", "equipment", "food", "armor"]:
         for i in crafting.show_item_effects(item):
@@ -170,7 +170,7 @@ def inv_crafting():
             [deco.print_header_r("Craft Item")],
             "Stop Crafting",
             "Cycle through All/Use-ables/Weapons/Armor",
-            [deco.print_header_r(show_items, s="~")]]
+            [get_header(show_items, char="~")]]
 
         shown_recipes = list_recipes(unlocked_recipies, show_items)
 

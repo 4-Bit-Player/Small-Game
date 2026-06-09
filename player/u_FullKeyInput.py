@@ -2,10 +2,10 @@ import places.quest_logic
 import player.inventory
 from input_system import get_key, SpecialChar
 from player import u_KeyInput
-from decoration import colors, deco
+from decoration import deco
 from player.keyinput_index_class import KeyinputIndexClass, TempInput
 from player.u_KeyInput import handle_number_keys, handle_backspace, handle_arrow_key, handle_f_keys
-from printing import n_print
+from printing import n_print, get_header, TextColouring
 
 
 def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False):
@@ -20,14 +20,14 @@ def keyinputfull(options: list, header: str = "", start_at=1, hud: bool = False)
         if hud:
             out += deco.player_hud() + "\n"
         if len(header) > 0:
-            out += deco.print_header_r(header) + "\n"
+            out += get_header(header, char="=")
 
         out += u_KeyInput.return_screen_prt_h(options, start_at) + "\n\n"
 
         if invalid:
             temp_input.clear()
             invalid = False
-            out += f"{colors.red}Invalid number, please pick a number from 1 to {index_class.limit}{colors.reset}"
+            out += TextColouring.red(f"Invalid number, please pick a number from 1 to {index_class.limit}")
 
         if temp_input.size != 0:
             out += "Action: " + str(temp_input.text())

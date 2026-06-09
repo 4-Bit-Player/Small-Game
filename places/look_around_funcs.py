@@ -1,4 +1,5 @@
 from threading import Thread
+from typing import Any
 import combat, random
 from decoration.deco import player_hud, line_r
 from input_system import get_key
@@ -11,7 +12,7 @@ from printing import n_print
 from time import sleep, perf_counter
 
 
-def look_around(current_location: dict[str:any]):
+def look_around(current_location: dict[str,Any]):
     la_class = LAClass(current_location)
     thread = Thread(target=_thread_func, args=[la_class], daemon=True)
     thread.start()

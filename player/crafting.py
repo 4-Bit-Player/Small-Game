@@ -3,7 +3,7 @@ from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
 from player.keyinput_index_class import KeyinputIndexClass
-from printing import n_print
+from printing import n_print, TextColouring
 import recipies.weapons as r_weapons
 import recipies.armor as r_armor
 import recipies.use_ables as r_use_ables
@@ -32,9 +32,9 @@ def craft(recipe):
 
         item_add(recipe["result"], recipe["re_amount"])
 
-        return [f'{colors.green}You crafted {recipe["re_amount"]}x {recipe["name"]}.{colors.reset}']
+        return [TextColouring.green(f'You crafted {recipe["re_amount"]}x {recipe["name"]}')]
     else:
-        return [f"{colors.red}You don't have all Materials{colors.reset}"]
+        return [TextColouring.red("You don't have all Materials")]
 
 
 def crafting_check(recipe):
@@ -119,7 +119,7 @@ def upgrading():
                 eq = "(equipped)" if item["equipped"] else ""
 
                 if item["upgrades"][0] >= item["upgrades"][1]:
-                    item_text = f'{colors.red}{item_text}{colors.reset}'
+                    item_text = TextColouring.red(item_text)
 
                 options.append(item_text +
                                f'{(" x "+str(item["item_amount"])) if item["item_amount"]>1 else ""} {eq}')

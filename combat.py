@@ -4,7 +4,7 @@ from decoration import deco, colors
 import time
 import enemies
 from places import quest_logic
-from printing import n_print
+from printing import n_print, TextColouring
 
 
 def combat(current_location):
@@ -66,7 +66,7 @@ def combat(current_location):
 
             while till_death:
                 enemy, temp_log, hp_lost = attack(enemy, 0)
-                out += deco.format_text_in_line([temp_log]) + "\n"
+                out += temp_log + "\n"
                 total_hp_lost += hp_lost
                 n_print(out)
                 time.sleep(.5)
@@ -133,13 +133,13 @@ def enemy_drop(enemy):
 def check_health_combat():
     out = deco.line_r() + "\n"
     if user.Player["hp"] > 0.7 * user.Player["hp_max"]:
-        out += f"{colors.green}You feel fine.{colors.reset}\n"
+        out += TextColouring.green(f"You feel fine.\n")
 
     elif user.Player["hp"] > 0.4 * user.Player["hp_max"]:
-        out += f"{colors.gold}You don't feel that well...{colors.reset}\n"
+        out += TextColouring.yellow(f"You don't feel that well...\n")
 
     else:
-        out += f"{colors.red}You are felling unwell!{colors.reset}\n"
+        out += TextColouring.red(f"You are felling unwell!\n")
     return out + deco.line_r()
 
 def dex_check(enemy):

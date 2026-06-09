@@ -1,13 +1,12 @@
-#import json
 import time
-from decoration import colors, deco
+from decoration import deco
 from places import quest_logic, location_data, location_actions
 from places.location_data import search_for_unlock, get_unlocked, get_location, get_past_location, unlocks_init, \
     location_init
 from places.locations import search_location
 from player import user, u_KeyInput
 from player.u_KeyInput import keyinput, wait_for_keypress
-from printing import n_print
+from printing import n_print, full_clear, TextColouring
 from save_system.file_system import save_game, get_save_nums, load_save, delete_save
 
 
@@ -27,7 +26,7 @@ def load_unlocked(stuff_to_unlock: dict):
                 print(u_lock_name, "\n", unlock_type)
                 u_lock = search_for_unlock(u_lock_name)
                 if u_lock is None:
-                    print(colors.red + "Failed to find " + u_lock_name + colors.reset)
+                    print(TextColouring.red(f"Failed to find {u_lock_name}"))
                     time.sleep(0.2)
                     #wait_for_keypress()
                     continue
@@ -103,7 +102,7 @@ def save_all():
     user.character_loaded = True
     n_print(
         deco.line_r() + "\n" +
-        colors.green + "Game saved successfully!" + colors.reset + "\n" +
+        TextColouring.green("Game saved successfully!") + "\n" +
         deco.line_r() + "\n" +
         "Press enter to continue.\n"
     )
@@ -113,7 +112,7 @@ def save_all():
 def load_all():
     nums = get_save_nums()
     if len(nums) == 0:
-        n_print(colors.red + "No Save File Found!" + colors.reset + "\n" + "Press enter to continue.\n")
+        n_print(TextColouring.red("No Save File Found!") + "\n" + "Press enter to continue.\n")
         wait_for_keypress()
         return
 
@@ -208,21 +207,23 @@ def try_load_save(save, save_num, active_game=False):
         quest_logic.load_saved_quests(finished_q, active_q)
 
         load_unlocked(save["unlocked"])
-        deco.full_clear() # required, because of the tons of text
+
+        full_clear() # required, because of the tons of text
         out = (
-            deco.line_r() + "\n" +
-            f"{colors.green}Save loaded successfully!{colors.reset}\n" +
-            deco.line_r() + "\nPress enter to continue your journey."
+            f"{deco.line_r()}\n"
+            f"{TextColouring.green('Save loaded successfully!')}\n"
+            f"{deco.line_r()}\nPress enter to continue your journey."
         )
+
         n_print(out)
         wait_for_keypress()
         return True
 
 
     out = (
-        deco.line_r() + "\n" +
-        f"{colors.red}Unable to load save!{colors.reset}\n" +
-        deco.line_r() + "\n"
+        f"{deco.line_r()}\n"
+        f"{TextColouring.red('Unable to load save!')}\n"
+        f"{deco.line_r()}\n"
     )
     if not active_game:
         out += "Press enter to start from the beginning.\n"
@@ -250,11 +251,11 @@ def try_load_saved_player(save, save_num):
         user.game_code = save["game_code"]
         user.character_loaded = True
         user.save_slot = save_num
-        deco.full_clear() # Most likely isn't required
+        full_clear() # Most likely isn't required
         out = (
-                deco.line_r() + "\n" +
-                f"{colors.green}Player data loaded successfully!{colors.reset}\n" +
-                deco.line_r() + "\nPress enter to continue your journey."
+                f"{deco.line_r()}\n"
+                f"{TextColouring.green('Player data loaded successfully!')}\n" +
+                f"{deco.line_r()}\nPress enter to continue your journey."
         )
         n_print(out)
         wait_for_keypress()
@@ -262,9 +263,9 @@ def try_load_saved_player(save, save_num):
 
     else:
         out = (
-                deco.line_r() + "\n" +
-                f"{colors.red}Unable to load player data!{colors.reset}\n" +
-                deco.line_r() + "\n" +
+                f"{deco.line_r()}\n"
+                f"{TextColouring.red('Unable to load player data!')}\n"
+                f"{deco.line_r()}\n"
                 "Press enter to start from the beginning.\n"
         )
         n_print(out)
@@ -319,7 +320,7 @@ def save_check() -> bool:
     save = load_save(save_nums[picked_save])
 
     if not "Player" in save:
-        n_print(colors.red + "The save seems to be broken. D:" + colors.reset+"\nPress enter to start from the beginning...")
+        n_print(TextColouring.red("The save seems to be broken. D:") + "\nPress enter to start from the beginning...")
         u_KeyInput.wait_for_keypress()
         return False
 
