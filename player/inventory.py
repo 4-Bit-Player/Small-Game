@@ -138,7 +138,7 @@ def inv_inspect():
 
 
 def item_inspect(item):
-    out = get_header(item["item_name"], char="=") + deco.format_text_in_line([item["item_desc"]]) + "\n"
+    out = get_header(item["item_name"], char="=") + "\n".join(item["item_desc"]) + "\n"
 
     if item["item_type"] in ["potion", "equipment", "food", "armor"]:
         for i in crafting.show_item_effects(item):

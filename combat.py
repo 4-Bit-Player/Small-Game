@@ -33,7 +33,7 @@ def combat(current_location):
 
         if temp_log:
             log.append(temp_log)
-            options[1].append(deco.format_text_in_line([temp_log]))
+            options[1].append(temp_log + "\n")
             temp_log = ""
 
         if overflow:

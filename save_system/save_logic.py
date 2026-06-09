@@ -6,7 +6,7 @@ from places.location_data import search_for_unlock, get_unlocked, get_location, 
 from places.locations import search_location
 from player import user, u_KeyInput
 from player.u_KeyInput import keyinput, wait_for_keypress
-from printing import n_print, full_clear, TextColouring, center_text
+from printing import n_print, full_clear, TextColouring, center_text, get_header
 from save_system.file_system import save_game, get_save_nums, load_save, delete_save
 
 
@@ -78,9 +78,7 @@ def save_all():
             saves[i] += " (exists)"
         options = [
             [
-                deco.line_r(),
-                "Which save file do you want to use?",
-                deco.line_r()
+                get_header("Which save file do you want to use?",char="=")
             ],
             "Back"
         ]
@@ -101,10 +99,8 @@ def save_all():
 
     user.character_loaded = True
     n_print(
-        f"{deco.line_r()}\n" +
-        TextColouring.green("Game saved successfully!") + "\n" +
-        f"{deco.line_r()}\n"
-        "Press enter to continue.\n"
+        get_header(TextColouring.green("Game saved successfully!"), char="=")
+        + "Press enter to continue.\n"
     )
     wait_for_keypress()
 
@@ -120,9 +116,7 @@ def load_all():
     save_nums = ["Save " + str(x) for x in nums]
 
     options = [
-        [deco.line_r(),
-         "Which save do you want to load?\n(Your current progress will be overwritten.)",
-         deco.line_r()],
+        [get_header("Which save do you want to load?\n(Your current progress will be overwritten.)", char="=", centered_text=False)],
         "Back",
         [""]
     ]
@@ -214,22 +208,15 @@ def try_load_save(save, save_num, active_game=False):
         load_unlocked(save["unlocked"])
 
         full_clear() # required, because of the tons of text
-        out = (
-            f"{deco.line_r()}\n"
-            f"{TextColouring.green('Save loaded successfully!')}\n"
-            f"{deco.line_r()}\nPress enter to continue your journey."
-        )
+        out = (get_header(f"{TextColouring.green('Save loaded successfully!')}", char="=")
+               + f"Press enter to continue your journey.")
 
         n_print(out)
         wait_for_keypress()
         return True
 
 
-    out = (
-        f"{deco.line_r()}\n"
-        f"{TextColouring.red('Unable to load save!')}\n"
-        f"{deco.line_r()}\n"
-    )
+    out = (get_header(TextColouring.red('Unable to load save!'), char="="))
     if not active_game:
         out += "Press enter to start from the beginning.\n"
     else:
@@ -260,21 +247,16 @@ def try_load_saved_player(save, save_num):
         user.character_loaded = True
         user.save_slot = save_num
         full_clear() # Most likely isn't required
-        out = (
-                f"{deco.line_r()}\n"
-                f"{TextColouring.green('Player data loaded successfully!')}\n" +
-                f"{deco.line_r()}\nPress enter to continue your journey."
-        )
+        out = (get_header(f"{TextColouring.green('Player data loaded successfully!')}", char="=")
+               + "Press enter to continue your journey.")
         n_print(out)
         wait_for_keypress()
         return True
 
     else:
         out = (
-                f"{deco.line_r()}\n"
-                f"{TextColouring.red('Unable to load player data!')}\n"
-                f"{deco.line_r()}\n"
-                "Press enter to start from the beginning.\n"
+                get_header(f"{TextColouring.red('Unable to load player data!')}", char="=")
+                + "Press enter to start from the beginning.\n"
         )
         n_print(out)
         wait_for_keypress()

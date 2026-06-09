@@ -133,58 +133,6 @@ def player_hud():
     return out
 
 
-def print_in_line(text:str):
-    if len(text) <= line_len:
-        print(text)
-        return
-    start = 0
-    end = start + line_len
-    while end < len(text):
-        newline = text.find("\n", start)
-        if newline != -1:
-            if newline - start - 1 <= line_len:
-                print(text[start:newline])
-                start = newline + 1
-                end = start+line_len
-                continue
-        while end > start and text[end] != ' ':
-            end -= 1
-        if end == start:
-            end = start + line_len
-        line = text[start:end]
-        while line[0] == " ":
-            line = line[1:]
-            end+=1
-        start = end + 1
-        end = start + line_len
-        print(line)
-    print(text[start:])
-
-
-def format_text_in_line(text_list: list[str]):
-    out = ""
-    for line in text_list:
-        if len(line) <= line_len:
-            out += line + "\n"
-
-        else:
-            start = 0
-            end = line_len
-            while end < len(line):
-                if line[end] != ' ':
-                    while end > start and line[end] != ' ':
-                        end -= 1
-                    if end == start:
-                        end = start + line_len
-                n_line: str = line[start:end]
-                n_line = n_line.lstrip()
-                out += n_line + "\n"
-                start = end + 1
-                end = start + line_len
-            out += line[start:] + "\n"
-
-    return out[:-1]
-
 def print_in_line_wb(text):
     true_line_length = line_len - 2
     characters = {
