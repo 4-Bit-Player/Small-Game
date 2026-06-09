@@ -14,9 +14,9 @@ p_gold = '\033[38;5;214m'
 p_light_blue = '\033[38;5;80m'
 p_negative = f'\033[7;5;160m'
 
-_line_len = 46
-_use_ansi = True
-_reset_console = "cls" if platform == "win32" else "clear"
+_line_len:int = int(get_terminal_size()[0]/3)
+_use_ansi:bool = True
+_reset_console:str = "cls" if platform == "win32" else "clear"
 
 def clear_screen(lines_to_remove:int=20, lines_to_remove_ahead:int=0) -> None:
     if not _use_ansi:

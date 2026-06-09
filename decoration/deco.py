@@ -1,46 +1,15 @@
 from player import user
 from decoration import colors
-import sys
+from printing._deco import get_line_len, set_line_len
 
-from printing._deco import set_line_len
-
-line_len = 46
+line_len = get_line_len()
 
 def clear_screen(lines_to_remove=20, lines_to_remove_ahead=5):
-    sys.stdout.write("\033[E"*lines_to_remove_ahead + "\033[F\033[K"*(lines_to_remove_ahead+lines_to_remove))
-    return 
-    for i in range(lines_to_remove_ahead):
-        sys.stdout.write("\033[E") # Cursor down one line
-
-    for i in range(lines_to_remove + lines_to_remove_ahead):
-        sys.stdout.write("\033[F")  # Cursor up one line
-        sys.stdout.write("\033[K")  # Clear to the end of line
-    #sys.stdout.flush()
-
-
-def full_clear():
-    sys.stdout.write("\033c") # resets the console
-    pass
-
-def clear_l(clear_first=0, s='='):
-    if clear_first:
-        clear_screen()
-    sys.stdout.write(s * line_len + "\n")
+    return
 
 
 def line_r(s='='):
     return s * line_len
-
-
-def print_header(text, clear_first=0, s="="):
-    if clear_first:
-        clear_screen()
-    if len(text) + 2 >= line_len:
-        print(text)
-        return
-    header = " " + text + " "
-    header = str.center(header, line_len, s)
-    print(header)
 
 
 def print_header_r(text, s="="):
