@@ -70,7 +70,7 @@ class PrintClass:
         self.target_fps_time: float = 1.0 / new_fps_limit
 
     def refresh_output(self):
-        self.current_output = self.output[:-1]
+        self.current_output = self.output[:]
 
         if not using_ansi():
             self.current_output = replace_ansi(self.current_output)
@@ -169,7 +169,7 @@ class PrintClass:
             return
         clear_screen(new_lines)
 
-    def get_new_output(self) -> bool:
+    def get_new_output(self) -> None:
         n_out: list[str | bool | tuple] = self.queue.get()
         if type(n_out[0]) == tuple:
             call = n_out[0][0]
@@ -185,9 +185,9 @@ class PrintClass:
                 self.centered = n_out[1]
             elif call == "pause":
                 self._is_paused = n_out[1]
-            return True
+            return
         self.output = n_out[0]
-        return True
+        return
 
     def check_queue(self):
         return self.queue.qsize() != 0
