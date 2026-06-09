@@ -76,11 +76,11 @@ def _enc_str(val:str, result: list[bytes]):
     length = len(bts)
 
     if length <= 255:
-        result.append(b"\x03" + length.to_bytes(byteorder="big") + bts)
+        result.append(b"\x03" + length.to_bytes(1, byteorder="big") + bts)
         return
 
     req_bytes = (length.bit_length() + 7) // 8
-    result.append(b"\x04" + req_bytes.to_bytes(byteorder="big") + length.to_bytes(req_bytes, byteorder="big") + bts)
+    result.append(b"\x04" + req_bytes.to_bytes(1, byteorder="big") + length.to_bytes(req_bytes, byteorder="big") + bts)
     return
 
 
@@ -107,9 +107,9 @@ def _enc_int(val:int, result: list[bytes]):
 
     if size <= 255:
         if is_negative:
-            result.append(b"\x13" + size.to_bytes(byteorder="big") + val.to_bytes(size, byteorder="big"))
+            result.append(b"\x13" + size.to_bytes(1, byteorder="big") + val.to_bytes(size, byteorder="big"))
         else:
-            result.append(b"\x05" + size.to_bytes(byteorder="big") + val.to_bytes(size, byteorder="big"))
+            result.append(b"\x05" + size.to_bytes(1, byteorder="big") + val.to_bytes(size, byteorder="big"))
         return
 
     # Looorge number O_o
@@ -117,9 +117,9 @@ def _enc_int(val:int, result: list[bytes]):
     req_bytes = (size.bit_length() + 7) // 8
 
     if is_negative:
-        result.append(b"\x14" + req_bytes.to_bytes(byteorder="big") + size.to_bytes(req_bytes, byteorder="big") + val.to_bytes(size, byteorder="big"))
+        result.append(b"\x14" + req_bytes.to_bytes(1, byteorder="big") + size.to_bytes(req_bytes, byteorder="big") + val.to_bytes(size, byteorder="big"))
     else:
-        result.append(b"\x06" + req_bytes.to_bytes(byteorder="big") + size.to_bytes(req_bytes, byteorder="big") + val.to_bytes(size, byteorder="big"))
+        result.append(b"\x06" + req_bytes.to_bytes(1, byteorder="big") + size.to_bytes(req_bytes, byteorder="big") + val.to_bytes(size, byteorder="big"))
 
 
 
@@ -127,7 +127,7 @@ def _enc_float(val:float, result: list[bytes]):
     result.append(b"\x07")
     bts = str(val).encode("utf-8")
     size = len(bts)
-    result.append(size.to_bytes(byteorder="big"))
+    result.append(size.to_bytes(1, byteorder="big"))
     result.append(bts)
 
 
@@ -137,13 +137,13 @@ def _enc_bytes(val: bytes, result: list[bytes]):
 
     if size <= 255:
         result.append(b"\x08")
-        result.append(size.to_bytes(byteorder="big"))
+        result.append(size.to_bytes(1, byteorder="big"))
         result.append(val)
         return
     result.append(b"\x09")
 
     req_bytes = (size.bit_length() + 7) // 8
-    result.append(req_bytes.to_bytes(byteorder="big"))
+    result.append(req_bytes.to_bytes(1, byteorder="big"))
     result.append(size.to_bytes(req_bytes, byteorder="big"))
 
     result.append(val)

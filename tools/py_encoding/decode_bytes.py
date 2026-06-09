@@ -180,7 +180,7 @@ def _dec_false(data:bytes, offset:int) -> tuple[bool, int]:
 def _dec_types(data:bytes, offset:int) -> tuple[type, int]:
     return _type_decode_lookup_table[data[offset]], offset+1
 
-_highest_num = int.from_bytes(b"\x14")
+_highest_num = int.from_bytes(b"\x14", byteorder="big")
 
 _lookup_table = [_val_err for _ in range(_highest_num + 1)]
 _lookup_table[int.from_bytes(b"\x00", byteorder="big")] = _dec_false
@@ -202,15 +202,15 @@ _lookup_table[int.from_bytes(b"\x13", byteorder="big")] = _dec_short_negative_in
 _lookup_table[int.from_bytes(b"\x14", byteorder="big")] = _dec_long_negative_int
 
 _type_decode_lookup_table = {
-    int.from_bytes(b"\x00"): list,
-    int.from_bytes(b"\x01"): dict,
-    int.from_bytes(b"\x02"): set,
-    int.from_bytes(b"\x03"): tuple,
-    int.from_bytes(b"\x04"): int,
-    int.from_bytes(b"\x05"): float,
-    int.from_bytes(b"\x06"): str,
-    int.from_bytes(b"\x07"): bool,
-    int.from_bytes(b"\x08"): type,
-    int.from_bytes(b"\x09"): bytes,
-    int.from_bytes(b"\x0a"): type(None),
+    int.from_bytes(b"\x00", byteorder="big"): list,
+    int.from_bytes(b"\x01", byteorder="big"): dict,
+    int.from_bytes(b"\x02", byteorder="big"): set,
+    int.from_bytes(b"\x03", byteorder="big"): tuple,
+    int.from_bytes(b"\x04", byteorder="big"): int,
+    int.from_bytes(b"\x05", byteorder="big"): float,
+    int.from_bytes(b"\x06", byteorder="big"): str,
+    int.from_bytes(b"\x07", byteorder="big"): bool,
+    int.from_bytes(b"\x08", byteorder="big"): type,
+    int.from_bytes(b"\x09", byteorder="big"): bytes,
+    int.from_bytes(b"\x0a", byteorder="big"): type(None),
 }
