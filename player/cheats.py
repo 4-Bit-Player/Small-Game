@@ -63,7 +63,7 @@ def change_that_stat(stat):
 
 
 def give_item():
-    item_name = text_input("Enter the item name you want to get: ")
+    item_name = text_input(["Enter the item name you want to get: "])
     if not item_name:
         return
     n_print()

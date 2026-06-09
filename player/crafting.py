@@ -3,7 +3,7 @@ from decoration import colors, deco
 from copy import deepcopy
 from items import items, potions, food, materials, equipment, armor
 from player.keyinput_index_class import KeyinputIndexClass
-from printing import n_print, TextColouring
+from printing import n_print, TextColouring, get_header
 import recipies.weapons as r_weapons
 import recipies.armor as r_armor
 import recipies.use_ables as r_use_ables
@@ -217,7 +217,7 @@ def upgrade_equipment(equip_to_upgrade):
         )
 
 
-def show_item_effects(item, already_did=0):
+def show_item_effects(item, already_did:bool=False) -> list[str]:
     overflow = []
     for i, k in item["player_affected_stats"].items():
         word_time = 'increases' if not already_did else 'increased'
@@ -248,7 +248,7 @@ def show_item_effects(item, already_did=0):
     return overflow
 
 
-def show_item_effects_r(item, already_did=0):
+def show_item_effects_r(item, already_did=0) -> str:
     word_time = 'increases' if not already_did else 'increased'
     out = ""
     for i, k in item["player_affected_stats"].items():
@@ -274,12 +274,12 @@ def show_item_effects_r(item, already_did=0):
     return out
 
 
-def craft_list(c_list):
+def craft_list(c_list) -> None:
     overflow = []
     selection = []
     while colors:
         selection += [
-            [deco.print_header_r(c_list["name"])],
+            [get_header(c_list["name"])],
             "Back",
             [deco.line_r("~")]
         ]

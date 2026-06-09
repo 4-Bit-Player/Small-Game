@@ -8,7 +8,7 @@ def open_inventory():
     inv_open = True
     available_items = []
     show_items = "All"
-    show_items_list = ["All", "Use-Ables", "Weapons", "Armor", "Materials"]
+    show_items_list = ["All", "Usables", "Weapons", "Armor", "Materials"]
     items_list_index = 0
     index = []
     overflow = []
@@ -19,16 +19,28 @@ def open_inventory():
             a_selection: list = []
 
         if len(user.Player["inv"]) == 0:
-            a_selection.append([1, "Close inventory",
-                                "Inspect item", "Craft stuff",
-                                "Cycle through All/Use-ables/Weapons/Armor/Materials"])
-            a_selection.append([deco.line_r()])
-            a_selection.append(["Your inventory is currently empty.", ""])
-
+            a_selection.extend(
+                [
+                    "Close inventory",
+                    "Inspect item",
+                    "Craft stuff",
+                    "Cycle through All/Use-ables/Weapons/Armor/Materials",
+                    [
+                        deco.line_r(),
+                        "Your inventory is currently empty.",
+                        ""
+                    ]
+                ]
+            )
         else:
-            a_selection.append([1, "Close inventory",
-                                "Inspect item", "Craft stuff",
-                                "Cycle through All/Use-ables/Weapons/Armor/Materials"])
+            a_selection.extend(
+                [
+                    "Close inventory",
+                    "Inspect item",
+                    "Craft stuff",
+                    "Cycle through All/Useables/Weapons/Armor/Materials"
+                ]
+            )
             a_selection.append([deco.print_header_r(show_items, s="~")])
             for item in show_inventory(show_items):
                 a_selection.append(item)
@@ -72,7 +84,7 @@ def use_item(item):
 
             article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
             overflow.append(f'You ate {article} {item["item_name"]}')
-            overflow += (crafting.show_item_effects(item, already_did=1))
+            overflow += (crafting.show_item_effects(item, already_did=True))
 
         else:
             return [colors.red +"You are at full HP already."+colors.reset]
@@ -90,9 +102,9 @@ def use_item(item):
                 user.check_hp_max()
             crafting.remove_item(item)
 
+            overflow.extend(crafting.show_item_effects(item, already_did=True))
+
             article = "an" if item["item_name"].lower() in ["a", "e", "i", "o", "u"] else "a"
-            for i in crafting.show_item_effects(item, already_did=1):
-                overflow.append(i)
             overflow.append(f'You used {article} {item["item_name"]}')
 
         else:
@@ -138,15 +150,16 @@ def inv_inspect():
 
 
 def item_inspect(item):
-    out = get_header(item["item_name"], char="=") + "\n".join(item["item_desc"]) + "\n"
-
+    out:list[str] = [
+        get_header(item["item_name"], char="="),
+        item["item_desc"],
+    ]
     if item["item_type"] in ["potion", "equipment", "food", "armor"]:
-        for i in crafting.show_item_effects(item):
-            out += i + "\n"
+        out.extend(crafting.show_item_effects(item))
     if item["item_type"] in ["equipment", "armor"]:
-        out += f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}\n"Can be equipped"'
-    out += ("\nPress enter to close.\n")
-    n_print(out)
+        out.append(f'Upgrade slots used: {item["upgrades"][0]}/{item["upgrades"][1]}\n\n* Can be equipped')
+    out.append("\nPress enter to close.")
+    n_print("\n".join(out))
     u_KeyInput.wait_for_keypress()
 
 
@@ -154,7 +167,7 @@ def inv_crafting():
     active_crafting = True
     unlocked_recipies = []
     show_items = "All"
-    show_items_list = ["All", "Use-Ables", "Weapons", "Armor"]
+    show_items_list = ["All", "Usables", "Weapons", "Armor"]
     items_list_index = 0
 
 
@@ -165,9 +178,9 @@ def inv_crafting():
     show = []
     while active_crafting:
         show += [
-            [deco.print_header_r("Craft Item")],
+            [get_header("Craft Item")],
             "Stop Crafting",
-            "Cycle through All/Use-ables/Weapons/Armor",
+            "Cycle through All/Usables/Weapons/Armor",
             [get_header(show_items, char="~")]]
 
         shown_recipes = list_recipes(unlocked_recipies, show_items)
