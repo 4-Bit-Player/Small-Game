@@ -46,7 +46,7 @@ def set_line_len(char_num:int) -> None:
     _line_len = char_num
 
 
-def get_header(*header, char:str='~', centered_text=True) -> str:
+def get_header(*header, char:str='=', centered_text=True) -> str:
     header = [str(x) for x in header]
     hwidth = _line_len
     if centered_text:
