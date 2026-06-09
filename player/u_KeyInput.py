@@ -1,8 +1,8 @@
 from time import sleep
-from decoration import colors, deco
+from decoration import deco
 from player.keyinput_index_class import KeyinputIndexClass, TempInput, LAClass
 from printing import n_print, toggle_constant_refresh, toggle_fps, change_fps_limit, TemporaryDisablePrintUpdates, \
-    toggle_centered_text, get_header, full_clear, n_exit
+    toggle_centered_text, get_header, full_clear, n_exit, TextColouring
 from printing import _print_queue
 from player import user, cheats
 from input_system import get_key, input as legacy_input, text_input, SpecialChar, Key, stop_keyboard_input, num_input, wait_for_keypress
@@ -147,9 +147,9 @@ def return_screen_prt_h(lists, start=1):
             if line[0] == 1:
                 for l in line[1:]:
                     if num == selected:
-                        l_line = colors.negative + str(num) + ". " + str(l) + " " + colors.reset
+                        l_line = TextColouring.negative(f"{num}. {l}")
                     else:
-                        l_line = (str(num) + ". " + str(l))
+                        l_line = f"{num}. {l}"
                     num += 1
                     lines.append(l_line)
             else:
@@ -158,9 +158,9 @@ def return_screen_prt_h(lists, start=1):
 
         if isinstance(line, str):
             if num == selected:
-                l_line = colors.negative + str(num) + ". " + str(line) + " " + colors.reset
+                l_line = TextColouring.negative(f"{num}. {line}")
             else:
-                l_line = (str(num) + ". " + str(line))
+                l_line = f"{num}. {line}"
             num += 1
             lines.append(l_line)
     if len(lines) == 0:
@@ -197,7 +197,7 @@ def create_index(options):
 
 
 def display_shortcuts(full=False):
-    out = deco.print_header_r("Shortcuts", "~") + "\n"
+    out = get_header("Shortcuts", char="~")
     if full:
         out += (
             "i = open inventory\n"
@@ -222,20 +222,20 @@ def keyinput(options: list, header: str = None, start_at=1, hud: bool = False):
     invalid = False
 
     while True:
-        out = ""
+        out = []
         if hud:
-            out += deco.player_hud() + "\n\n"
+            out.append(deco.player_hud() + "\n\n")
         if header:
-            out += deco.print_header_r(header) + "\n"
-        out += return_screen_prt_h(options, start_at) + "\n\n"
+            out.append(get_header(header))
+        out.append(return_screen_prt_h(options, start_at) + "\n\n")
         if invalid:
             temp_input.clear()
             invalid = False
-            out += f"{colors.red}Invalid number, please pick a number from 1 to {index_class.limit}{colors.reset}"
+            out.append(TextColouring.red(f"Invalid number, please pick a number from 1 to {index_class.limit}"))
 
         if temp_input.size != 0:
-            out += "Action: " + str(temp_input.text())
-        n_print(out)
+            out.append("Action: " + str(temp_input.text()))
+        n_print("".join(out))
         key = get_key()
 
         if key.val in current_keyboard_layout:
