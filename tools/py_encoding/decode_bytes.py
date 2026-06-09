@@ -1,4 +1,6 @@
 from .decoding import _decode_from_string
+class ByteDecodeError(Exception):
+    pass
 
 
 def decode_from_bytes(data:bytes):
@@ -7,6 +9,8 @@ def decode_from_bytes(data:bytes):
 
     Only works with bytes that got encoded with my small byte encoder.
     Tries to fall back to the string decoder if the input is a string or the start byte is incorrect.
+
+    Raises an ByteDecodeError if it fails.
 
     :param data: The encoded bytes.
     :return: Whatever the bytes were before it got encoded.
@@ -17,17 +21,18 @@ def decode_from_bytes(data:bytes):
             return b""
         index = data[0]
         if index <= _highest_num:
-            val, _ = _lookup_table[index](data, 1)
-            return val
-
+            try:
+                val, _ = _lookup_table[index](data, 1)
+                return val
+            except (IndexError, ValueError) as e:
+                raise ByteDecodeError("Failed to decode bytes.")
         try:
             return _decode_from_string(data.decode("utf-8"))
 
         except (ValueError, IndexError) as e:
             pass
 
-        raise ValueError("Invalid start char!")
-
+        raise ByteDecodeError("Invalid start char!")
 
     if t == str:
         try:
@@ -35,9 +40,8 @@ def decode_from_bytes(data:bytes):
         except (ValueError, IndexError) as e:
             pass
 
-
     err_msg = "Invalid type to decode: " + str(t)
-    raise ValueError(err_msg)
+    raise ByteDecodeError(err_msg)
 
 
 
@@ -161,11 +165,32 @@ def _dec_long_int(data: bytes, offset: int) -> tuple[int, int]:
     return num, offset + length
 
 def _dec_float(data: bytes, offset: int) -> tuple[float, int]:
-    length = data[offset]
-    offset += 1
-    num = float(data[offset:offset + length])
+    divider = data[offset]
+    length = data[offset + 1]
 
-    return num, offset + length
+    offset += 2
+    num = int.from_bytes(data[offset:offset + length], byteorder="big")
+    return num / (2**(divider-1)), offset + length
+
+def _dec_negative_float(data: bytes, offset: int) -> tuple[float, int]:
+    num, offset = _dec_float(data, offset)
+    return -num, offset
+
+
+def _dec_long_float(data: bytes, offset: int) -> tuple[float, int]:
+    size_length = data[offset]
+    offset += 1
+    length = 0
+    length.from_bytes(data[offset:offset + size_length], byteorder="big")
+    offset += size_length
+    num = 0
+    num.from_bytes(data[offset:offset + length], byteorder="big")
+
+    return float(num), offset+length
+
+def _dec_long_negative_float(data: bytes, offset: int) -> tuple[float, int]:
+    num, offset = _dec_long_float(data, offset)
+    return -num, offset
 
 
 def _dec_none(data:bytes, offset:int) -> tuple[None, int]:
@@ -180,7 +205,7 @@ def _dec_false(data:bytes, offset:int) -> tuple[bool, int]:
 def _dec_types(data:bytes, offset:int) -> tuple[type, int]:
     return _type_decode_lookup_table[data[offset]], offset+1
 
-_highest_num = int.from_bytes(b"\x14", byteorder="big")
+_highest_num = int.from_bytes(b"\x17", byteorder="big")
 
 _lookup_table = [_val_err for _ in range(_highest_num + 1)]
 _lookup_table[int.from_bytes(b"\x00", byteorder="big")] = _dec_false
@@ -200,6 +225,9 @@ _lookup_table[int.from_bytes(b"\x0f", byteorder="big")] = _dec_set
 _lookup_table[int.from_bytes(b"\x11", byteorder="big")] = _dec_tuple
 _lookup_table[int.from_bytes(b"\x13", byteorder="big")] = _dec_short_negative_int
 _lookup_table[int.from_bytes(b"\x14", byteorder="big")] = _dec_long_negative_int
+_lookup_table[int.from_bytes(b"\x15", byteorder="big")] = _dec_negative_float
+_lookup_table[int.from_bytes(b"\x16", byteorder="big")] = _dec_long_float
+_lookup_table[int.from_bytes(b"\x17", byteorder="big")] = _dec_long_negative_float
 
 _type_decode_lookup_table = {
     int.from_bytes(b"\x00", byteorder="big"): list,

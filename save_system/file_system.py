@@ -3,7 +3,7 @@ import zlib
 from pathlib import Path
 from pickle import loads
 
-from tools.py_encoding import decode_from_bytes, encode_to_bytes
+from tools.py_encoding import decode_from_bytes, encode_to_bytes, ByteDecodeError
 
 
 
@@ -42,7 +42,7 @@ def load_save(save_num:int):
     try:
         save = decode_from_bytes(zlib.decompress(data))
         return save
-    except zlib.error:
+    except (zlib.error, ByteDecodeError):
         pass
 
     try:
