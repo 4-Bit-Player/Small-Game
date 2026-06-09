@@ -1,5 +1,6 @@
-from decoration import colors
+from typing import Any
 from decoration.deco import line_r
+from printing import TextColouring
 from tools.LList import LinkedList
 
 
@@ -7,39 +8,6 @@ class TempInput:
     """
     Class for saving the state of the user input
     """
-    def rm_last_char(self) -> None:
-        """
-        Removes the last character from its list.
-        :return: Returns nothing
-        """
-        pass
-    def text(self) -> str:
-        """
-        Returns the content of itself as a string.
-        :return: A string
-        """
-        pass
-    def clear(self) -> None:
-        """
-        Clears its list.
-        :return: Nothing
-        """
-        pass
-    @property
-    def size(self) -> int:
-        """
-        :return: The size of its list
-        """
-        pass
-    @property
-    def input_list(self) -> list[str]:
-        """
-        :return: A copy of the internal list of chars.
-        """
-        pass
-
-
-class TempInput(TempInput):
     def __init__(self, val:list=None):
         if val is None:
             self._temp_input:list[str] = []
@@ -48,7 +16,7 @@ class TempInput(TempInput):
             self._temp_input:list[str] = val
             self._size:int = len(self._temp_input)
 
-    def __iadd__(self, other:str|list[str]|TempInput):
+    def __iadd__(self, other:"str|list[str]|TempInput"):
         if isinstance(other, str):
             self._temp_input.append(other)
             self._size += 1
@@ -66,7 +34,7 @@ class TempInput(TempInput):
             self._size += other.size
         return self
 
-    def __add__(self, other:str|list[str]|TempInput) -> TempInput:
+    def __add__(self, other:"str|list[str]|TempInput") -> "TempInput":
         if isinstance(other, str):
             return TempInput(self._temp_input[:] + [other])
 
@@ -91,24 +59,43 @@ class TempInput(TempInput):
 
 
     def rm_last_char(self):
+        """
+        Removes the last character from its list.
+        :return: Returns nothing
+        """
         if len(self._temp_input) == 0:
             return
         self._size -= 1
         self._temp_input.pop()
 
     def text(self):
+        """
+        Returns the content of itself as a string.
+        :return: A string
+        """
+
         return "".join(self._temp_input)
 
     def clear(self):
+        """
+        Clears its list.
+        :return: Nothing
+        """
         self._size = 0
         self._temp_input.clear()
 
     @property
     def size(self):
+        """
+        :return: The size of its list
+        """
         return self._size
 
     @property
     def input_list(self)->list[str]:
+        """
+        :return: A copy of the internal list of chars.
+        """
         return self._temp_input[:]
 
 
@@ -164,7 +151,7 @@ class KeyinputIndexClass:
 
 
 class LAClass:
-    def __init__(self, current_location:dict[str:any]):
+    def __init__(self, current_location:dict[str,Any]):
         self.index = KeyinputIndexClass(1,1,True)
         self.active = True
         self._events:LinkedList[str] = LinkedList()
@@ -180,18 +167,16 @@ class LAClass:
 
     def get_text(self, header:str=""):
         l_r = line_r()
-        out:list[list|str] = [
+        out:list = [
             self.index, [
-                header + "\n" + l_r +
-                f'\nYou are wandering through the {self.location["name"]} looking for usable Items...\n' + l_r
+                f"{header}\n{l_r}"
+                f'\nYou are wandering through the {self.location["name"]} looking for usable Items...\n{l_r}'
             ],
             list(self._events), [l_r],
-            [f"{colors.red}Invalid number, please pick a number from 1 to {self.index.limit}{colors.reset}" if self.index.invalid else ""],
+            [f"{TextColouring.red(f'Invalid number, please pick a number from 1 to {self.index.limit}')}" if self.index.invalid else ""],
             ["Action: " + self.index.temp_input.text() if self.index.temp_input.text() else ""],
         ]
 
-        #if self.out:
-        #    out.append([self.out])
         if self.combat_init:
             out.append("Run away!")
         elif not self.combat:
@@ -229,9 +214,9 @@ def _return_screen_prt_h(lists, start=1):
             if line[0] == 1:
                 for l in line[1:]:
                     if num == selected:
-                        l_line = colors.negative + str(num) + ". " + str(l) + " " + colors.reset
+                        l_line = TextColouring.negative(f"{num}. {l}")
                     else:
-                        l_line = (str(num) + ". " + str(l))
+                        l_line = f"{num}. {l}"
                     num += 1
                     lines.append(l_line)
             else:
@@ -240,9 +225,9 @@ def _return_screen_prt_h(lists, start=1):
 
         if isinstance(line, str):
             if num == selected:
-                l_line = colors.negative + str(num) + ". " + str(line) + " " + colors.reset
+                l_line = TextColouring.negative(f"{num}. {line}")
             else:
-                l_line = (str(num) + ". " + str(line))
+                l_line = f"{num}. {line}"
             num += 1
             lines.append(l_line)
     if len(lines) == 0:
