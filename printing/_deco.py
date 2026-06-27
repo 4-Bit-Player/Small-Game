@@ -93,8 +93,10 @@ _COLOR_LOOKUP_TABLE = {
 
 def remove_escape_sequences(string:str) -> str:
     for seq in _COLOR_LOOKUP_TABLE.values():
-        string = string.replace(seq, "")
-    string = string.replace(p_reset, "")
+        if seq in string:
+            string = string.replace(seq, "")
+    if p_reset in string:
+        string = string.replace(p_reset, "")
     return string
 
 
