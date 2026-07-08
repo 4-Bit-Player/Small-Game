@@ -1,3 +1,4 @@
+from input_system import KeyInputIndexClass, key_input
 from player import user, crafting, u_KeyInput
 from decoration import deco, colors
 from player.keyinput_index_class import KeyinputIndexClass
@@ -120,33 +121,30 @@ def use_item(item):
 
 def inv_inspect():
     inspecting = True
-    index = []
+    cls = KeyInputIndexClass()
+    show = [[deco.player_hud(), get_header("Inventory (Inspecting)")]]
+
+    if len(user.Player["inv"]) <= 0:
+        show.extend(
+            [
+                [deco.line_r()],
+                "Stop inspecting",
+                [deco.line_r()],
+            ]
+        )
+
+    else:
+        show.append("Stop inspecting")
+        show.append([deco.line_r("~")])
+        for item in user.Player["inv"]:
+            show.append(f'{item["item_name"]} {("x " + str(item["item_amount"])) if item["item_amount"] > 1 else ""}')
+
     while inspecting:
-        show = [["", deco.print_header_r("Inventory (Inspecting)")]]
-        if index:
-            show.insert(0, index)
-
-        if len(user.Player["inv"]) <= 0:
-            show.append([deco.line_r()])
-            show.append("Stop inspecting")
-            show.append([deco.line_r()])
-
-        else:
-            show.append("Stop inspecting")
-            show.append([deco.line_r("~")])
-            for item in user.Player["inv"]:
-
-                show.append(f'{item["item_name"]} {("x "+str(item["item_amount"])) if item["item_amount"]>1 else ""}')
-
-        pick = u_KeyInput.keyinput(show)
+        pick = key_input(show, cls)
         if not pick:
             inspecting = False
-
         else:
             item_inspect(user.Player["inv"][pick - 1])
-
-        if isinstance(show[0], KeyinputIndexClass):
-            index = show[0]
 
 
 def item_inspect(item):
