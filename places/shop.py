@@ -1,5 +1,6 @@
 import random
-from player import user, crafting, inventory, u_KeyInput
+from input_system import KeyInputIndexClass, key_input
+from player import user, crafting, inventory
 from decoration import deco, colors
 
 
@@ -36,31 +37,49 @@ def check_money(price):
 def shop_sell():
     selling = 1
     sell_all = False
-
     overflow = ""
-    while selling:
-        out = [1, "Back", "Toggle sell one/all"]
-        av_items = inventory.show_inventory()
-        av_items.insert(0,1)
-        options = [[deco.line_r()], out, [deco.print_header_r("Sell one" if not sell_all else "Sell all")], av_items]
-        item_list = inventory.list_inventory()
-        if overflow:
-            options.append([overflow])
-            overflow = ""
-        pick = u_KeyInput.keyinput(options, hud=True)
+    cls = KeyInputIndexClass()
+    options = [
+        [
+            deco.player_hud(),
+            "\nSelling Items\n",
+            deco.line_r(),
+        ],
+        "Back",
+        "Toggle sell one/all",
+        [deco.print_header_r("Sell one")],
+        "",
+        ""
+    ]
+    av_items = inventory.show_inventory()
+    av_items.insert(0, 1)
+    options[-2] = av_items
 
-        if not pick:
+    while selling:
+
+        options[-1] = [""]
+        if overflow:
+            options[-1] = [overflow]
+            overflow = ""
+        pick = key_input(options, cls)
+
+        if pick <= 0:
             return
 
         if pick == 1:
             sell_all = not sell_all
-
         else:
+
+            item_list = inventory.list_inventory()
             if sell_all:
                 overflow = sell_item(item_list[pick-2], item_list[pick-2]["item_amount"])
 
             else:
                 overflow = sell_item(item_list[pick - 2])
+
+            av_items = inventory.show_inventory()
+            av_items.insert(0, 1)
+            options[-2] = av_items
 
 
 def sell_item(item, amount=1):
