@@ -381,7 +381,7 @@ def non_blocking_keyinput(key:Key, la_class:LAClass) -> int:
 def handle_number_keys(key:Key, index_class:KeyinputIndexClass):
     val:str = key.val
     num = int(index_class.temp_input.text() + val)
-    if 0 < num < index_class.limit:
+    if 0 < num <= index_class.limit:
         index_class.index = num
     index_class.temp_input += val
 
