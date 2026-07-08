@@ -39,14 +39,22 @@ from save_system.save_logic import save_check, save_update_score, highscore_chec
 
 def game_init():
     story.navigation_intro()
-    out = [[deco.line_r()], ["Do you want to play this game as a rogue like? \n(Your save will get deleted if you die)\n(not recommended)", ""], [1, "No", "Yes"], [deco.line_r()]]
-    user.settings["delete_save_on_death"] = bool(u_KeyInput.keyinput(out))
-    out = [[deco.line_r()], ["Should everything be centered?", "(you can change it later as well)", ""],
+    out = [[deco.line_r()], ["Do you want to play this game as a rogue like? \n(Your save will get deleted if you die)\n(not recommended)\n"],
+           "No",
+           "Yes",
+           [deco.line_r()]
+    ]
+    if key_input(out, escape_key_allowed=False) == 1:
+        user.settings["delete_save_on_death"] = True
+    else:
+        user.settings["delete_save_on_death"] = False
+
+    out = [[deco.line_r(), "Should everything be centered?\n(you can change it later as well)\n"],
            "No",
            "Yes",
            [deco.line_r()]
            ]
-    pick = u_KeyInput.keyinput(out)
+    pick = key_input(out, escape_key_allowed=False)
     if pick == 1:
         center_text()
     else:
