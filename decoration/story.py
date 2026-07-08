@@ -4,7 +4,7 @@ from player import user, u_KeyInput
 from printing import n_print
 
 
-def navigation_intro():
+def navigation_intro() -> None:
     options = [
         [deco.line_r(),
          "You can navigate using numbers and enter.\nYou can also use the arrow keys and enter \nto select the highlighted option.\nOr use Shift+num to select an option immediately.\n"],
@@ -15,7 +15,7 @@ def navigation_intro():
     u_KeyInput.keyinput(options)
 
 
-def intro_1():
+def intro_1() -> None:
     options = [
         [deco.line_r(), "Skip Intro?"],
         "No",
@@ -30,8 +30,20 @@ def intro_1():
         u_KeyInput.wait_for_keypress()
 
 
+def outro() -> str:
+    if user.Player["hp"] > 0:
+        out = outro_alive()
+        n_print(out)
+        time.sleep(1)
+    else:
+        out = outro_death()
+        n_print(out)
+        time.sleep(1)
+    out += deco.line_r() + "\n"
+    return out
 
-def outro_alive():
+
+def outro_alive() -> str:
     if user.Player["score"] == 0:
         return show_text(outro_a0)
 
@@ -48,7 +60,7 @@ def outro_alive():
         return show_text(outro_a500)
 
 
-def outro_death():
+def outro_death() -> str:
     out = deco.print_header_r("You died. :(")
     if user.Player["score"] > 500:
         out_lst = list(outro_d500)
@@ -58,7 +70,7 @@ def outro_death():
         return out
 
 
-def show_text(text, previous_text=""):
+def show_text(text:list[str] | tuple[str,...], previous_text="") -> str:
     out = previous_text + deco.line_r() + "\n"
     for i, line in enumerate(text):
         out += line + "\n"

@@ -31,7 +31,7 @@ import time
 from decoration import story, deco, colors
 from places.location_data import get_location, unlocks_init, location_init
 from player import user, crafting, u_KeyInput
-from input_system import init_keyboard_input
+from input_system import init_keyboard_input, key_input
 from places import show_location_actions, location_actions, quests
 from printing import init_print, n_print, center_text, uncenter_text, full_clear
 from save_system.save_logic import save_check, save_update_score, highscore_check, save_just_highscore, load_all
@@ -65,6 +65,66 @@ def game_init():
 def partial_restart():
     user.restart()
 
+def death_check():
+    if user.Player["hp"] <= 0:
+        user.Player["deaths"] += 1
+
+    if user.character_loaded:
+        if user.settings["delete_save_on_death"]:
+            save_just_highscore()
+        else:
+            save_update_score()
+
+def restart_or_exit(highscore:int, out:str):
+
+    if user.Player["score"] > highscore:
+        out += f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
+    else:
+        out += (f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
+              f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.\n')
+
+    if user.Player["deaths"] > 1:
+        out += f'You died {colors.red}{user.Player["deaths"]} times{colors.reset} to get this far.\n\n'
+
+    if not user.settings["delete_save_on_death"]:
+        out += ("I hope you've had fun with my small project. :)\n"
+        "You can make a screenshot to save the score. ^^\n")
+        out += deco.line_r() + "\nWhat would you like to do?"
+        options = [[out],
+                   "Quit",
+                   "Complete restart",
+                   "Partial restart",
+                   "Load save"
+                   ]
+        pick = key_input(options, escape_key_allowed=False)
+        if not pick:
+            return False
+        elif pick == 1:
+            location_actions.restart()
+        elif pick == 2:
+            partial_restart()
+        else:
+            load_all()
+
+    else:
+        out += ("I hope you've had fun with my small project. :)\n"
+                "You can make a screenshot to save the score. ^^\n")
+        out += deco.line_r() + "\n" + "What would you like to do?"
+        options = [[out], [
+            1,
+            "Quit",
+            "Restart"
+        ]]
+        pick = key_input(options, escape_key_allowed=False)
+        if not pick:
+            return False
+        else:
+            game_init()
+    return True
+
+
+
+
 
 def main():
     playing = True
@@ -82,69 +142,12 @@ def main():
             if user.Player["retired"]:
                 break
 
-        if user.Player["hp"] <= 0:
-            user.Player["deaths"] += 1
+        death_check()
 
-        if user.character_loaded:
-            if user.settings["delete_save_on_death"]:
-                save_just_highscore()
+        out = story.outro()
+        if not restart_or_exit(highscore, out):
+            break
 
-            else:
-                save_update_score()
-
-        if user.Player["hp"] > 0:
-            out = story.outro_alive()
-            n_print(out)
-            time.sleep(1)
-        else:
-            out = story.outro_death()
-            n_print(out)
-            time.sleep(1)
-        out += deco.line_r() + "\n"
-
-        if user.Player["score"] > highscore:
-            out += f'You have a new highscore of {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
-        else:
-            out += (f'You managed to get {colors.light_blue}{user.Player["score"]} Points{colors.reset}!\n'
-                  f'Your highscore is {colors.light_blue}{highscore} Points{colors.reset}.\n')
-
-        if user.Player["deaths"] > 1:
-            out += f'You died {colors.red}{user.Player["deaths"]} times{colors.reset} to get this far.\n\n'
-
-        if not user.settings["delete_save_on_death"]:
-            out += ("I hope you've had fun with my small project. :)\n"
-            "You can make a screenshot to save the score. ^^\n")
-            out += deco.line_r() + "\n" + "What would you like to do?"
-            options = [[out], [
-                1,
-                "Quit",
-                "Complete restart",
-                "Partial restart",
-                "Load save"]]
-            pick = u_KeyInput.keyinput(options)
-            if not pick:
-                break
-            elif pick == 1:
-                location_actions.restart()
-            elif pick == 2:
-                partial_restart()
-            else:
-                load_all()
-
-        else:
-            out += ("I hope you've had fun with my small project. :)\n"
-                    "You can make a screenshot to save the score. ^^\n")
-            out += deco.line_r() + "\n" + "What would you like to do?"
-            options = [[out], [
-                1,
-                "Quit",
-                "Restart"
-            ]]
-            pick = u_KeyInput.keyinput(options)
-            if not pick:
-                break
-            else:
-                game_init()
 
 if __name__ == '__main__':
     init_print()

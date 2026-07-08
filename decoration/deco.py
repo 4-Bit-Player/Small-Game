@@ -5,11 +5,11 @@ from printing._deco import get_line_len, set_line_len
 line_len = get_line_len()
 
 
-def line_r(s='='):
+def line_r(s='=') -> str:
     return s * line_len
 
 
-def print_header_r(text, s="="):
+def print_header_r(text, s="=") -> str:
     if len(text) + 2 >= line_len:
         return text
     header = " " + text + " "
@@ -17,7 +17,7 @@ def print_header_r(text, s="="):
     return header
 
 
-def player_hud():
+def player_hud() -> str:
     global line_len
     hp = str(round(user.Player["hp"], 1))
     hp_max = str(round(user.Player["hp_max"], 1))
