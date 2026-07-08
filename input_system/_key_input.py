@@ -170,7 +170,7 @@ def num_input(header:str, min_num:int|None=None, max_num:int|None=None, whole_nu
                 tmp += char
             continue
 
-        if key == b'\x05': # ctrl+e
+        if key.val == b'\x05': # ctrl+e
             toggle_ansi()
 
 

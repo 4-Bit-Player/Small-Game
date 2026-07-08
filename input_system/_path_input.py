@@ -131,7 +131,7 @@ def path_input(options: list, input_class:KeyInputIndexClass=None, forced_option
                 invalid = True
 
 
-        elif key.val == '\x16' or key.val == '\x19': # ctrl + v or ctrl + y
+        elif val == '\x16' or val == '\x19': # ctrl + v or ctrl + y
              curr_recommendations = _get_clipboard_content(temp_input, curr_recommendations, previous_recommendations)
         elif val == '\x05': # ctrl+e
             toggle_ansi()
