@@ -206,7 +206,7 @@ def display_shortcuts(full=False):
     out += ("h = open the available shortcuts\n"
             "o = change options\n"
             "esc = pick the first option (usually going back, unless in fights)\n"
-            "shift + number key (not num pad)= instantly select an option\n"
+            "shift + number key (not num pad)= select the option immediately\n"
             "ctrl + c = crash the game. :)\n\n"
             "Press enter to return")
     n_print(out)
